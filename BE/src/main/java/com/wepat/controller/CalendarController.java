@@ -45,7 +45,6 @@ public class CalendarController {
 //        ApiFuture<com.google.cloud.firestore.WriteResult> apiFuture
 //                = db.collection(COLLECTION_NAME).document().set(schedule);
 
-
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
