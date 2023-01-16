@@ -87,7 +87,7 @@ wepet
   └── utils
 ```
 ### Front
-
+```
 front
   ├── node_modules
   ├── public
@@ -114,6 +114,7 @@ front
            ├── petprofile
            ├── sns
            └── settings
+```
 
 ## 👍 협업 툴
 ---
