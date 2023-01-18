@@ -1,4 +1,4 @@
-package com.wepat.service.impl;
+package com.wepat.service;
 
 import com.wepat.dto.ScheduleDto;
 
