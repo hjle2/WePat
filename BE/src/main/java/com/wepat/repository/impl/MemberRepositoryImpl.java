@@ -48,10 +48,13 @@ public class MemberRepositoryImpl implements MemberRepository {
     @Override
     public MemberDto findId(String email) throws ExecutionException, InterruptedException {
         logger.info("findId called!");
+
         // asynchronously retrieve multiple documents
         ApiFuture<QuerySnapshot> future = collection.whereEqualTo("email", email).get();
+
         // future.get() blocks on response
         List<QueryDocumentSnapshot> documents = future.get().getDocuments();
+
         for (DocumentSnapshot document : documents) {
             System.out.println(document.getId() + " => " + document.toObject(MemberDto.class));
             return document.toObject(MemberDto.class);
@@ -62,6 +65,7 @@ public class MemberRepositoryImpl implements MemberRepository {
     @Override
     public MemberDto modifyPwd(String memberId, String pwd) throws ExecutionException, InterruptedException {
         logger.info("modifyPwd called!");
+
         return null;
     }
 
@@ -71,6 +75,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
         // asynchronously retrieve multiple documents
         ApiFuture<QuerySnapshot> future = collection.whereEqualTo("memberid", memberId).get();
+
         // future.get() blocks on response
         List<QueryDocumentSnapshot> documents = future.get().getDocuments();
         for (DocumentSnapshot document : documents) {
@@ -118,13 +123,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public MemberDto blockMember(String memberId) throws ExecutionException, InterruptedException {
-
         logger.info("blockMember called!");
         return null;
-    }
-
-    public List<QueryDocumentSnapshot> executeQuery(Query query) throws ExecutionException, InterruptedException {
-        logger.info("logout called!");
-        return query.get().get().getDocuments();
     }
 }
