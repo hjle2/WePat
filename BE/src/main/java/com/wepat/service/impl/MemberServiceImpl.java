@@ -23,47 +23,47 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberDto signIn(String memberid, String pwd) throws ExecutionException, InterruptedException {
-        return null;
+    public MemberDto signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
+        return memberRepo.signIn(memberId, pwd);
     }
 
     @Override
     public MemberDto findId(String email) throws ExecutionException, InterruptedException {
-        return null;
+        return memberRepo.findId(email);
     }
 
     @Override
     public MemberDto modifyPwd(String memberId, String pwd) throws ExecutionException, InterruptedException {
-        return null;
+        return memberRepo.modifyPwd(memberId, pwd);
     }
 
     @Override
     public MemberDto getMember(String memberId) throws ExecutionException, InterruptedException {
-        return null;
+        return memberRepo.getMember(memberId);
     }
 
     @Override
     public MemberDto modifyMember(MemberDto member) throws ExecutionException, InterruptedException {
-        return null;
+        return memberRepo.modifyMember(member);
     }
 
     @Override
     public MemberDto deleteMember(String memberId) throws ExecutionException, InterruptedException {
-        return null;
+        return memberRepo.deleteMember(memberId);
     }
 
     @Override
     public MemberDto logout(String memberId) throws ExecutionException, InterruptedException {
-        return null;
+        return memberRepo.logout(memberId);
     }
 
     @Override
     public MemberDto warnMember(String memberId) throws ExecutionException, InterruptedException {
-        return null;
+        return memberRepo.warnMember(memberId);
     }
 
     @Override
     public MemberDto blockMember(String memberId) throws ExecutionException, InterruptedException {
-        return null;
+        return memberRepo.blockMember(memberId);
     }
 }

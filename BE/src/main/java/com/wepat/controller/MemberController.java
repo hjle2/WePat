@@ -64,9 +64,9 @@ public class MemberController {
         try {
             memberResult = memberService.findId(email);
         } catch (ExecutionException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
@@ -79,9 +79,9 @@ public class MemberController {
         try {
             memberService.modifyPwd(memberid, pwd);
         } catch (ExecutionException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
@@ -93,9 +93,9 @@ public class MemberController {
         try {
             memberResult = memberService.getMember(memberId);
         } catch (ExecutionException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
@@ -107,9 +107,9 @@ public class MemberController {
         try {
             memberResult = memberService.modifyMember(member);
         } catch (ExecutionException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
@@ -121,9 +121,9 @@ public class MemberController {
         try {
             memberResult = memberService.deleteMember(memberId);
         } catch (ExecutionException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
@@ -135,9 +135,9 @@ public class MemberController {
         try {
             memberResult = memberService.logout(memberId);
         } catch (ExecutionException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
@@ -148,9 +148,9 @@ public class MemberController {
         try {
             memberResult = memberService.warnMember(memberId);
         } catch (ExecutionException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
@@ -161,9 +161,9 @@ public class MemberController {
         try {
             memberResult = memberService.blockMember(memberId);
         } catch (ExecutionException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
