@@ -22,9 +22,7 @@ public class MemberController {
         try {
             MemberDto response = memberService.signIn(member);
             return new ResponseEntity<MemberDto>(response, HttpStatus.OK);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -34,9 +32,7 @@ public class MemberController {
         try {
             MemberDto response = memberService.signIn(member);
             return new ResponseEntity<MemberDto>(response, HttpStatus.OK);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -46,9 +42,7 @@ public class MemberController {
         try {
             MemberDto response = memberService.signIn(member);
             return new ResponseEntity<MemberDto>(response, HttpStatus.OK);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -58,9 +52,7 @@ public class MemberController {
         try {
             MemberDto response = memberService.signIn(member);
             return new ResponseEntity<MemberDto>(response, HttpStatus.OK);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
