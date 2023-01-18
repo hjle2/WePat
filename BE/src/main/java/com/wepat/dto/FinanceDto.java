@@ -1,20 +1,22 @@
 package com.wepat.dto;
 
+import io.swagger.annotations.ApiParam;
+
 import java.sql.Timestamp;
 
 public class FinanceDto {
-    // 사용처 
+    @ApiParam(value = "사용처")
     private String category;
-    // 입금 or 출금 날짜
+    @ApiParam(value = "입금 or 출금 날짜")
     private Timestamp date;
-    // 가계부 작성 날짜
+    @ApiParam(value = "가계부 작성 날짜(PK)", required = true)
     private Timestamp writtenDate;
-    // 돈
+    @ApiParam(value = "돈")
     private int money;
-    // 입금인지 아닌지
+    @ApiParam(value = "입금 or 출금", required = true)
     private boolean isIncome;
-    // 돈의 사용자
+    @ApiParam(value = "사용자", required = true)
     private String nickName;
-    // 가계부 메모
+    @ApiParam(value = "가계부 내용")
     private String memo;
 }
