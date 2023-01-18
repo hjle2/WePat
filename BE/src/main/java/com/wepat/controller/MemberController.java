@@ -2,7 +2,8 @@ package com.wepat.controller;
 
 import com.wepat.dto.MemberDto;
 import com.wepat.service.MemberService;
-import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,61 +15,143 @@ import java.util.concurrent.ExecutionException;
 @RequestMapping("/member")
 @CrossOrigin(origins = "*", methods = { RequestMethod.DELETE, RequestMethod.POST })
 public class MemberController {
-    @Autowired
+    private final Logger logger = LoggerFactory.getLogger(MemberController.class);
     private MemberService memberService;
-    @PostMapping("/signin")
-    @ApiOperation(value = "로그인 정보를 확인한다 .", response = MemberDto.class)
-    public ResponseEntity<?> signIn(MemberDto member) {
-        try {
-            MemberDto response = memberService.signIn(member);
-            return new ResponseEntity<MemberDto>(response, HttpStatus.OK);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    @Autowired
+    public MemberController(MemberService memberService) {
+        this.memberService = memberService;
     }
-    @PostMapping("/signup")
-    @ApiOperation(value = "로그인한 사용자 정보를 반환한다.", response = MemberDto.class)
+    @PostMapping("signup")
     public ResponseEntity<?> signUp(MemberDto member) {
+        MemberDto memberResult = null;
+        logger.info("signUp called!");
         try {
-            MemberDto response = memberService.signIn(member);
-            return new ResponseEntity<MemberDto>(response, HttpStatus.OK);
-        } catch (Exception e) {
+            memberResult = memberService.signUp(member);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+        return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
-    @PutMapping("/modify")
-    @ApiOperation(value = "수정된 사용자의 정보를 반환한다.", response = MemberDto.class)
-    public ResponseEntity<?> modify(MemberDto member) {
+    @PostMapping("signin")
+    public ResponseEntity<?> signIn(String memberid, String pwd) {
+        MemberDto memberResult = null;
+        logger.info("signIn called!");
         try {
-            MemberDto response = memberService.signIn(member);
-            return new ResponseEntity<MemberDto>(response, HttpStatus.OK);
-        } catch (Exception e) {
+            memberResult = memberService.signIn(memberid, pwd);
+            System.out.println(memberResult);
+        } catch (ExecutionException e) {
+            System.out.println("e1");
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            System.out.println("e2");
             throw new RuntimeException(e);
         }
+        return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
-    @DeleteMapping("/delete/{id}")
-    @ApiOperation(value = "사용자의 정보를 삭제한다.", response = MemberDto.class)
-    public ResponseEntity<?> delete(MemberDto member) {
+    @PostMapping("findid")
+    public ResponseEntity<?> findId(String name, String email) {
+        MemberDto memberResult = null;
+        logger.info("findId called!");
         try {
-            MemberDto response = memberService.signIn(member);
-            return new ResponseEntity<MemberDto>(response, HttpStatus.OK);
-        } catch (Exception e) {
+            memberResult = memberService.findId(email);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+        return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
-    @PostMapping("/findid")
-    @ApiOperation(value = "사용자의 아이디를 반환한다.", response = MemberDto.class)
-    public ResponseEntity<?> findId(MemberDto member) {
-        return new ResponseEntity<Void>(HttpStatus.OK);
-    }
-    @PostMapping("/setpwd")
-    @ApiOperation(value = "사용자의 비밀번호를 변경한다.", response = MemberDto.class)
-    public ResponseEntity<?> setPwd(String pwd) {
-        return new ResponseEntity<Void>(HttpStatus.OK);
+    @PostMapping("findpwd")
+    public ResponseEntity<?> modifyPwd(String memberid, String pwd) {
+        MemberDto memberResult = null;
+        logger.info("findPwd called!");
+        try {
+            memberService.modifyPwd(memberid, pwd);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
     @GetMapping("/{memberid}")
-    @ApiOperation(value = "사용자의 정보를 반환한다.", response = MemberDto.class)
-    public ResponseEntity<?> getMemberById(@PathVariable String memberId) {
-        return new ResponseEntity<Void>(HttpStatus.OK);
+    public ResponseEntity<?> getMember(@PathVariable String memberId) {
+        MemberDto memberResult = null;
+        logger.info("getMember called!");
+        try {
+            memberResult = memberService.getMember(memberId);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
+    }
+    @PutMapping("/modify")
+    public ResponseEntity<?> modifyMember(MemberDto member) {
+        MemberDto memberResult = null;
+        logger.info("modifyMember called!");
+        try {
+            memberResult = memberService.modifyMember(member);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
+    }
+    @DeleteMapping("/{memberid}")
+    public ResponseEntity<?> deleteMember(@PathVariable String memberId) {
+        MemberDto memberResult = null;
+        logger.info("deleteMember called!");
+        try {
+            memberResult = memberService.deleteMember(memberId);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
+    }
+    @GetMapping("/logout/{memberid}")
+    public ResponseEntity<?> logout(@PathVariable String memberId) {
+        MemberDto memberResult = null;
+        logger.info("logout called!");
+        try {
+            memberResult = memberService.logout(memberId);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
+    }
+    @GetMapping("/warn/{memberid}")
+    public ResponseEntity<?> warnMember(String memberId) {
+        MemberDto memberResult = null;
+        logger.info("warnMember called!");
+        try {
+            memberResult = memberService.warnMember(memberId);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
+    }
+    @GetMapping("/block/{memberid}")
+    public ResponseEntity<?> blockMember(String memberId) {
+        MemberDto memberResult = null;
+        logger.info("blockMember called!");
+        try {
+            memberResult = memberService.blockMember(memberId);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
 }

@@ -1,5 +1,7 @@
 package com.wepat.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +12,7 @@ import java.util.concurrent.ExecutionException;
 @RequestMapping("/calendar")
 @CrossOrigin(origins = "*", methods = { RequestMethod.GET, RequestMethod.POST })
 public class CalendarController {
+    private final Logger logger = LoggerFactory.getLogger(CalendarController.class);
     private final String COLLECTION_NAME = "calendar";
     @GetMapping("/test")
     public ResponseEntity<?> testCalendar() throws ExecutionException, InterruptedException {

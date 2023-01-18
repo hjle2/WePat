@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public class PhotoEntity {
     private String docId;
-    private String userId;
+    private String memberId;
     private String url;
     private List<CommentDto> commentList;
     private boolean isOnSNS;

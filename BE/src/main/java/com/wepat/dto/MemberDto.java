@@ -8,7 +8,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class MemberDto {
     @ApiParam(value = "사용자 ID", required = true)
-    private String user;
+    private String memberId;
     @ApiParam(value = "사용자 비밀번호", required = true)
     private String pwd;
     @ApiParam(value = "사용자 이름", required = true)
