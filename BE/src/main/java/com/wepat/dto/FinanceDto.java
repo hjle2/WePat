@@ -2,7 +2,7 @@ package com.wepat.dto;
 
 import java.sql.Timestamp;
 
-public class Finance {
+public class FinanceDto {
     private String category;
     private Timestamp date;
     private int money;

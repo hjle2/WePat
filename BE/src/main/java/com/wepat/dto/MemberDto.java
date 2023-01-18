@@ -1,13 +1,12 @@
 package com.wepat.dto;
 
-//import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiParam;
 import lombok.Data;
 
 @Data
-public class Member {
+public class MemberDto {
     @ApiParam(value = "사용자 ID", required = true)
-    private String id;
+    private String user;
     @ApiParam(value = "사용자 E-mail", required = true)
     private String email;
     @ApiParam(value = "사용자 이름", required = true)

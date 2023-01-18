@@ -1,11 +1,10 @@
 package com.wepat.dto;
 
 import lombok.Data;
-
 import java.util.List;
 
 @Data
-public class Calendar {
+public class CalendarDto {
     private List<String> petId;
-    private List<Finance> financeList;
+    private List<FinanceDto> financeList;
 }

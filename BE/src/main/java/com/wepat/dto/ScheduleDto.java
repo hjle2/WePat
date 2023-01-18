@@ -1,12 +1,14 @@
 package com.wepat.dto;
 
 import lombok.Data;
+
 import java.sql.Timestamp;
 import java.util.List;
 
 @Data
-public class Schedule {
+public class ScheduleDto {
     private String title;
+    private String petId;
     private boolean isRepeated;
     private Timestamp startDate;
     private Timestamp endDate;
@@ -17,5 +19,5 @@ public class Schedule {
     private double weight;
     private String memo;
     private List<String> photoList;
-    private List<Comment> reviewList;
+    private List<CommentDto> reviewList;
 }

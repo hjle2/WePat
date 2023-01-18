@@ -1,16 +1,9 @@
 package com.wepat.controller;
 
-import com.google.api.core.ApiFuture;
-import com.google.cloud.Timestamp;
-import com.google.cloud.firestore.*;
-import com.google.firebase.cloud.FirestoreClient;
-import com.wepat.dto.Schedule;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -47,5 +40,4 @@ public class CalendarController {
 
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
-
 }

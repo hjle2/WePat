@@ -7,9 +7,9 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 
 @Data
-public class Comment {
+public class CommentDto {
     private String writter;
     private String content;
     private Timestamp date;
-    private LocalDate writtenDate;
+    private Timestamp writtenDate;
 }

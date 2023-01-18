@@ -6,9 +6,10 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @Data
-public class Photo {
+public class PhotoDto {
+    private String userId;
     private String url;
-    private List<Comment> commentList;
+    private List<CommentDto> commentList;
     private boolean isOnSNS;
     private int like;
     private List<String> reportIdList;

@@ -29,7 +29,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
 	// Validation
-//	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 	// lombok
 	compileOnly 'org.projectlombok:lombok:1.18.24'
@@ -48,22 +48,21 @@ dependencies {
 	implementation 'com.google.firebase:firebase-admin:8.1.0'
 
 	// JWT
-//	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
-//	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
-//	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
 
 	// Oauth
 //	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
 	// Gson
-//	implementation 'com.google.code.gson:gson:2.10.1'
+	implementation 'com.google.code.gson:gson:2.10.1'
 
 	// 메일 인증
-//	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
 	// GCP
-//	implementation 'com.google.cloud.tools:appengine-gradle-plugin:2.4.3'
-
+	implementation 'com.google.cloud.tools:appengine-gradle-plugin:2.4.3'
 }
 
 tasks.named('test') {

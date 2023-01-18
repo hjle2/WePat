@@ -1,12 +1,12 @@
 package com.wepat.service;
 
-import com.wepat.dto.Member;
+import com.wepat.dto.MemberDto;
 
 import java.util.concurrent.ExecutionException;
 
 public interface MemberService {
-    Member signUp(Member member) throws ExecutionException, InterruptedException;
-    Member signIn(Member member) throws ExecutionException, InterruptedException;
-    Member modify(Member member) throws ExecutionException, InterruptedException;
-    void delete(Member member) throws ExecutionException, InterruptedException;
+    MemberDto signUp(MemberDto member) throws ExecutionException, InterruptedException;
+    MemberDto signIn(MemberDto member) throws ExecutionException, InterruptedException;
+    MemberDto modify(MemberDto member) throws ExecutionException, InterruptedException;
+    void delete(MemberDto member) throws ExecutionException, InterruptedException;
 }

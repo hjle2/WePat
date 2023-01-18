@@ -5,7 +5,8 @@ import lombok.Data;
 import java.sql.Timestamp;
 
 @Data
-public class Weight {
+public class WeightDto {
+    private String petId;
     private double weight;
     private Timestamp date;
 }
