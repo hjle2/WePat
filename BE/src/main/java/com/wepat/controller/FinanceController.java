@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/finance")
-@CrossOrigin(origins = "*", methods = { RequestMethod.GET, RequestMethod.POST })
+@CrossOrigin(origins = "*")
 public class FinanceController {
     private final Logger logger = LoggerFactory.getLogger(FinanceController.class);
     @GetMapping("{calendarid}")

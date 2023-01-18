@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/calendar")
-@CrossOrigin(origins = "*", methods = { RequestMethod.GET, RequestMethod.POST })
+@CrossOrigin(origins = "*")
 public class CalendarController {
     private final Logger logger = LoggerFactory.getLogger(CalendarController.class);
     private final String COLLECTION_NAME = "calendar";

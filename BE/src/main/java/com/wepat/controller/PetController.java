@@ -10,7 +10,7 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/pet")
-@CrossOrigin(origins = "*", methods = { RequestMethod.GET, RequestMethod.POST })
+@CrossOrigin(origins = "*")
 public class PetController {
     private final Logger logger = LoggerFactory.getLogger(PetController.class);
 

@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/member")
-@CrossOrigin(origins = "*", methods = { RequestMethod.DELETE, RequestMethod.POST })
+@CrossOrigin(origins = "*")
 public class MemberController {
     private final Logger logger = LoggerFactory.getLogger(MemberController.class);
     private MemberService memberService;
