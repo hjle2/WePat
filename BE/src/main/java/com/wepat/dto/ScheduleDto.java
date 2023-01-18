@@ -12,7 +12,7 @@ public class ScheduleDto {
     private boolean isRepeated;
     private Timestamp startDate;
     private Timestamp endDate;
-    private Timestamp date;
+    private Timestamp writtenDate;
     private boolean isCompleted = false;
     private int period;
     private int nPeriod;
