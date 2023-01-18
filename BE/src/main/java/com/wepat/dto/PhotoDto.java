@@ -10,7 +10,7 @@ import java.util.List;
 public class PhotoDto {
 
     @ApiParam(value = "업로드한 사용자ID")
-    private String memberid;
+    private String memberId;
     @ApiParam(value = "사진 url", required = true)
     private String url;
     @ApiParam(value = "댓글Dto 리스트")

@@ -14,32 +14,32 @@ import io.swagger.annotations.ApiOperation;
 public class PetController {
     private final Logger logger = LoggerFactory.getLogger(PetController.class);
 
-    @GetMapping("/{petid}")
+    @GetMapping("/{petId}")
     @ApiOperation(value = "반려동물 상세페이지")
-    public ResponseEntity<?> getPet(@PathVariable String petid) {
+    public ResponseEntity<?> getPet(@PathVariable String petId) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/{petid}/{weight}")
+    @PutMapping("/{petId}/{weight}")
     @ApiOperation(value = "몸무게 추가")
-    public ResponseEntity<?> addPetWeight(@PathVariable String petid, @PathVariable String weight) {
+    public ResponseEntity<?> addPetWeight(@PathVariable String petId, @PathVariable String weight) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/{calendarid}")
+    @GetMapping("/{calendarId}")
     @ApiOperation(value = "반려동물 추가페이지")
-    public ResponseEntity<?> addPagePet(@PathVariable String calendarid) {
+    public ResponseEntity<?> addPagePet(@PathVariable String calendarId) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/{calendarid}")
+    @PostMapping("/{calendarId}")
     @ApiOperation(value = "반려동물 추가")
-    public ResponseEntity<?> addPet(@PathVariable String calendarid, @RequestBody PetDto petDto) {
+    public ResponseEntity<?> addPet(@PathVariable String calendarId, @RequestBody PetDto petDto) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/{calendarid}/{petid}")
-    public ResponseEntity deletePet(@PathVariable String calendarid, @PathVariable String petid) {
+    @DeleteMapping("/{calendarId}/{petId}")
+    public ResponseEntity deletePet(@PathVariable String calendarId, @PathVariable String petId) {
         return new ResponseEntity(HttpStatus.OK);
     }
 }

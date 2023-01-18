@@ -20,34 +20,34 @@ import java.util.List;
 public class PhotoController {
     private final Logger logger = LoggerFactory.getLogger(PhotoController.class);
 
-    @GetMapping("/{calendarid}")
-    @ApiOperation(value = "전체 앨범 이미지 얻기", notes = "List<PhotoDto> photo", response = List.class)
-    public ResponseEntity<?> photoPage(@PathVariable String calendarId) {
+    @GetMapping("/{calendarId}")
+    @ApiOperation(value = "전체 앨범 이미지 얻기", notes = "Photo 에 SNS 체크가 되어있는 사진들 조회", response = List.class)
+    public ResponseEntity<?> getAllPhoto(@PathVariable String calendarId) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/{calendarid}/{photoid}")
+    @GetMapping("/{calendarId}/{photoId}")
     @ApiOperation(value = "앨범 상세보기", response = PhotoDto.class)
-    public ResponseEntity<?> photoDetail(@PathVariable String calendarId, @PathVariable String photoId) {
+    public ResponseEntity<?> getPhotoById(@PathVariable String calendarId, @PathVariable String photoId) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/{calendarid}/{photoid}")
+    @PutMapping("/{calendarId}/{photoId}")
     @ApiOperation(value = "앨범 댓글 추가하기")
-    public ResponseEntity<?> addComment(@PathVariable String calendarId, @PathVariable String photoId,
+    public ResponseEntity<?> updateCommentByPhoto(@PathVariable String calendarId, @PathVariable String photoId,
                                         @RequestBody CommentDto commentDto) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/{calendarid}")
-    @ApiOperation(value = "SNS에 사진 업로드하기")
-    public ResponseEntity<?> snsUpload(String calendarId) {
+    @PutMapping("/{calendarId}/{photoId}/sns")
+    @ApiOperation(value = "SNS 에 사진 업로드하기")
+    public ResponseEntity<?> updateSNSByPhoto(@PathVariable String calendarId, @PathVariable String photoId) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/{calendarid}/{photoid}")
+    @DeleteMapping("/{calendarId}/{photoId}")
     @ApiOperation(value = "앨범에서 삭제")
-    public ResponseEntity<?> photoDelete(@PathVariable String calendarid, @PathVariable String photoId) {
+    public ResponseEntity<?> deletePhotoById(@PathVariable String calendarId, @PathVariable String photoId) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

@@ -41,11 +41,11 @@ public class MemberController {
     }
     @PostMapping("signin")
     @ApiOperation(value = "로그인 시도",  notes = "로그인 요청을 한다.",response = MemberDto.class)
-    public ResponseEntity<?> signIn(String memberid, String pwd) {
+    public ResponseEntity<?> signIn(String memberId, String pwd) {
         MemberDto memberResult = null;
         logger.info("signIn called!");
         try {
-            memberResult = memberService.signIn(memberid, pwd);
+            memberResult = memberService.signIn(memberId, pwd);
             System.out.println(memberResult);
         } catch (ExecutionException e) {
             System.out.println("e1");
@@ -70,14 +70,14 @@ public class MemberController {
         }
         return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
-    @PostMapping("findpwd")
+    @PutMapping("modifypwd")
     @ApiOperation(value = "비밀번호 찾기", notes = "아이디, 이메일 인증 성공 시," +
             "해당 이메일로 임시 비밀번호 제공 및 임시 비밀번호로 정보 변경", response = HttpResponse.class)
-    public ResponseEntity<?> modifyPwd(String memberid, String pwd) {
+    public ResponseEntity<?> modifyPwd(String memberId, String pwd) {
         MemberDto memberResult = null;
         logger.info("findPwd called!");
         try {
-            memberService.modifyPwd(memberid, pwd);
+            memberService.modifyPwd(memberId, pwd);
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
