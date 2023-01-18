@@ -24,21 +24,21 @@ public class SNSController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/{photoId}")
+    @GetMapping("/{photoid}")
     @ApiOperation(value = "이미지 선택", response = PhotoDto.class)
-    public ResponseEntity<?> getSNSByPhotoId(@PathVariable String photoId) {
+    public ResponseEntity<?> getSNSByPhotoId(@PathVariable("photoid") String photoId) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/{photoId}")
+    @PutMapping("/{photoid}")
     @ApiOperation(value = "좋아요 클릭", response = PhotoDto.class)
-    public ResponseEntity<?> updateSNSLike(@PathVariable String photoId) {
+    public ResponseEntity<?> updateSNSLike(@PathVariable("photoid") String photoId) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/{photoId}/{memberId}")
+    @PutMapping("/{photoid}/{memberid}")
     @ApiOperation(value = "신고 클릭")
-    public ResponseEntity<?> reportSNS(@PathVariable String photoId, String memberId) {
+    public ResponseEntity<?> reportSNS(@PathVariable("photoid") String photoId, @PathVariable("memberid") String memberId) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -16,24 +16,24 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class FinanceController {
     private final Logger logger = LoggerFactory.getLogger(FinanceController.class);
-    @GetMapping("{calendarId}")
+    @GetMapping("/{calendarid}")
     @ApiOperation(value = "가계부 내용", response = List.class)
-    public ResponseEntity<?> getAllFinance(@PathVariable String calendarId) {
+    public ResponseEntity<?> getAllFinance(@PathVariable("calendarid") String calendarId) {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
-    @PostMapping("/add/{calendarId}")
+    @PostMapping("/add/{calendarid}")
     @ApiOperation(value = "가계부 내용 추가", response = HttpStatus.class)
-    public ResponseEntity<?> addFinance(@PathVariable String calendarId, @RequestBody FinanceDto financeDto) {
+    public ResponseEntity<?> addFinance(@PathVariable("calendarid") String calendarId, @RequestBody FinanceDto financeDto) {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
-    @GetMapping("/detail/{calendarId}")
+    @GetMapping("/detail/{calendarid}")
     @ApiOperation(value = "가계부 세부 내용 조회", response = FinanceDto.class)
-    public ResponseEntity<?> getFinanceById(@PathVariable String calendarId) {
+    public ResponseEntity<?> getFinanceById(@PathVariable("calendarid") String calendarId) {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
-    @PutMapping("/detail/{calendarId}")
+    @PutMapping("/detail/{calendarid}")
     @ApiOperation(value = "가계부 세부 내용 변경")
-    public ResponseEntity<?> modifyFinanceByTime(@PathVariable String calendarId, @RequestBody FinanceDto financeDto) {
+    public ResponseEntity<?> modifyFinanceByTime(@PathVariable("calendarid") String calendarId, @RequestBody FinanceDto financeDto) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

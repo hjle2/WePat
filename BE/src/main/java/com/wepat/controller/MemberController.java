@@ -87,7 +87,7 @@ public class MemberController {
     }
     @GetMapping("/{memberid}")
     @ApiOperation(value = "마이페이지", notes = "현재 로그인되어있는 회원의 정보 조회", response = MemberDto.class)
-    public ResponseEntity<?> getMember(@PathVariable String memberId) {
+    public ResponseEntity<?> getMember(@PathVariable("memberid") String memberId) {
         MemberDto memberResult = null;
         logger.info("getMember called!");
         try {
@@ -115,7 +115,7 @@ public class MemberController {
     }
     @DeleteMapping("/{memberid}")
     @ApiOperation(value = "사용자의 정보를 삭제한다.", response = HttpResponse.class)
-    public ResponseEntity<?> deleteMember(@PathVariable String memberId) {
+    public ResponseEntity<?> deleteMember(@PathVariable("memberid") String memberId) {
         MemberDto memberResult = null;
         logger.info("deleteMember called!");
         try {
@@ -129,7 +129,7 @@ public class MemberController {
     }
     @GetMapping("/logout/{memberid}")
     @ApiOperation(value = "로그아웃", notes = "현재 로그인되어있는 사용자 로그아웃", response = HttpResponse.class)
-    public ResponseEntity<?> logout(@PathVariable String memberId) {
+    public ResponseEntity<?> logout(@PathVariable("memberid") String memberId) {
         MemberDto memberResult = null;
         logger.info("logout called!");
         try {
@@ -142,7 +142,7 @@ public class MemberController {
         return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
     @GetMapping("/warn/{memberid}")
-    public ResponseEntity<?> warnMember(String memberId) {
+    public ResponseEntity<?> warnMember(@PathVariable("memberid") String memberId) {
         MemberDto memberResult = null;
         logger.info("warnMember called!");
         try {
@@ -155,7 +155,7 @@ public class MemberController {
         return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
     @GetMapping("/block/{memberid}")
-    public ResponseEntity<?> blockMember(String memberId) {
+    public ResponseEntity<?> blockMember(@PathVariable("memberid") String memberId) {
         MemberDto memberResult = null;
         logger.info("blockMember called!");
         try {
