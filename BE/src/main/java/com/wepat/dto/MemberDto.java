@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class MemberDto {
     @ApiParam(value = "사용자 ID", required = true)
-    private String user;
+    private String memberid;
     @ApiParam(value = "사용자 E-mail", required = true)
     private String email;
     @ApiParam(value = "사용자 이름", required = true)

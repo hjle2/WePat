@@ -12,7 +12,7 @@ public class PhotoEntity {
     @ApiParam(value = "사진ID", required = true)
     private String docId;
     @ApiParam(value = "업로드한 사용자ID")
-    private String userId;
+    private String memberid;
     @ApiParam(value = "사진 url", required = true)
     private String url;
     @ApiParam(value = "댓글Dto 리스트")

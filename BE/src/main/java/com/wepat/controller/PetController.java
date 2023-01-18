@@ -1,12 +1,42 @@
 package com.wepat.controller;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import com.wepat.dto.PetDto;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/pet")
 @CrossOrigin(origins = "*", methods = { RequestMethod.GET, RequestMethod.POST })
 public class PetController {
+
+    @GetMapping("/{petid}")
+    @ApiOperation(value = "반려동물 상세페이지")
+    public ResponseEntity<?> getPet(@PathVariable String petid) {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("/{petid}/{weight}")
+    @ApiOperation(value = "몸무게 추가")
+    public ResponseEntity<?> addPetWeight(@PathVariable String petid, @PathVariable String weight) {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/{calendarid}")
+    @ApiOperation(value = "반려동물 추가페이지")
+    public ResponseEntity<?> addPagePet(@PathVariable String calendarid) {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/{calendarid}")
+    @ApiOperation(value = "반려동물 추가")
+    public ResponseEntity<?> addPet(@PathVariable String calendarid, @RequestBody PetDto petDto) {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{calendarid}/{petid}")
+    public ResponseEntity deletePet(@PathVariable String calendarid, @PathVariable String petid) {
+        return new ResponseEntity(HttpStatus.OK);
+    }
 }
