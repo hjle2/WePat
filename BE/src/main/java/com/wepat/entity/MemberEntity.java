@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class MemberEntity {
+    @ApiParam(value = "사용자 PK", required = true)
     private String docId;
     @ApiParam(value = "사용자 ID", required = true)
     private String memberId;
