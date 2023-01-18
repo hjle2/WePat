@@ -7,10 +7,10 @@ import java.util.List;
 
 @Data
 public class PetDto {
-    private List<ScheduleDto> schedule;
     private String name;
     private int age;
     private Timestamp birthday;
     private Timestamp adaptday;
-    private List<Double> weightList;
+    private List<String> schedule;
+    private List<WeightDto> weightList;
 }
