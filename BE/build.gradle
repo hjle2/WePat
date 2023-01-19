@@ -62,7 +62,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
 	// GCP
-	implementation 'com.google.cloud.tools:appengine-gradle-plugin:2.4.3'
+	implementation 'com.google.cloud:google-cloud-storage'
 }
 
 tasks.named('test') {
