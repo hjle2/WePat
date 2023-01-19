@@ -61,10 +61,6 @@ SNS를 겸한 공유 캘린더로 개발되었습니다.</br>
 
 **Frontend**
 
-- Visual Studio Code IDE
-- vue 3.2.13
-- vuex 4.0.2
-
 **CI/CD**
 - Firebase 8.1.0
 - Node.js 8.19.3
@@ -87,34 +83,6 @@ wepet
   └── utils
 ```
 ### Front
-```
-front
-  ├── node_modules
-  ├── public
-  └── src
-      ├── api
-      ├── assets
-      ├── components
-      │   ├── accounts
-      │   ├── calendar
-      │   ├── errors
-      │   ├── financial
-      │   ├── myprofile
-      │   ├── petprofile
-      │   ├── sns
-      │   └── settings
-      ├── router
-      ├── store
-      └── views         
-           ├── accounts
-           ├── calendar
-           ├── errors
-           ├── financial
-           ├── myprofile
-           ├── petprofile
-           ├── sns
-           └── settings
-```
 
 ## 👍 협업 툴
 ---

@@ -47,5 +47,4 @@ public class CalendarController {
 
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
-
 }
