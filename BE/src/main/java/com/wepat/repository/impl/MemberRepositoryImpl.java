@@ -37,17 +37,20 @@ public class MemberRepositoryImpl implements MemberRepository {
         if (document.exists()) {
             // convert document to POJO
             member = document.toObject(MemberDto.class);
+            if (member.getPwd().equals(pwd)) {
+                return member;
+            } else {
+                return null;
+            }
         } else {
-        }
-        if (member.getPwd().equals(pwd))
-            return member;
-        else
+            logger.debug("wrong debug");
             return null;
+        }
     }
 
     @Override
     public MemberDto findId(String email) throws ExecutionException, InterruptedException {
-        logger.info("findId called!");
+        logger.debug("findId called!");
 
         // asynchronously retrieve multiple documents
         ApiFuture<QuerySnapshot> future = collection.whereEqualTo("email", email).get();
@@ -64,14 +67,14 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public MemberDto modifyPwd(String memberId, String pwd) throws ExecutionException, InterruptedException {
-        logger.info("modifyPwd called!");
+        logger.debug("modifyPwd called!");
 
         return null;
     }
 
     @Override
     public MemberDto getMember(String memberId) throws ExecutionException, InterruptedException {
-        logger.info("getMember called!");
+        logger.debug("getMember called!");
 
         // asynchronously retrieve multiple documents
         ApiFuture<QuerySnapshot> future = collection.whereEqualTo("memberid", memberId).get();
@@ -87,43 +90,43 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public MemberDto modifyMember(MemberDto member) throws ExecutionException, InterruptedException {
-        logger.info("modifyMember called!");
+        logger.debug("modifyMember called!");
 
         // asynchronously modify a document
         ApiFuture<WriteResult> writeResult = collection.document(member.getMemberId()).set(member);
 
-        logger.info("Update time : " + writeResult.get().getUpdateTime());
+        logger.debug("Update time : " + writeResult.get().getUpdateTime());
         return getMember(member.getMemberId());
     }
 
     @Override
     public MemberDto deleteMember(String memberId) throws ExecutionException, InterruptedException {
-        logger.info("deleteMember called!");
+        logger.debug("deleteMember called!");
 
         MemberDto member = getMember(memberId);
         // asynchronously delete a document
         ApiFuture<WriteResult> writeResult = collection.document(memberId).delete();
         // ...
-        logger.info("Update time : " + writeResult.get().getUpdateTime());
+        logger.debug("Update time : " + writeResult.get().getUpdateTime());
 
         return member;
     }
 
     @Override
     public MemberDto logout(String memberId) throws ExecutionException, InterruptedException  {
-        logger.info("logout called!");
+        logger.debug("logout called!");
         return null;
     }
 
     @Override
     public MemberDto warnMember(String memberId) throws ExecutionException, InterruptedException {
-        logger.info("warnMember called!");
+        logger.debug("warnMember called!");
         return null;
     }
 
     @Override
     public MemberDto blockMember(String memberId) throws ExecutionException, InterruptedException {
-        logger.info("blockMember called!");
+        logger.debug("blockMember called!");
         return null;
     }
 }
