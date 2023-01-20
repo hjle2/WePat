@@ -5,11 +5,13 @@ import com.wepat.repository.MemberRepository;
 import com.wepat.repository.ScheduleRepository;
 import com.wepat.service.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+@Service
 public class ScheduleServiceImpl implements ScheduleService {
     private final ScheduleRepository scheduleRepo;
 

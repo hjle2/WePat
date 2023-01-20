@@ -20,151 +20,148 @@ import java.util.concurrent.ExecutionException;
 @CrossOrigin(origins = "*")
 public class MemberController {
     private final Logger logger = LoggerFactory.getLogger(MemberController.class);
-    private MemberService memberService;
+    private final MemberService memberService;
     @Autowired
     public MemberController(MemberService memberService) {
         this.memberService = memberService;
     }
-    @PostMapping("signup")
+    @PostMapping("/signup")
     @ApiOperation(value = "회원가입", notes = "정보를 받아 회원가입 시도한다.", response = MemberDto.class)
     public ResponseEntity<?> signUp(MemberDto member) {
-        logger.debug("signUp called!");
+        logger.info("signUp called!");
         MemberDto memberResult = null;
         try {
             memberResult = memberService.signUp(member);
+            return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
         } catch (ExecutionException e) {
-            throw new RuntimeException(e);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
-    @PostMapping("signin")
+    @PostMapping("/signin")
     @ApiOperation(value = "로그인 시도",  notes = "로그인 요청을 한다.",response = MemberDto.class)
     public ResponseEntity<?> signIn(String memberId, String pwd) {
-        logger.debug("signIn called!");
+        logger.info("signIn called! parameter >> member Id : " + memberId + " pwd : " + pwd);
         MemberDto memberResult = null;
         try {
             memberResult = memberService.signIn(memberId, pwd);
-            System.out.println(memberResult);
+            return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
         } catch (ExecutionException e) {
-            System.out.println("e1");
-            throw new RuntimeException(e);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (InterruptedException e) {
-            System.out.println("e2");
-            throw new RuntimeException(e);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
-    @PostMapping("findid")
+    @PostMapping("/findid")
     @ApiOperation(value = "아이디 찾기", notes = "이메일을 확인하여 해당 아이디 제공", response = String.class)
     public ResponseEntity<?> findId(String name, String email) {
-        logger.debug("findId called!");
+        logger.info("findId called! parameter >> name : " + name + " email : " + email);
         MemberDto memberResult = null;
         try {
             memberResult = memberService.findId(email);
+            return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
-    @PutMapping("modifypwd")
+    @PutMapping("/modifypwd")
     @ApiOperation(value = "비밀번호 찾기", notes = "아이디, 이메일 인증 성공 시," +
             "해당 이메일로 임시 비밀번호 제공 및 임시 비밀번호로 정보 변경", response = HttpResponse.class)
     public ResponseEntity<?> modifyPwd(String memberId, String pwd) {
-        logger.debug("findPwd called!");
+        logger.info("findPwd called! parameter >> member Id : " + memberId + " pwd : " + pwd);
         MemberDto memberResult = null;
         try {
             memberService.modifyPwd(memberId, pwd);
+            return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
     @GetMapping("/{memberid}")
     @ApiOperation(value = "마이페이지", notes = "현재 로그인되어있는 회원의 정보 조회", response = MemberDto.class)
     public ResponseEntity<?> getMember(@PathVariable("memberid") String memberId) {
-        logger.debug("getMember called!");
+        logger.info("getMember called! parameter >> member Id : " + memberId);
         MemberDto memberResult = null;
         try {
             memberResult = memberService.getMember(memberId);
+            return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
     @PutMapping("/modify")
     @ApiOperation(value = "회원 정보 수정", notes = "현재 회원의 정보를 수정한다.", response = MemberDto.class)
     public ResponseEntity<?> modifyMember(MemberDto member) {
-        logger.debug("modifyMember called!");
+        logger.info("modifyMember called! >> Member : " + member.toString());
         MemberDto memberResult = null;
         try {
             memberResult = memberService.modifyMember(member);
+            return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
     @DeleteMapping("/{memberid}")
     @ApiOperation(value = "사용자의 정보를 삭제한다.", response = HttpResponse.class)
     public ResponseEntity<?> deleteMember(@PathVariable("memberid") String memberId) {
-        logger.debug("deleteMember called!");
+        logger.info("deleteMember called!");
         MemberDto memberResult = null;
         try {
             memberResult = memberService.deleteMember(memberId);
+            return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
     @GetMapping("/logout/{memberid}")
     @ApiOperation(value = "로그아웃", notes = "현재 로그인되어있는 사용자 로그아웃", response = HttpResponse.class)
     public ResponseEntity<?> logout(@PathVariable("memberid") String memberId) {
-        logger.debug("logout called!");
+        logger.info("logout called!");
         MemberDto memberResult = null;
         try {
             memberResult = memberService.logout(memberId);
+            return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
     @GetMapping("/warn/{memberid}")
     public ResponseEntity<?> warnMember(@PathVariable("memberid") String memberId) {
-        logger.debug("warnMember called!");
+        logger.info("warnMember called!");
         MemberDto memberResult = null;
         try {
             memberResult = memberService.warnMember(memberId);
+            return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
     @GetMapping("/block/{memberid}")
     public ResponseEntity<?> blockMember(@PathVariable("memberid") String memberId) {
-        logger.debug("blockMember called!");
+        logger.info("blockMember called!");
         MemberDto memberResult = null;
         try {
             memberResult = memberService.blockMember(memberId);
+            return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
 }

@@ -1,9 +1,14 @@
 package com.wepat.dto;
 
 import io.swagger.annotations.ApiParam;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 
+
+@Data
+@NoArgsConstructor
 public class FinanceDto {
     @ApiParam(value = "사용자", required = true)
     private String nickName;
@@ -14,9 +19,9 @@ public class FinanceDto {
     @ApiParam(value = "입금 or 출금", required = true)
     private boolean isIncome;
     @ApiParam(value = "입금 or 출금 날짜")
-    private Timestamp date;
+    private LocalDate date;
     @ApiParam(value = "가계부 작성 날짜(PK)", required = true)
-    private Timestamp writtenDate;
+    private LocalDate writtenDate;
     @ApiParam(value = "가계부 내용")
     private String memo;
 }
