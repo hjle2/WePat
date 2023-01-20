@@ -18,4 +18,6 @@ public interface MemberRepository {
     // 관리자 기능
     MemberDto warnMember(String memberId) throws ExecutionException, InterruptedException;
     MemberDto blockMember(String memberId) throws ExecutionException, InterruptedException;
+
+    void findPwd(String randomPassword, String memberId) throws ExecutionException, InterruptedException;
 }

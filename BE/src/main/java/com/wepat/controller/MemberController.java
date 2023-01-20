@@ -1,5 +1,6 @@
 package com.wepat.controller;
 
+import com.wepat.dto.MailDto;
 import com.wepat.dto.MemberDto;
 import com.wepat.service.MemberService;
 import org.slf4j.Logger;
@@ -13,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
+import java.io.UnsupportedEncodingException;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -67,20 +70,27 @@ public class MemberController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-    @PutMapping("/modifypwd")
+    @PostMapping("findpwd")
     @ApiOperation(value = "비밀번호 찾기", notes = "아이디, 이메일 인증 성공 시," +
             "해당 이메일로 임시 비밀번호 제공 및 임시 비밀번호로 정보 변경", response = HttpResponse.class)
+    public ResponseEntity<?> findPwd(String memberId, String email) throws ExecutionException, InterruptedException, MessagingException, UnsupportedEncodingException {
+        System.out.println("findpwd 호출!!!!!");
+        memberService.findPwd(memberId, email);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @PutMapping("modifypwd")
+    @ApiOperation(value = "비밀번호 변경", response = HttpResponse.class)
     public ResponseEntity<?> modifyPwd(String memberId, String pwd) {
-        logger.info("findPwd called! parameter >> member Id : " + memberId + " pwd : " + pwd);
+        logger.debug("modifypwd called!");
         MemberDto memberResult = null;
         try {
             memberService.modifyPwd(memberId, pwd);
-            return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
         } catch (ExecutionException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            e.printStackTrace();
         } catch (InterruptedException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            e.printStackTrace();
         }
+        return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
     }
     @GetMapping("/{memberid}")
     @ApiOperation(value = "마이페이지", notes = "현재 로그인되어있는 회원의 정보 조회", response = MemberDto.class)
@@ -164,4 +174,5 @@ public class MemberController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
 }

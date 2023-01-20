@@ -1,7 +1,9 @@
 package com.wepat.service;
 
+import com.wepat.dto.MailDto;
 import com.wepat.dto.MemberDto;
 
+import javax.mail.MessagingException;
 import java.util.concurrent.ExecutionException;
 
 public interface MemberService {
@@ -17,4 +19,7 @@ public interface MemberService {
     // 관리자 기능
     MemberDto warnMember(String memberId) throws ExecutionException, InterruptedException;
     MemberDto blockMember(String memberId) throws ExecutionException, InterruptedException;
+
+    void findPwd(String memberId, String email) throws ExecutionException, InterruptedException, MessagingException;
+
 }

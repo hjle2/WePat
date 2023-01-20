@@ -23,6 +23,8 @@ public class PetEntity {
     private String name;
     @ApiParam(value = "반려동물 나이")
     private int age;
+    @ApiParam(value = "펫 프로필")
+    private String photoURL;
     @ApiParam(value = "반려동물 생일")
     private LocalDate birthday;
     @ApiParam(value = "반려동물 입양일")
