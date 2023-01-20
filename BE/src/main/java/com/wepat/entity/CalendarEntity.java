@@ -3,11 +3,13 @@ package com.wepat.entity;
 import com.wepat.dto.FinanceDto;
 import io.swagger.annotations.ApiParam;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
 public class CalendarEntity {
     public CalendarEntity(String memberId) {
         this.memberId = new ArrayList<>();

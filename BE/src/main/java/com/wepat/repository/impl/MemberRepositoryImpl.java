@@ -3,6 +3,7 @@ package com.wepat.repository.impl;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
+import com.wepat.dto.CalendarDto;
 import com.wepat.dto.MemberDto;
 import com.wepat.entity.CalendarEntity;
 import com.wepat.entity.MemberEntity;
@@ -28,42 +29,34 @@ public class MemberRepositoryImpl implements MemberRepository {
     @Override
     public MemberEntity signUpWithCalendar(MemberDto member) throws ExecutionException, InterruptedException {
         logger.info("signUpWithCalendar Repo called!");
-        logger.info(String.valueOf(member));
-        System.out.println(member);
 
+        //memberId(member Collection)와 CalendarId(calendar Collection)
         final DocumentReference memDocRef = memCollection.document(member.getMemberId());
         final DocumentReference calDocRef = calCollection.document(member.getCalendarId());
 
+        logger.info("memDocRef " + memDocRef.getId()); //입력한 ID
+        logger.info("calDocRef " + calDocRef.getId()); //입력한 캘린더ID
 
-        logger.info("memDocRef " + memDocRef.getId());
-        logger.info("calDocRef " + calDocRef.getId());
         // run an asynchronous transaction
         db.runTransaction(transaction -> {
+            DocumentSnapshot memSnapshot = transaction.get(memDocRef).get(); //입력한ID 값을 갖는 snapshot
+            DocumentSnapshot calSnapshot = transaction.get(calDocRef).get(); //입력한 캘린더ID 값을 갖는 snapshot
 
-            DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
-            DocumentSnapshot calSnapshot = transaction.get(calDocRef).get();
-            DocumentSnapshot documentSnapshot = transaction.get(calDocRef).get();
-            logger.info(String.valueOf(documentSnapshot));
-
-            CalendarEntity calendarEntity = transaction.get(calDocRef).get().toObject(CalendarEntity.class);
-            List<String> memberId = calendarEntity.getMemberId();
-            logger.info("memberId " + memberId);
-
-            logger.info("memSnapshot " + memSnapshot.getId());
-            logger.info("calSnapshot " + calSnapshot.getId());
             //memberId가 없고 calendarId가 있을 때
             if (!memSnapshot.exists() && calSnapshot.exists()) {
                 System.out.println("signup 호출!!!");
+
+                //멤버에 calendarID값 넣고
                 member.setCalendarId(calDocRef.getId());
+                //트랜잭션을 통해 생성
                 transaction.create(memDocRef, new MemberEntity(member));
                 System.out.println("member 생성 완료");
-//                System.out.println(memberId);
 
-//                memberId.add(member.getMemberId());
-
-//                System.out.println(">>> " + memberId);
-
-//                transaction.update(calDocRef, "memberId", memberId);
+                //트랜잭션을 통해 얻은 calSnapshot의 member배열에 접근
+                List<String> memberId = calSnapshot.toObject(CalendarEntity.class).getMemberId();
+                //회원가입한 member의 Id를 포함하여 업데이트
+                memberId.add(member.getMemberId());
+                transaction.update(calDocRef, "memberId", memberId);
 
 
                 // calendar가 이미 있으면, 캘린더 ID 에러 발생
