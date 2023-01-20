@@ -47,6 +47,9 @@ public class MemberRepositoryImpl implements MemberRepository {
                 transaction.create(memDocRef, new MemberEntity(member));
                 transaction.create(calDocRef, new CalendarEntity(member.getMemberId()));
 
+                // calendar가 이미 있으면, 캘린더 ID 에러 발생
+
+                // member가 이미 있으면, 멤버 ID 에러 발생
                 return "success";
             } else {
                 return "fail";

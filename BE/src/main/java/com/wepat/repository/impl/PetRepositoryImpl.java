@@ -27,7 +27,6 @@ public class PetRepositoryImpl implements PetRepository {
 
         List<QueryDocumentSnapshot> documents = future.get().getDocuments();
         for (DocumentSnapshot document: documents) {
-            logger.info(document.toString());
         }
         return null;
     }
@@ -45,19 +44,14 @@ public class PetRepositoryImpl implements PetRepository {
         } else {
             docRef = collection.document(calendarId);
         }
-        logger.info(docRef.getId());
-        logger.info(docRef.toString());
         ApiFuture<WriteResult> future = docRef.set(new PetEntity(pet));
 
-        logger.info("addPet done!");
-        logger.info(pet.toString());
         return pet;
     }
 
     @Override
     public PetDto modifyPet(String petId, PetDto pet) throws ExecutionException, InterruptedException {
         ApiFuture<WriteResult> future = collection.document(petId).set(pet);
-        logger.info(pet.toString() + " => " + collection.document(petId).toString());
         return pet;
     }
 

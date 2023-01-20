@@ -21,9 +21,14 @@ repositories {
 dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'junit:junit:4.13.1'
+	implementation 'junit:junit:4.13.1'
 //	implementation 'org.springframework.boot:spring-boot-starter-security'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+
+	// aop
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
 
 	// WebSocket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'

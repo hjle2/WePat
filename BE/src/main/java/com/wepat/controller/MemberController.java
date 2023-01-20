@@ -48,7 +48,6 @@ public class MemberController {
     @PostMapping("/signin")
     @ApiOperation(value = "로그인 시도",  notes = "로그인 요청을 한다.",response = MemberDto.class)
     public ResponseEntity<?> signIn(String memberId, String pwd) {
-        logger.info("signIn called! parameter >> member Id : " + memberId + " pwd : " + pwd);
         MemberEntity memberResult = null;
         try {
             memberResult = memberService.signIn(memberId, pwd);
@@ -64,7 +63,6 @@ public class MemberController {
     @PostMapping("/findid")
     @ApiOperation(value = "아이디 찾기", notes = "이메일을 확인하여 해당 아이디 제공", response = String.class)
     public ResponseEntity<?> findId(String name, String email) {
-        logger.info("findId called! parameter >> name : " + name + " email : " + email);
         MemberEntity memberResult = null;
         try {
             memberResult = memberService.findId(email);
@@ -81,14 +79,12 @@ public class MemberController {
     @ApiOperation(value = "비밀번호 찾기", notes = "아이디, 이메일 인증 성공 시," +
             "해당 이메일로 임시 비밀번호 제공 및 임시 비밀번호로 정보 변경", response = HttpResponse.class)
     public ResponseEntity<?> findPwd(String memberId, String email) throws ExecutionException, InterruptedException, MessagingException, UnsupportedEncodingException {
-        System.out.println("findpwd 호출!!!!!");
         memberService.findPwd(memberId, email);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @PutMapping("modifypwd")
     @ApiOperation(value = "비밀번호 변경", response = HttpResponse.class)
     public ResponseEntity<?> modifyPwd(String memberId, String pwd) {
-        logger.info("findPwd called! parameter >> member Id : " + memberId + " pwd : " + pwd);
         MemberEntity memberResult = null;
         try {
             memberService.modifyPwd(memberId, pwd);
@@ -104,7 +100,6 @@ public class MemberController {
     @GetMapping("/{memberid}")
     @ApiOperation(value = "마이페이지", notes = "현재 로그인되어있는 회원의 정보 조회", response = MemberDto.class)
     public ResponseEntity<?> getMember(@PathVariable("memberid") String memberId) {
-        logger.info("getMember called! parameter >> member Id : " + memberId);
         MemberEntity memberResult = null;
         try {
             memberResult = memberService.getMember(memberId);
@@ -120,7 +115,6 @@ public class MemberController {
     @PutMapping("/modify")
     @ApiOperation(value = "회원 정보 수정", notes = "현재 회원의 정보를 수정한다.", response = MemberDto.class)
     public ResponseEntity<?> modifyMember(MemberDto member) {
-        logger.info("modifyMember called! >> Member : " + member.toString());
         MemberEntity memberResult = null;
         try {
             memberResult = memberService.modifyMember(member);
@@ -136,7 +130,6 @@ public class MemberController {
     @DeleteMapping("/{memberid}")
     @ApiOperation(value = "사용자의 정보를 삭제한다.", response = HttpResponse.class)
     public ResponseEntity<?> deleteMember(@PathVariable("memberid") String memberId) {
-        logger.info("deleteMember called!");
         MemberEntity memberResult = null;
         try {
             memberResult = memberService.deleteMember(memberId);
@@ -152,7 +145,6 @@ public class MemberController {
     @GetMapping("/logout/{memberid}")
     @ApiOperation(value = "로그아웃", notes = "현재 로그인되어있는 사용자 로그아웃", response = HttpResponse.class)
     public ResponseEntity<?> logout(@PathVariable("memberid") String memberId) {
-        logger.info("logout called!");
         MemberEntity memberResult = null;
         try {
             memberResult = memberService.logout(memberId);
@@ -167,7 +159,6 @@ public class MemberController {
     }
     @GetMapping("/warn/{memberid}")
     public ResponseEntity<?> warnMember(@PathVariable("memberid") String memberId) {
-        logger.info("warnMember called!");
         MemberEntity memberResult = null;
         try {
             memberResult = memberService.warnMember(memberId);
@@ -182,7 +173,6 @@ public class MemberController {
     }
     @GetMapping("/block/{memberid}")
     public ResponseEntity<?> blockMember(@PathVariable("memberid") String memberId) {
-        logger.info("blockMember called!");
         MemberEntity memberResult = null;
         try {
             memberResult = memberService.blockMember(memberId);
