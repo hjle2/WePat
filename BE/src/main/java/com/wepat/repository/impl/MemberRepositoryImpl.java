@@ -66,6 +66,9 @@ public class MemberRepositoryImpl implements MemberRepository {
 //                transaction.update(calDocRef, "memberId", memberId);
 
 
+                // calendar가 이미 있으면, 캘린더 ID 에러 발생
+
+                // member가 이미 있으면, 멤버 ID 에러 발생
                 return "success";
             } else {
                 logger.info("Fail!!");

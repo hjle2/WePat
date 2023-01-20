@@ -28,8 +28,6 @@ public class PetController {
     @GetMapping("/{calendarid}")
     @ApiOperation(value = "반려동물 상세페이지")
     public ResponseEntity<?> getAllPet(@PathVariable("calendarid") String calendarId) {
-        logger.info("getAllPet called!");
-
         try {
             List<PetDto> petList = petService.getAllPet(calendarId);
         } catch (ExecutionException e) {
@@ -41,8 +39,6 @@ public class PetController {
     @GetMapping("/{petid}")
     @ApiOperation(value = "반려동물 상세페이지")
     public ResponseEntity<?> getPet(@PathVariable("petid") String petId) {
-        logger.info("getPet called!");
-
         try {
             PetDto pet = petService.getPet(petId);
         } catch (ExecutionException e) {
@@ -54,7 +50,6 @@ public class PetController {
     @PutMapping("/{petid}/{weight}")
     @ApiOperation(value = "몸무게 추가")
     public ResponseEntity<?> addPetWeight(@PathVariable("petid") String petId, @PathVariable double weight) {
-        logger.info("addPetWeight called!");
         try {
             PetDto pet = petService.addPetWeight(petId, weight);
         } catch (ExecutionException e) {
@@ -65,8 +60,6 @@ public class PetController {
     @PostMapping("/add")
     @ApiOperation(value = "반려동물 추가")
     public ResponseEntity<?> addPet(String calendarId, PetDto petDto) {
-        logger.info("addPet called!");
-        logger.info(calendarId + petDto.toString());
         try {
             PetDto pet = petService.addPet(calendarId, petDto);
         } catch (ExecutionException e) {
@@ -78,7 +71,6 @@ public class PetController {
     @DeleteMapping("/{calendarid}/{petid}")
     @ApiOperation(value = "반려동물 삭제")
     public ResponseEntity deletePet(@PathVariable("calendarid") String calendarId, @PathVariable("petid") String petId) {
-        logger.info("deletePet called!");
         try {
             PetDto pet = petService.deletePet(calendarId, petId);
         } catch (ExecutionException e) {
