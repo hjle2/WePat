@@ -28,7 +28,11 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberEntity signUp(MemberDto member) throws ExecutionException, InterruptedException {
-        return memberRepo.signUp(member);
+        if (member.getCalendarId()==null) {
+            return memberRepo.signUp(member);
+        } else {
+            return memberRepo.signUpWithCalendar(member);
+        }
     }
 
     @Override

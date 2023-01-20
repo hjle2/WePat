@@ -24,31 +24,93 @@ public class MemberRepositoryImpl implements MemberRepository {
     private final CollectionReference calCollection = db.collection(CALENDAR_COLLECTION);
     private final CollectionReference memCollection = db.collection(MEMBER_COLLECTION);
 
+    //캘린더 ID가 있을 때, 회원가입 (ID 값이 틀렸다고 에러)
     @Override
     public MemberEntity signUpWithCalendar(MemberDto member) throws ExecutionException, InterruptedException {
-        return null;
-    }
-
-    @Override
-    public MemberEntity signUp(MemberDto member) throws ExecutionException, InterruptedException {
-        logger.info("signUp called!");
+        logger.info("signUpWithCalendar Repo called!");
+        logger.info(String.valueOf(member));
+        System.out.println(member);
 
         final DocumentReference memDocRef = memCollection.document(member.getMemberId());
-        final DocumentReference calDocRef = calCollection.document();
+        final DocumentReference calDocRef = calCollection.document(member.getCalendarId());
 
+
+        logger.info("memDocRef " + memDocRef.getId());
+        logger.info("calDocRef " + calDocRef.getId());
         // run an asynchronous transaction
         db.runTransaction(transaction -> {
 
             DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
             DocumentSnapshot calSnapshot = transaction.get(calDocRef).get();
+            DocumentSnapshot documentSnapshot = transaction.get(calDocRef).get();
+            logger.info(String.valueOf(documentSnapshot));
 
-            if (!memSnapshot.exists() && !calSnapshot.exists()) {
+            CalendarEntity calendarEntity = transaction.get(calDocRef).get().toObject(CalendarEntity.class);
+            List<String> memberId = calendarEntity.getMemberId();
+            logger.info("memberId " + memberId);
 
+            logger.info("memSnapshot " + memSnapshot.getId());
+            logger.info("calSnapshot " + calSnapshot.getId());
+            //memberId가 없고 calendarId가 있을 때
+            if (!memSnapshot.exists() && calSnapshot.exists()) {
+                System.out.println("signup 호출!!!");
+                member.setCalendarId(calDocRef.getId());
                 transaction.create(memDocRef, new MemberEntity(member));
-                transaction.create(calDocRef, new CalendarEntity(member.getMemberId()));
+                System.out.println("member 생성 완료");
+//                System.out.println(memberId);
+
+//                memberId.add(member.getMemberId());
+
+//                System.out.println(">>> " + memberId);
+
+//                transaction.update(calDocRef, "memberId", memberId);
+
 
                 return "success";
             } else {
+                logger.info("Fail!!");
+                return "fail";
+            }
+        });
+        // 트랜잭션 실행 결과를 반환
+        return memDocRef.get().get().toObject(MemberEntity.class);
+    }
+
+    //캘린더 ID null일 때, 회원가입
+    @Override
+    public MemberEntity signUp(MemberDto member) throws ExecutionException, InterruptedException {
+        logger.info("signUp Repo called!");
+        logger.info(String.valueOf(member));
+        System.out.println(member);
+
+        // memberId인 document 를 가져옴(없으면 생성)
+        final DocumentReference memDocRef = memCollection.document(member.getMemberId());
+        // calendar document 를 생성 (docId 는 랜덤값)
+        final DocumentReference calDocRef = calCollection.document();
+        logger.info("memDocRef " + memDocRef.getId());
+        logger.info("calDocRef " + calDocRef.getId());
+        // run an asynchronous transaction
+        db.runTransaction(transaction -> {
+
+            // memberId 인 document 를 가져옴
+            DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
+//            DocumentSnapshot documentSnapshot = transaction.get(memDocRef).get().toObject(MemberEntity.class).getPwd();
+//            DocumentSnapshot calSnapshot = transaction.get(calDocRef).get();
+            logger.info("memSnapshot " + memSnapshot.getId());
+//            logger.info("calSnapshot " + calSnapshot);
+            if (!memSnapshot.exists()) {
+                logger.info("create호출!!");
+                // memberEntity 를 db 에 추가 함
+                member.setCalendarId(calDocRef.getId());
+                transaction.create(memDocRef, new MemberEntity(member));
+                // calendarEntity(memberId 를 갖는)를 db에 추가 함
+                transaction.create(calDocRef, new CalendarEntity(member.getMemberId()));
+
+//                transaction.get(memDocRef).get().toObject(MemberEntity.class).setCalendarId(String.valueOf(calDocRef));
+                logger.info("success");
+                return "success";
+            } else {
+                logger.info("Fail!!");
                 return "fail";
             }
         });
