@@ -1,5 +1,6 @@
 package com.wepat.entity;
 
+import com.wepat.dto.MemberDto;
 import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,13 +13,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberEntity {
-    public MemberEntity(String memberId) {
-        this.memberId = memberId;
+    public MemberEntity(MemberDto member) {
+        this.pwd = member.getPwd();
+        this.nickName = member.getNickName();
+        this.email = member.getEmail();
+        this.calendarId = member.getCalendarId();
         this.warnMemberList = new ArrayList<>();
         this.blockMemberList = new ArrayList<>();
     }
-    @ApiParam(value = "사용자 ID", required = true)
-    private String memberId;
     @ApiParam(value = "사용자 비밀번호", required = true)
     private String pwd;
     @ApiParam(value = "사용자 이름", required = true)

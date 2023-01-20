@@ -16,6 +16,8 @@ public class PetDto {
     private String name;
     @ApiParam(value = "반려동물 나이")
     private int age;
+    @ApiParam(value = "펫 프로필")
+    private String photoURL;
     @ApiParam(value = "반려동물 생일")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate birthday;

@@ -19,4 +19,6 @@ public class MemberDto {
     private String nickName;
     @ApiParam(value = "사용자 E-mail", required = true)
     private String email;
+    @ApiParam(value = "CalendarId")
+    private String calendarId;
 }
