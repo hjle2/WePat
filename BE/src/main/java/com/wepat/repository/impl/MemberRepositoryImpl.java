@@ -180,4 +180,12 @@ public class MemberRepositoryImpl implements MemberRepository {
         logger.info("blockMember called!");
         return null;
     }
+
+    @Override
+    public void findPwd(String randomPassword, String memberId) throws ExecutionException, InterruptedException {
+        logger.debug("findPwd called!!!");
+        MemberDto memberDto = memCollection.document(memberId).get().get().toObject(MemberDto.class);
+        memberDto.setPwd(randomPassword);
+        memCollection.document(memberId).set(memberDto);
+    }
 }

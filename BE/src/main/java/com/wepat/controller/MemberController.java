@@ -1,5 +1,6 @@
 package com.wepat.controller;
 
+import com.wepat.dto.MailDto;
 import com.wepat.dto.MemberDto;
 import com.wepat.entity.MemberEntity;
 import com.wepat.service.MemberService;
@@ -14,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
+import java.io.UnsupportedEncodingException;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -74,9 +77,16 @@ public class MemberController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-    @PutMapping("/modifypwd")
+    @PostMapping("/findpwd")
     @ApiOperation(value = "비밀번호 찾기", notes = "아이디, 이메일 인증 성공 시," +
             "해당 이메일로 임시 비밀번호 제공 및 임시 비밀번호로 정보 변경", response = HttpResponse.class)
+    public ResponseEntity<?> findPwd(String memberId, String email) throws ExecutionException, InterruptedException, MessagingException, UnsupportedEncodingException {
+        System.out.println("findpwd 호출!!!!!");
+        memberService.findPwd(memberId, email);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @PutMapping("modifypwd")
+    @ApiOperation(value = "비밀번호 변경", response = HttpResponse.class)
     public ResponseEntity<?> modifyPwd(String memberId, String pwd) {
         logger.info("findPwd called! parameter >> member Id : " + memberId + " pwd : " + pwd);
         MemberEntity memberResult = null;

@@ -13,4 +13,6 @@ public class CalendarDto {
     private List<String> petId;
     @ApiParam(value = "가계부 내용 목록")
     private List<FinanceDto> financeList;
+    @ApiParam(value = "멤버")
+    private MemberDto memberDto;
 }
