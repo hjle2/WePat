@@ -44,13 +44,9 @@ public class MemberRepositoryImpl implements MemberRepository {
 
             //memberId가 없고 calendarId가 있을 때
             if (!memSnapshot.exists() && calSnapshot.exists()) {
-                System.out.println("signup 호출!!!");
-
-                //멤버에 calendarID값 넣고
+                //멤버에 calendarID값 넣고 트랜잭션을 통해 생성
                 member.setCalendarId(calDocRef.getId());
-                //트랜잭션을 통해 생성
                 transaction.create(memDocRef, new MemberEntity(member));
-                System.out.println("member 생성 완료");
 
                 //트랜잭션을 통해 얻은 calSnapshot의 member배열에 접근
                 List<String> memberId = calSnapshot.toObject(CalendarEntity.class).getMemberId();
@@ -76,8 +72,6 @@ public class MemberRepositoryImpl implements MemberRepository {
     @Override
     public MemberEntity signUp(MemberDto member) throws ExecutionException, InterruptedException {
         logger.info("signUp Repo called!");
-        logger.info(String.valueOf(member));
-        System.out.println(member);
 
         // memberId인 document 를 가져옴(없으면 생성)
         final DocumentReference memDocRef = memCollection.document(member.getMemberId());
@@ -85,6 +79,7 @@ public class MemberRepositoryImpl implements MemberRepository {
         final DocumentReference calDocRef = calCollection.document();
         logger.info("memDocRef " + memDocRef.getId());
         logger.info("calDocRef " + calDocRef.getId());
+
         // run an asynchronous transaction
         db.runTransaction(transaction -> {
 
@@ -125,7 +120,9 @@ public class MemberRepositoryImpl implements MemberRepository {
             DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
             MemberEntity memberEntity = transaction.get(memDocRef).get().toObject(MemberEntity.class);
 
-            if (!memSnapshot.exists() && memberEntity.getPwd().equals(pwd)) {
+            //해당 멤버ID가 있고, pwd가 같다면 로그인 성공
+            if (memSnapshot.exists() && memberEntity.getPwd().equals(pwd)) {
+                logger.info("success");
                 // 로그인 성공 처리 ??
                 return "success";
             } else {
@@ -150,9 +147,11 @@ public class MemberRepositoryImpl implements MemberRepository {
         List<MemberEntity> memberEntity = memCollection.whereEqualTo("email", email).get().get().toObjects(MemberEntity.class);
 
         if (memberEntity.size() > 0) {
+            System.out.println(memberEntity.get(0));
             return memberEntity.get(0);
         } else {
             // Exception ??
+            System.out.println("Exception");
             return null;
         }
     }
@@ -214,6 +213,15 @@ public class MemberRepositoryImpl implements MemberRepository {
 
         MemberEntity member = getMember(memberId);
         // asynchronously delete a document
+        List<String> calMember = calCollection.document(member.getCalendarId()).get().get().toObject(CalendarEntity.class).getMemberId();
+        calMember.remove(memberId);
+
+        if (calMember.size()==0) {
+            calCollection.document(member.getCalendarId()).delete();
+        } else {
+            calCollection.document(member.getCalendarId()).update("memberId", calMember);
+        }
+
         ApiFuture<WriteResult> writeResult = memCollection.document(memberId).delete();
         // ...
         logger.info("Update time : " + writeResult.get().getUpdateTime());
