@@ -63,6 +63,12 @@ dependencies {
 
 	// GCP
 	implementation 'com.google.cloud:google-cloud-storage'
+
+
+	// commons io for gcp test
+	implementation 'commons-io:commons-io:2.11.0'
+
+
 }
 
 tasks.named('test') {
