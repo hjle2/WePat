@@ -12,8 +12,7 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/pet")
 @CrossOrigin(origins = "*")
 public class PetController {
-    private final Logger logger = LoggerFactory.getLogger(PetController.class);
-
+    private final static Logger logger = LoggerFactory.getLogger(PetController.class);
     @GetMapping("/{petid}")
     @ApiOperation(value = "반려동물 상세페이지")
     public ResponseEntity<?> getPet(@PathVariable("petid") String petId) {

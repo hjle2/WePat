@@ -22,7 +22,7 @@ public class FileService {
     private final FileRepository fileRepository;
     private final DataBucketUtil dataBucketUtil;
     public List<InputFile> uploadFiles(MultipartFile[] files) {
-        LOGGER.debug("Start file uploading service");
+        LOGGER.trace("Start file uploading service");
         List<InputFile> inputFiles = new ArrayList<>();
 
         Arrays.asList(files).forEach(file -> {
@@ -38,7 +38,7 @@ public class FileService {
 
                 if (fileDto != null) {
                     inputFiles.add(new InputFile(fileDto.getFileName(), fileDto.getFileUrl()));
-                    LOGGER.debug("File uploaded successfully, fily name: {} and url: {} ", fileDto.getFileName(), fileDto.getFileUrl());
+                    LOGGER.trace("File uploaded successfully, fily name: {} and url: {} ", fileDto.getFileName(), fileDto.getFileUrl());
                 }
             } catch (IOException e) {
                 LOGGER.error("Error ocurred while uploading. Error: ",  e);
@@ -46,7 +46,11 @@ public class FileService {
             }
         });
         fileRepository.saveAll(inputFiles);
-        LOGGER.debug("File details successfully saved in the database");
+        LOGGER.trace("File details successfully saved in the database");
         return inputFiles;
+    }
+
+    public void downloadFile(String fileURL, String fileName) {
+        dataBucketUtil.downloadFile(fileURL, fileName);
     }
 }

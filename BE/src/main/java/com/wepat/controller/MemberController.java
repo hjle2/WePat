@@ -2,6 +2,7 @@ package com.wepat.controller;
 
 import com.wepat.dto.MemberDto;
 import com.wepat.service.MemberService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.swagger.annotations.ApiOperation;
@@ -17,14 +18,11 @@ import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/member")
+@RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class MemberController {
-    private final Logger logger = LoggerFactory.getLogger(MemberController.class);
-    private MemberService memberService;
-    @Autowired
-    public MemberController(MemberService memberService) {
-        this.memberService = memberService;
-    }
+    private final static Logger logger = LoggerFactory.getLogger(MemberController.class);
+    private final MemberService memberService;
     @PostMapping("signup")
     @ApiOperation(value = "회원가입", notes = "정보를 받아 회원가입 시도한다.", response = MemberDto.class)
     public ResponseEntity<?> signUp(MemberDto member) {

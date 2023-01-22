@@ -3,19 +3,16 @@ package com.wepat.service.impl;
 import com.wepat.dto.MemberDto;
 import com.wepat.repository.MemberRepository;
 import com.wepat.service.MemberService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ExecutionException;
 
 @Service
+@RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepo;
-
-    @Autowired
-    public MemberServiceImpl(MemberRepository memberRepo) {
-        this.memberRepo = memberRepo;
-    }
 
     @Override
     public MemberDto signUp(MemberDto member) throws ExecutionException, InterruptedException {

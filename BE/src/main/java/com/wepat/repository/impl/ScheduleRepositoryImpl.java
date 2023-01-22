@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class ScheduleRepositoryImpl implements ScheduleRepository {
-    private final Logger logger = LoggerFactory.getLogger(ScheduleRepositoryImpl.class);
-    private final String COLLECTION_NAME = "schedule";
+    private final static Logger logger = LoggerFactory.getLogger(ScheduleRepositoryImpl.class);
+    private final static String COLLECTION_NAME = "schedule";
 
     @Override
     public List<Timestamp> getAllSchedule(String calendarId) throws ExecutionException, InterruptedException {

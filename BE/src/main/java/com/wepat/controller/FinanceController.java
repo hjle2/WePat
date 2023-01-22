@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("/finance")
 @CrossOrigin(origins = "*")
 public class FinanceController {
-    private final Logger logger = LoggerFactory.getLogger(FinanceController.class);
+    private final static Logger logger = LoggerFactory.getLogger(FinanceController.class);
     @GetMapping("/{calendarid}")
     @ApiOperation(value = "가계부 내용", response = List.class)
     public ResponseEntity<?> getAllFinance(@PathVariable("calendarid") String calendarId) {

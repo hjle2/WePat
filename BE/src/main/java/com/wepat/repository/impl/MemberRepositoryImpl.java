@@ -14,8 +14,8 @@ import java.util.List;
 
 @Repository
 public class MemberRepositoryImpl implements MemberRepository {
-    private final Logger logger = LoggerFactory.getLogger(MemberRepository.class);
-    private final String COLLECTION_NAME = "member";
+    private final static Logger logger = LoggerFactory.getLogger(MemberRepository.class);
+    private final static String COLLECTION_NAME = "member";
     private final CollectionReference collection = FirestoreClient.getFirestore().collection(COLLECTION_NAME);
     @Override
     public MemberDto signUp(MemberDto member) throws ExecutionException, InterruptedException {
