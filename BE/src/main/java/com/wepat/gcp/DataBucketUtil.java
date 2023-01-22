@@ -17,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.activation.FileTypeMap;
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Component
@@ -98,7 +100,7 @@ public class DataBucketUtil {
             LOGGER.info("Get Blob");
 
             if(blob != null){
-                LOGGER.info("File successfully uploaded to GCS");
+                LOGGER.info("File successfully downloaded from GCS");
                 return new ResponseEntity<FileDto>(new FileDto(blob.getName(), blob.getMediaLink()),HttpStatus.NOT_ACCEPTABLE);
             }
 
@@ -141,5 +143,21 @@ public class DataBucketUtil {
         LOGGER.error("Not a permitted file type");
         throw new InvalidFileTypeException("Not a permitted file type");
     }
+    // fileName : 파일이 다운로드 될 위치 + 파일 이름인 전체 경로
+    public void download(String fileURL, String fileName) {
+        try (BufferedInputStream in = new BufferedInputStream(new URL(fileURL).openStream());
+             FileOutputStream fileOutputStream = new FileOutputStream(fileName)) {
 
+            byte[] dataBuffer = new byte[1024];
+            int bytesRead;
+
+            while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+                fileOutputStream.write(dataBuffer, 0, bytesRead);
+            }
+        } catch (MalformedURLException e) {
+            LOGGER.info("MalformedURLException occured!");
+        } catch (IOException e) {
+            LOGGER.info("IOException occured!");
+        }
+    }
 }
