@@ -114,4 +114,14 @@ public class MemberServiceImpl implements MemberService {
         System.out.println("success");
     }
 
+    @Override
+    public MemberEntity addWarnMember(String memberId, String warnMemberId) throws ExecutionException, InterruptedException {
+        return memberRepo.addWarnMember(memberId, warnMemberId);
+    }
+
+    @Override
+    public MemberEntity addBlockMember(String memberId, String blockMemberId) throws ExecutionException, InterruptedException {
+        return memberRepo.addBlockMember(memberId, blockMemberId);
+    }
+
 }

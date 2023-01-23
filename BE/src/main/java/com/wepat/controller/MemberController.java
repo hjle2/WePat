@@ -87,7 +87,8 @@ public class MemberController {
     public ResponseEntity<?> modifyPwd(String memberId, String pwd) {
         MemberEntity memberResult = null;
         try {
-            memberService.modifyPwd(memberId, pwd);
+            memberResult = memberService.modifyPwd(memberId, pwd);
+            System.out.println("modifypwd>> " + memberResult);
             return new ResponseEntity<MemberEntity>(memberResult, HttpStatus.OK);
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -158,6 +159,7 @@ public class MemberController {
         }
     }
     @GetMapping("/warn/{memberid}")
+    @ApiOperation(value = "신고한 회원 목록 조회")
     public ResponseEntity<?> warnMember(@PathVariable("memberid") String memberId) {
         MemberEntity memberResult = null;
         try {
@@ -171,12 +173,48 @@ public class MemberController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PutMapping("/warn/{memberid}")
+    @ApiOperation(value = "회원 신고 추가")
+    public ResponseEntity<?> addWarnMember(@PathVariable("memberid") String memberId, String warnMemberId) {
+        MemberEntity memberResult = null;
+        try {
+            memberResult = memberService.addWarnMember(memberId, warnMemberId);
+            System.out.println(memberResult);
+            return new ResponseEntity<MemberEntity>(memberResult, HttpStatus.OK);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping("/block/{memberid}")
+    @ApiOperation(value = "차단한 회원 목록 조회")
     public ResponseEntity<?> blockMember(@PathVariable("memberid") String memberId) {
         MemberEntity memberResult = null;
         try {
             memberResult = memberService.blockMember(memberId);
+            System.out.println("controller block >> " + memberResult);
             return new ResponseEntity<MemberEntity>(memberResult, HttpStatus.OK);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/block/{memberid}")
+    @ApiOperation(value = "회원 차단 추가")
+    public ResponseEntity<?> addBlockMember(@PathVariable("memberid") String memberId, String blockMemberId) {
+        MemberEntity memberResult = null;
+        try {
+            memberResult = memberService.addBlockMember(memberId, blockMemberId);
+            return new ResponseEntity<>(memberResult, HttpStatus.OK);
         } catch (ExecutionException e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

@@ -22,5 +22,9 @@ public interface MemberRepository {
     MemberEntity blockMember(String memberId) throws ExecutionException, InterruptedException;
 
     void findPwd(String randomPassword, String memberId) throws ExecutionException, InterruptedException;
+
+    MemberEntity addWarnMember(String memberId, String warnMemberId) throws ExecutionException, InterruptedException;
+
+    MemberEntity addBlockMember(String memberId, String blockMemberId) throws ExecutionException, InterruptedException;
 }
 

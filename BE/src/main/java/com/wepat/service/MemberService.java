@@ -23,4 +23,7 @@ public interface MemberService {
 
     void findPwd(String memberId, String email) throws ExecutionException, InterruptedException, MessagingException;
 
+    MemberEntity addWarnMember(String memberId, String warnMemberId) throws ExecutionException, InterruptedException;
+
+    MemberEntity addBlockMember(String memberId, String blockMemberId) throws ExecutionException, InterruptedException;
 }
