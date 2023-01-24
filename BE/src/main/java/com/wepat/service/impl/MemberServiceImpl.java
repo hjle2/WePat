@@ -1,10 +1,12 @@
 package com.wepat.service.impl;
 
 import com.wepat.dto.MemberDto;
+import com.wepat.entity.MemberDetails;
 import com.wepat.repository.MemberRepository;
 import com.wepat.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ExecutionException;
@@ -62,5 +64,10 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberDto blockMember(String memberId) throws ExecutionException, InterruptedException {
         return memberRepo.blockMember(memberId);
+    }
+
+    @Override
+    public MemberDetails loadMemberByMemberId(String memberId) throws UsernameNotFoundException {
+        return null;
     }
 }

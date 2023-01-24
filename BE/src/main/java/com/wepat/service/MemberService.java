@@ -1,6 +1,8 @@
 package com.wepat.service;
 
 import com.wepat.dto.MemberDto;
+import com.wepat.entity.MemberDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.concurrent.ExecutionException;
 
@@ -17,4 +19,7 @@ public interface MemberService {
     // 관리자 기능
     MemberDto warnMember(String memberId) throws ExecutionException, InterruptedException;
     MemberDto blockMember(String memberId) throws ExecutionException, InterruptedException;
+
+    // JWT
+    MemberDetails loadMemberByMemberId(String memberId) throws UsernameNotFoundException;
 }
