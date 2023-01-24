@@ -3,6 +3,9 @@ package com.wepat.controller;
 import com.wepat.dto.MailDto;
 import com.wepat.dto.MemberDto;
 import com.wepat.entity.MemberEntity;
+import com.wepat.exception.ErrorPwd;
+import com.wepat.exception.NoId;
+import com.wepat.exception.UserException;
 import com.wepat.service.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,18 +50,33 @@ public class MemberController {
     }
     @PostMapping("/signin")
     @ApiOperation(value = "로그인 시도",  notes = "로그인 요청을 한다.",response = MemberDto.class)
-    public ResponseEntity<?> signIn(String memberId, String pwd) {
-        MemberEntity memberResult = null;
+    public MemberEntity signIn(String memberId, String pwd) {
         try {
-            memberResult = memberService.signIn(memberId, pwd);
-            return new ResponseEntity<MemberEntity>(memberResult, HttpStatus.OK);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return memberService.signIn(memberId, pwd);
+        } catch (NoId e) {
+            logger.info(e.getMessage());
+            throw new NoId(e.getMessage());
+        } catch (ErrorPwd e) {
+            logger.info(e.getMessage());
+            System.out.println(e.getMessage());
+            throw new ErrorPwd(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
         }
+//        MemberEntity memberResult = null;
+//        try {
+//            System.out.println("1111111");
+//            memberResult = memberService.signIn(memberId, pwd);
+//            return new ResponseEntity<MemberEntity>(memberResult, HttpStatus.OK);
+//        } catch (ExecutionException e) {
+//            System.out.println("22222222222");
+//            e.printStackTrace();
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//        } catch (InterruptedException e) {
+//            System.out.println("333333333333");
+//            e.printStackTrace();
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//        }
     }
     @PostMapping("/findid")
     @ApiOperation(value = "아이디 찾기", notes = "이메일을 확인하여 해당 아이디 제공", response = String.class)
@@ -119,6 +137,7 @@ public class MemberController {
         MemberEntity memberResult = null;
         try {
             memberResult = memberService.modifyMember(member);
+            System.out.println("modifyMember controller>>> " + memberResult);
             return new ResponseEntity<MemberEntity>(memberResult, HttpStatus.OK);
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -188,6 +207,9 @@ public class MemberController {
         } catch (InterruptedException e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (UserException e) {
+            e.printStackTrace();
+            throw new UserException(e.getMessage());
         }
     }
 
