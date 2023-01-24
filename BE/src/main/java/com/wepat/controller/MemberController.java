@@ -2,8 +2,7 @@ package com.wepat.controller;
 
 import com.wepat.dto.MemberDto;
 import com.wepat.entity.MemberEntity;
-import com.wepat.exception.member.PwdWriteException;
-import com.wepat.exception.member.IdWriteException;
+import com.wepat.exception.member.*;
 import com.wepat.service.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,18 +29,18 @@ public class MemberController {
     }
     @PostMapping("/signup")
     @ApiOperation(value = "회원가입", notes = "정보를 받아 회원가입 시도한다.", response = MemberDto.class)
-    public ResponseEntity<?> signUp(MemberDto member) {
+    public MemberEntity signUp(MemberDto member) {
         logger.info("signUp called!");
-        MemberEntity memberResult = null;
         try {
-            memberResult = memberService.signUp(member);
-            return new ResponseEntity<MemberEntity>(memberResult, HttpStatus.OK);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return memberService.signUp(member);
+        } catch (ExistEmailException e) {
+            throw new ExistEmailException(e.getMessage());
+        } catch (ExistIdException e) {
+            throw new RuntimeException(e.getMessage());
+        } catch (NotExistCalendarException e) {
+            throw new NotExistCalendarException(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
     @PostMapping("/signin")
@@ -59,72 +58,51 @@ public class MemberController {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
-//        MemberEntity memberResult = null;
-//        try {
-//            System.out.println("1111111");
-//            memberResult = memberService.signIn(memberId, pwd);
-//            return new ResponseEntity<MemberEntity>(memberResult, HttpStatus.OK);
-//        } catch (ExecutionException e) {
-//            System.out.println("22222222222");
-//            e.printStackTrace();
-//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//        } catch (InterruptedException e) {
-//            System.out.println("333333333333");
-//            e.printStackTrace();
-//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//        }
     }
     @PostMapping("/findid")
     @ApiOperation(value = "아이디 찾기", notes = "이메일을 확인하여 해당 아이디 제공", response = String.class)
-    public ResponseEntity<?> findId(String name, String email) {
-        MemberEntity memberResult = null;
+    public MemberEntity findId(String email) {
         try {
-            memberResult = memberService.findId(email);
-            return new ResponseEntity<MemberEntity>(memberResult, HttpStatus.OK);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return memberService.findId(email);
+        } catch (NotExistEmailException e) {
+            throw new NotExistEmailException(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
     @PostMapping("/findpwd")
     @ApiOperation(value = "비밀번호 찾기", notes = "아이디, 이메일 인증 성공 시," +
             "해당 이메일로 임시 비밀번호 제공 및 임시 비밀번호로 정보 변경", response = HttpResponse.class)
-    public ResponseEntity<?> findPwd(String memberId, String email) throws ExecutionException, InterruptedException, MessagingException, UnsupportedEncodingException {
-        memberService.findPwd(memberId, email);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> findPwd(String memberId, String email) throws ExecutionException, InterruptedException {
+        try {
+            memberService.findPwd(memberId, email);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (NotExistMember e) {
+            throw new NotExistMember(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
     }
     @PutMapping("modifypwd")
     @ApiOperation(value = "비밀번호 변경", response = HttpResponse.class)
-    public ResponseEntity<?> modifyPwd(String memberId, String pwd) {
-        MemberEntity memberResult = null;
+    public MemberEntity modifyPwd(String memberId, String pwd) {
         try {
-            memberResult = memberService.modifyPwd(memberId, pwd);
-            System.out.println("modifypwd>> " + memberResult);
-            return new ResponseEntity<MemberEntity>(memberResult, HttpStatus.OK);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return memberService.modifyPwd(memberId, pwd);
+        } catch (NotExistMember e) {
+            throw new NotExistMember(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
     @GetMapping("/{memberid}")
     @ApiOperation(value = "마이페이지", notes = "현재 로그인되어있는 회원의 정보 조회", response = MemberDto.class)
-    public ResponseEntity<?> getMember(@PathVariable("memberid") String memberId) {
-        MemberEntity memberResult = null;
+    public MemberEntity getMember(@PathVariable("memberid") String memberId) {
         try {
-            memberResult = memberService.getMember(memberId);
-            return new ResponseEntity<MemberEntity>(memberResult, HttpStatus.OK);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return memberService.getMember(memberId);
+        } catch (NotExistMember e) {
+            throw new NotExistMember(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException();
         }
     }
     @PutMapping("/modify")

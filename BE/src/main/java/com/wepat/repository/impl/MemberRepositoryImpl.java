@@ -6,8 +6,7 @@ import com.google.firebase.cloud.FirestoreClient;
 import com.wepat.dto.MemberDto;
 import com.wepat.entity.CalendarEntity;
 import com.wepat.entity.MemberEntity;
-import com.wepat.exception.member.PwdWriteException;
-import com.wepat.exception.member.IdWriteException;
+import com.wepat.exception.member.*;
 import com.wepat.repository.MemberRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,35 +36,48 @@ public class MemberRepositoryImpl implements MemberRepository {
         logger.info("memDocRef " + memDocRef.getId()); //입력한 ID
         logger.info("calDocRef " + calDocRef.getId()); //입력한 캘린더ID
 
+        boolean EmailCheck;
+        List<QueryDocumentSnapshot> documents = memCollection.get().get().getDocuments();
+        EmailCheck = documents.stream().anyMatch(docs -> (docs.toObject(MemberEntity.class).getEmail()).equals(member.getEmail()));
+
         // run an asynchronous transaction
-        db.runTransaction(transaction -> {
+        ApiFuture<String> stringApiFuture = db.runTransaction(transaction -> {
             DocumentSnapshot memSnapshot = transaction.get(memDocRef).get(); //입력한ID 값을 갖는 snapshot
             DocumentSnapshot calSnapshot = transaction.get(calDocRef).get(); //입력한 캘린더ID 값을 갖는 snapshot
 
-            //memberId가 없고 calendarId가 있을 때
-            if (!memSnapshot.exists() && calSnapshot.exists()) {
-                //멤버에 calendarID값 넣고 트랜잭션을 통해 생성
-                member.setCalendarId(calDocRef.getId());
-                transaction.create(memDocRef, new MemberEntity(member));
-
-                //트랜잭션을 통해 얻은 calSnapshot의 member배열에 접근
-                List<String> memberId = calSnapshot.toObject(CalendarEntity.class).getMemberId();
-                //회원가입한 member의 Id를 포함하여 업데이트
-                memberId.add(member.getMemberId());
-                transaction.update(calDocRef, "memberId", memberId);
-
-
-                // calendar가 이미 있으면, 캘린더 ID 에러 발생
-
-                // member가 이미 있으면, 멤버 ID 에러 발생
-                return "success";
+            if (EmailCheck) {
+                return "ExistEmailException";
             } else {
-                logger.info("Fail!!");
-                return "fail";
+                if (memSnapshot.exists()) {
+                    return "ExistIdException";
+                } else {
+                    if (calSnapshot.exists()) {
+                        member.setCalendarId(calDocRef.getId());
+                        transaction.create(memDocRef, new MemberEntity(member));
+
+                        //트랜잭션을 통해 얻은 calSnapshot의 member배열에 접근
+                        List<String> memberId = calSnapshot.toObject(CalendarEntity.class).getMemberId();
+                        //회원가입한 member의 Id를 포함하여 업데이트
+                        memberId.add(member.getMemberId());
+                        transaction.update(calDocRef, "memberId", memberId);
+
+                        return "success";
+                    } else {
+                        return "NotExistCalendarException";
+                    }
+                }
             }
         });
         // 트랜잭션 실행 결과를 반환
-        return memDocRef.get().get().toObject(MemberEntity.class);
+        if ((stringApiFuture.get()).equals("ExistEmailException")) {
+            throw new ExistEmailException("이미 회원가입된 이메일입니다!");
+        } else if ((stringApiFuture.get()).equals("ExistIdException")) {
+            throw new ExistIdException("이미 존재하는 아이디입니다!");
+        } else if ((stringApiFuture.get()).equals("NotExistCalendarException")) {
+            throw new NotExistCalendarException("존재하지 않는 코드입니다!");
+        } else {
+            return memCollection.document(member.getMemberId()).get().get().toObject(MemberEntity.class);
+        }
     }
 
     //캘린더 ID null일 때, 회원가입
@@ -80,33 +92,39 @@ public class MemberRepositoryImpl implements MemberRepository {
         logger.info("memDocRef " + memDocRef.getId());
         logger.info("calDocRef " + calDocRef.getId());
 
+        boolean EmailCheck;
+        List<QueryDocumentSnapshot> documents = memCollection.get().get().getDocuments();
+        EmailCheck = documents.stream().anyMatch(docs -> (docs.toObject(MemberEntity.class).getEmail()).equals(member.getEmail()));
+
         // run an asynchronous transaction
-        db.runTransaction(transaction -> {
+        ApiFuture<String> stringApiFuture = db.runTransaction(transaction -> {
 
             // memberId 인 document 를 가져옴
             DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
-//            DocumentSnapshot documentSnapshot = transaction.get(memDocRef).get().toObject(MemberEntity.class).getPwd();
-//            DocumentSnapshot calSnapshot = transaction.get(calDocRef).get();
-            logger.info("memSnapshot " + memSnapshot.getId());
-//            logger.info("calSnapshot " + calSnapshot);
-            if (!memSnapshot.exists()) {
-                logger.info("create호출!!");
-                // memberEntity 를 db 에 추가 함
-                member.setCalendarId(calDocRef.getId());
-                transaction.create(memDocRef, new MemberEntity(member));
-                // calendarEntity(memberId 를 갖는)를 db에 추가 함
-                transaction.create(calDocRef, new CalendarEntity(member.getMemberId()));
 
-//                transaction.get(memDocRef).get().toObject(MemberEntity.class).setCalendarId(String.valueOf(calDocRef));
-                logger.info("success");
-                return "success";
+            if (EmailCheck) {
+                return "ExistEmailException";
             } else {
-                logger.info("Fail!!");
-                return "fail";
+                if (memSnapshot.exists()) {
+                    return "ExistIdException";
+                } else {
+                    // memberEntity 를 db 에 추가 함
+                    member.setCalendarId(calDocRef.getId());
+                    transaction.create(memDocRef, new MemberEntity(member));
+                    // calendarEntity(memberId 를 갖는)를 db에 추가 함
+                    transaction.create(calDocRef, new CalendarEntity(member.getMemberId()));
+                    return "success";
+                }
             }
         });
         // 트랜잭션 실행 결과를 반환
-        return memDocRef.get().get().toObject(MemberEntity.class);
+        if ((stringApiFuture.get()).equals("ExistEmailException")) {
+            throw new ExistEmailException("이미 회원가입된 이메일입니다!");
+        } else if ((stringApiFuture.get()).equals("ExistIdException")) {
+            throw new ExistIdException("이미 존재하는 아이디입니다!");
+        } else {
+            return memCollection.document(member.getMemberId()).get().get().toObject(MemberEntity.class);
+        }
     }
 
     @Override
@@ -121,30 +139,24 @@ public class MemberRepositoryImpl implements MemberRepository {
             MemberEntity memberEntity = transaction.get(memDocRef).get().toObject(MemberEntity.class);
 
             if (!memSnapshot.exists()) { // 멤버ID가 없을 경우
-                return "noid";
+                return "IdWriteException";
             } else if (memSnapshot.exists() && memberEntity.getPwd().equals(pwd)) { //해당 멤버ID가 있고, pwd가 같다면 로그인 성공
                 logger.info("success");
                 return "success";
             } else { //비밀번호가 다르다면
                 logger.info("throw exception");
-                return "errorpwd";
+                return "PwdWriteException";
             }
         });
 
         // 트랜잭션 실행 결과를 반환
-        if ((stringApiFuture.get()).equals("noid")) {
+        if ((stringApiFuture.get()).equals("IdWriteException")) {
             throw new IdWriteException("존재하지 않는 아이디입니다!");
-        } else if ((stringApiFuture.get()).equals("success")) {
-            return memCollection.document(memberId).get().get().toObject(MemberEntity.class);
-        } else {
+        } else if ((stringApiFuture.get()).equals("PwdWriteException")) {
             throw new PwdWriteException("비밀번호가 일치하지 않습니다!");
+        } else {
+            return memCollection.document(memberId).get().get().toObject(MemberEntity.class);
         }
-//        MemberEntity memberEntity = memCollection.document(memberId).get().get().toObject(MemberEntity.class);
-//        System.out.println(memberEntity);
-//        if (memberEntity == null) {
-//            throw new InterruptedException();
-//        }
-//        return memberEntity;
     }
 
     @Override
@@ -156,12 +168,31 @@ public class MemberRepositoryImpl implements MemberRepository {
 
         if (memberEntity.size() > 0) {
             System.out.println(memberEntity.get(0));
+            System.out.println(memberEntity);
             return memberEntity.get(0);
         } else {
             // Exception ??
-            System.out.println("Exception");
-            return null;
+            logger.info("NotExistEmailException");
+            throw new NotExistEmailException("존재하지 않는 회원입니다!");
         }
+    }
+
+    @Override
+    public void findPwd(String randomPassword, String memberId) throws ExecutionException, InterruptedException {
+        logger.debug("findPwd called!!!");
+
+        boolean memberIdCheck;
+        List<QueryDocumentSnapshot> documents = memCollection.get().get().getDocuments();
+        memberIdCheck = documents.stream().anyMatch(docs -> (docs.getId()).equals(memberId));
+
+        if (memberIdCheck) {
+            MemberEntity memberEntity = memCollection.document(memberId).get().get().toObject(MemberEntity.class);
+            memberEntity.setPwd(randomPassword);
+            memCollection.document(memberId).set(memberEntity);
+        } else {
+            throw new NotExistMember("존재하지 않는 회원입니다!");
+        }
+
     }
 
     @Override
@@ -171,17 +202,22 @@ public class MemberRepositoryImpl implements MemberRepository {
         // run an asynchronous transaction
         final DocumentReference memDocRef = memCollection.document(memberId);
 
-        db.runTransaction( transaction -> {
+        ApiFuture<String> stringApiFuture = db.runTransaction(transaction -> {
 
             MemberEntity memberEntity = transaction.get(memDocRef).get().toObject(MemberEntity.class);
 
             if (memDocRef.get().get().exists()) {
                 transaction.update(memDocRef, "pwd", pwd);
+                return "success";
+            } else {
+                return "NotExistMember";
             }
-            return null;
-            // ??
         });
-        return memDocRef.get().get().toObject(MemberEntity.class);
+        if ((stringApiFuture.get()).equals("success")) {
+            return memCollection.document(memberId).get().get().toObject(MemberEntity.class);
+        } else {
+            throw new NotExistMember("존재하지 않는 회원입니다!");
+        }
     }
 
     @Override
@@ -189,9 +225,14 @@ public class MemberRepositoryImpl implements MemberRepository {
         logger.info("getMember called!");
 
         // asynchronously retrieve multiple documents
-        MemberEntity memberEntity = memCollection.document(memberId).get().get().toObject(MemberEntity.class);
-
-        return memberEntity;
+        boolean memberIdCheck;
+        List<QueryDocumentSnapshot> documents = memCollection.get().get().getDocuments();
+        memberIdCheck = documents.stream().anyMatch(docs -> (docs.getId()).equals(memberId));
+        if (memberIdCheck) {
+            return memCollection.document(memberId).get().get().toObject(MemberEntity.class);
+        } else {
+            throw new NotExistMember("존재하지 않는 회원입니다!");
+        }
     }
 
     @Override
@@ -280,14 +321,6 @@ public class MemberRepositoryImpl implements MemberRepository {
         List<String> blockMemberList = memberEntity.getBlockMemberList();
         System.out.println(blockMemberList);
         return memberEntity;
-    }
-
-    @Override
-    public void findPwd(String randomPassword, String memberId) throws ExecutionException, InterruptedException {
-        logger.debug("findPwd called!!!");
-        MemberDto memberDto = memCollection.document(memberId).get().get().toObject(MemberDto.class);
-        memberDto.setPwd(randomPassword);
-        memCollection.document(memberId).set(memberDto);
     }
 
     @Override
