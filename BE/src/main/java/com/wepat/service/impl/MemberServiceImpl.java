@@ -1,10 +1,7 @@
 package com.wepat.service.impl;
 
-import com.wepat.dto.MailDto;
 import com.wepat.dto.MemberDto;
 import com.wepat.entity.MemberEntity;
-import com.wepat.exception.ErrorPwd;
-import com.wepat.exception.NoId;
 import com.wepat.repository.MemberRepository;
 import com.wepat.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,9 +1,6 @@
-package com.wepat.controller;
+package com.wepat.exception.member;
 
-import com.wepat.dto.ErrorDto;
-import com.wepat.exception.ErrorPwd;
-import com.wepat.exception.NoId;
-import com.wepat.exception.UserException;
+import com.wepat.exception.ErrorDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,23 +10,16 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
 @RestControllerAdvice
-public class ExceptionController {
+public class MemberExceptionHandler {
 
-    @ExceptionHandler(UserException.class)
-    public ResponseEntity<?> userException(UserException e) {
-        log.error("[userException] e", e);
-        ErrorDto errorDto = new ErrorDto("유저 ex", e.getMessage());
-        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(NoId.class)
-    public ResponseEntity<?> noIdException(NoId e) {
+    @ExceptionHandler(IdWriteException.class)
+    public ResponseEntity<?> noIdException(IdWriteException e) {
         ErrorDto errorDto = new ErrorDto("NoId", e.getMessage());
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(ErrorPwd.class)
-    public ResponseEntity<?> errorPwdException(ErrorPwd e) {
+    @ExceptionHandler(PwdWriteException.class)
+    public ResponseEntity<?> errorPwdException(PwdWriteException e) {
         ErrorDto errorDto = new ErrorDto("ErrorPwd", e.getMessage());
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }

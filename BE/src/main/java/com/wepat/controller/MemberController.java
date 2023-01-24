@@ -1,18 +1,14 @@
 package com.wepat.controller;
 
-import com.wepat.dto.MailDto;
 import com.wepat.dto.MemberDto;
 import com.wepat.entity.MemberEntity;
-import com.wepat.exception.ErrorPwd;
-import com.wepat.exception.NoId;
-import com.wepat.exception.UserException;
+import com.wepat.exception.member.PwdWriteException;
+import com.wepat.exception.member.IdWriteException;
 import com.wepat.service.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.apache.http.HttpResponse;
-import org.apache.http.protocol.HTTP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,13 +49,13 @@ public class MemberController {
     public MemberEntity signIn(String memberId, String pwd) {
         try {
             return memberService.signIn(memberId, pwd);
-        } catch (NoId e) {
+        } catch (IdWriteException e) {
             logger.info(e.getMessage());
-            throw new NoId(e.getMessage());
-        } catch (ErrorPwd e) {
+            throw new IdWriteException(e.getMessage());
+        } catch (PwdWriteException e) {
             logger.info(e.getMessage());
             System.out.println(e.getMessage());
-            throw new ErrorPwd(e.getMessage());
+            throw new PwdWriteException(e.getMessage());
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -207,9 +203,6 @@ public class MemberController {
         } catch (InterruptedException e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (UserException e) {
-            e.printStackTrace();
-            throw new UserException(e.getMessage());
         }
     }
 

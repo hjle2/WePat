@@ -1,24 +1,18 @@
 package com.wepat.repository.impl;
 
-import com.google.api.Http;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
-import com.wepat.dto.CalendarDto;
 import com.wepat.dto.MemberDto;
 import com.wepat.entity.CalendarEntity;
 import com.wepat.entity.MemberEntity;
-import com.wepat.exception.ErrorPwd;
-import com.wepat.exception.NoId;
-import com.wepat.exception.UserException;
+import com.wepat.exception.member.PwdWriteException;
+import com.wepat.exception.member.IdWriteException;
 import com.wepat.repository.MemberRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
-import java.lang.reflect.Member;
 import java.util.concurrent.ExecutionException;
 import java.util.List;
 
@@ -139,11 +133,11 @@ public class MemberRepositoryImpl implements MemberRepository {
 
         // 트랜잭션 실행 결과를 반환
         if ((stringApiFuture.get()).equals("noid")) {
-            throw new NoId("존재하지 않는 아이디입니다!");
+            throw new IdWriteException("존재하지 않는 아이디입니다!");
         } else if ((stringApiFuture.get()).equals("success")) {
             return memCollection.document(memberId).get().get().toObject(MemberEntity.class);
         } else {
-            throw new ErrorPwd("비밀번호가 일치하지 않습니다!");
+            throw new PwdWriteException("비밀번호가 일치하지 않습니다!");
         }
 //        MemberEntity memberEntity = memCollection.document(memberId).get().get().toObject(MemberEntity.class);
 //        System.out.println(memberEntity);
@@ -291,16 +285,13 @@ public class MemberRepositoryImpl implements MemberRepository {
     @Override
     public void findPwd(String randomPassword, String memberId) throws ExecutionException, InterruptedException {
         logger.debug("findPwd called!!!");
-        if (memberId.equals("aaa")) {
-            throw new UserException("사용자 에러!");
-        }
         MemberDto memberDto = memCollection.document(memberId).get().get().toObject(MemberDto.class);
         memberDto.setPwd(randomPassword);
         memCollection.document(memberId).set(memberDto);
     }
 
     @Override
-    public MemberEntity addWarnMember(String memberId, String warnMemberId) throws ExecutionException, InterruptedException, UserException {
+    public MemberEntity addWarnMember(String memberId, String warnMemberId) throws ExecutionException, InterruptedException {
 
         final DocumentReference memDocRef = memCollection.document(memberId);
         final DocumentReference warnMemDocRef = memCollection.document(warnMemberId);
@@ -318,7 +309,7 @@ public class MemberRepositoryImpl implements MemberRepository {
                     return memSnapshot.toObject(MemberEntity.class);
                 } else {
                     logger.info("이미 신고한 회원입니다!");
-                    throw new UserException("이미 신고한 회원입니다!");
+                    return "fail";
                 }
             } else {
                 logger.info("존재하지 않는 회원입니다!");

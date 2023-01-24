@@ -1,4 +1,4 @@
-package com.wepat.dto;
+package com.wepat.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
