@@ -1,6 +1,5 @@
 package com.wepat.service;
 
-import com.wepat.dto.MailDto;
 import com.wepat.dto.MemberDto;
 import com.wepat.entity.MemberEntity;
 
@@ -26,4 +25,6 @@ public interface MemberService {
     MemberEntity addWarnMember(String memberId, String warnMemberId) throws ExecutionException, InterruptedException;
 
     MemberEntity addBlockMember(String memberId, String blockMemberId) throws ExecutionException, InterruptedException;
+
+    String createJwt(String memberId, String pwd);
 }

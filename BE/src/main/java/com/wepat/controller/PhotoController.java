@@ -18,7 +18,7 @@ import java.util.List;
 @RequestMapping("/photo")
 @CrossOrigin(origins = "*")
 public class PhotoController {
-    private final Logger logger = LoggerFactory.getLogger(PhotoController.class);
+    private final static Logger logger = LoggerFactory.getLogger(PhotoController.class);
 
     @GetMapping("/{calendarid}")
     @ApiOperation(value = "전체 앨범 이미지 얻기", notes = "Photo 에 SNS 체크가 되어있는 사진들 조회", response = List.class)

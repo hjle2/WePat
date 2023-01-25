@@ -17,9 +17,9 @@ import java.util.List;
 
 @Repository
 public class MemberRepositoryImpl implements MemberRepository {
-    private final Logger logger = LoggerFactory.getLogger(MemberRepository.class);
-    private final String CALENDAR_COLLECTION = "calendar";
-    private final String MEMBER_COLLECTION = "member";
+    private final static Logger logger = LoggerFactory.getLogger(MemberRepository.class);
+    private final static String CALENDAR_COLLECTION = "calendar";
+    private final static String MEMBER_COLLECTION = "member";
     private final Firestore db = FirestoreClient.getFirestore();
     private final CollectionReference calCollection = db.collection(CALENDAR_COLLECTION);
     private final CollectionReference memCollection = db.collection(MEMBER_COLLECTION);

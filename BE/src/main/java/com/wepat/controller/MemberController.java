@@ -4,14 +4,18 @@ import com.wepat.dto.MemberDto;
 import com.wepat.entity.MemberEntity;
 import com.wepat.exception.member.*;
 import com.wepat.service.MemberService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.http.HttpResponse;
+import org.apache.http.protocol.HTTP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import utils.JwtUtil;
 
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
@@ -19,14 +23,11 @@ import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/member")
+@RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class MemberController {
-    private final Logger logger = LoggerFactory.getLogger(MemberController.class);
+    private final static Logger logger = LoggerFactory.getLogger(MemberController.class);
     private final MemberService memberService;
-    @Autowired
-    public MemberController(MemberService memberService) {
-        this.memberService = memberService;
-    }
     @PostMapping("/signup")
     @ApiOperation(value = "회원가입", notes = "정보를 받아 회원가입 시도한다.", response = MemberDto.class)
     public MemberEntity signUp(MemberDto member) {
@@ -45,9 +46,14 @@ public class MemberController {
     }
     @PostMapping("/signin")
     @ApiOperation(value = "로그인 시도",  notes = "로그인 요청을 한다.",response = MemberDto.class)
-    public MemberEntity signIn(String memberId, String pwd) {
+    public ResponseEntity<?> signIn(String memberId, String pwd) {
         try {
-            return memberService.signIn(memberId, pwd);
+            MemberEntity memberResult = memberService.signIn(memberId, pwd);
+            if(memberResult!=null){//로그인에서 객체를 받아왔다.
+                String memberToken = memberService.createJwt(memberId, pwd);
+                return new ResponseEntity<String>(memberToken, HttpStatus.OK);
+            }
+//            return memberService.signIn(memberId, pwd);
         } catch (IdWriteException e) {
             logger.info(e.getMessage());
             throw new IdWriteException(e.getMessage());
@@ -58,6 +64,7 @@ public class MemberController {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
+        return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
     }
     @PostMapping("/findid")
     @ApiOperation(value = "아이디 찾기", notes = "이메일을 확인하여 해당 아이디 제공", response = String.class)
@@ -190,15 +197,13 @@ public class MemberController {
         MemberEntity memberResult = null;
         try {
             memberResult = memberService.blockMember(memberId);
-            System.out.println("controller block >> " + memberResult);
             return new ResponseEntity<MemberEntity>(memberResult, HttpStatus.OK);
         } catch (ExecutionException e) {
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (InterruptedException e) {
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @PutMapping("/block/{memberid}")

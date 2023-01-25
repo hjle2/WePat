@@ -16,7 +16,7 @@ import java.util.List;
 @RequestMapping("/sns")
 @CrossOrigin(origins = "*")
 public class SNSController {
-    private final Logger logger = LoggerFactory.getLogger(PetController.class);
+    private final static Logger logger = LoggerFactory.getLogger(PetController.class);
 
     @GetMapping("/")
     @ApiOperation(value = "SNS 메인 페이지", notes = "전체 SNS 사진 가져오기", response = List.class)

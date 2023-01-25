@@ -4,6 +4,7 @@ import com.wepat.dto.ScheduleDto;
 import com.wepat.repository.MemberRepository;
 import com.wepat.repository.ScheduleRepository;
 import com.wepat.service.ScheduleService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,13 +13,10 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Service
+@RequiredArgsConstructor
 public class ScheduleServiceImpl implements ScheduleService {
     private final ScheduleRepository scheduleRepo;
 
-    @Autowired
-    public ScheduleServiceImpl(ScheduleRepository scheduleRepo) {
-        this.scheduleRepo = scheduleRepo;
-    }
     @Override
     public List<Timestamp> getAllSchedule(String calendarId) throws ExecutionException, InterruptedException {
         return scheduleRepo.getAllSchedule(calendarId);

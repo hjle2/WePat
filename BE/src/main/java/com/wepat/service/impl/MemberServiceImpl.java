@@ -4,9 +4,10 @@ import com.wepat.dto.MemberDto;
 import com.wepat.entity.MemberEntity;
 import com.wepat.repository.MemberRepository;
 import com.wepat.service.MemberService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import utils.JwtUtil;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -15,15 +16,10 @@ import javax.mail.internet.MimeMessage;
 import java.util.concurrent.ExecutionException;
 
 @Service
+@RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepo;
     private final JavaMailSender javaMailSender;
-
-    @Autowired
-    public MemberServiceImpl(MemberRepository memberRepo, JavaMailSender javaMailSender) {
-        this.memberRepo = memberRepo;
-        this.javaMailSender = javaMailSender;
-    }
 
     @Override
     public MemberEntity signUp(MemberDto member) throws ExecutionException, InterruptedException {
@@ -67,6 +63,12 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberEntity logout(String memberId) throws ExecutionException, InterruptedException {
         return memberRepo.logout(memberId);
+    }
+
+    @Override
+    public String createJwt(String memberId, String pwd) {
+        Long expireMs = 1000 * 60 * 60L;
+        return JwtUtil.createJwt(memberId,expireMs);
     }
 
     @Override
@@ -120,7 +122,6 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberEntity addBlockMember(String memberId, String blockMemberId) throws ExecutionException, InterruptedException {
-        return memberRepo.addBlockMember(memberId, blockMemberId);
+        return null;
     }
-
 }
