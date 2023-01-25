@@ -24,6 +24,7 @@ public interface MemberRepository {
     List<String> warnMember() throws ExecutionException, InterruptedException;
     ResponseEntity<?> addBlockMember(String blockMemberId) throws ExecutionException, InterruptedException;
 //    MemberEntity blockMember(String memberId) throws ExecutionException, InterruptedException;
+    //
 
 }
 
