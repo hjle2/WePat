@@ -14,6 +14,8 @@ import java.util.List;
 public class ScheduleDto {
     @ApiParam(value = "스케쥴 이름")
     private String title;
+    @ApiParam(value = "카테고리")
+    private String category;
     @ApiParam(value = "펫ID(PK)", required = true)
     private String petId;
     @ApiParam(value = "반복여부")

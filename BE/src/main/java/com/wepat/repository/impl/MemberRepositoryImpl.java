@@ -173,13 +173,9 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public void findPwd(String randomPassword, String memberId) throws ExecutionException, InterruptedException {
-        logger.debug("findPwd called!!!");
 
-        boolean memberIdCheck;
-        List<QueryDocumentSnapshot> documents = memCollection.get().get().getDocuments();
-        memberIdCheck = documents.stream().anyMatch(docs -> (docs.getId()).equals(memberId));
-
-        if (memberIdCheck) {
+        boolean exists = memCollection.document(memberId).get().get().exists();
+        if (exists) {
             MemberEntity memberEntity = memCollection.document(memberId).get().get().toObject(MemberEntity.class);
             memberEntity.setPwd(randomPassword);
             memCollection.document(memberId).set(memberEntity);
@@ -215,13 +211,9 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public MemberDto getMember(String memberId) throws ExecutionException, InterruptedException {
-        logger.info("getMember called!");
-
         // asynchronously retrieve multiple documents
-        boolean memberIdCheck;
-        List<QueryDocumentSnapshot> documents = memCollection.get().get().getDocuments();
-        memberIdCheck = documents.stream().anyMatch(docs -> (docs.getId()).equals(memberId));
-        if (memberIdCheck) {
+        boolean exists = memCollection.document(memberId).get().get().exists();
+        if (exists) {
             return memCollection.document(memberId).get().get().toObject(MemberDto.class);
         } else {
             throw new NotExistMember("존재하지 않는 회원입니다!");

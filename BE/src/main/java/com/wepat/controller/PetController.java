@@ -1,6 +1,8 @@
 package com.wepat.controller;
 
+import com.wepat.exception.member.NotExistCalendarException;
 import com.wepat.service.PetService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +18,23 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/pet")
+@RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class PetController {
-    private final Logger logger = LoggerFactory.getLogger(PetController.class);
-    private PetService petService;
-    @Autowired
-    public PetController(PetService petService) {
-        this.petService = petService;
+    private final static Logger logger = LoggerFactory.getLogger(PetController.class);
+    private final PetService petService;
+
+    @PostMapping("/add")
+    @ApiOperation(value = "반려동물 추가")
+    public ResponseEntity<?> addPet(String calendarId, PetDto petDto) {
+        System.out.println(">>>>>>>>>>.. 컨트롤러 호출!!");
+        try {
+            return new ResponseEntity<>(petService.addPet(calendarId, petDto), HttpStatus.OK);
+        } catch (NotExistCalendarException e) {
+            throw new NotExistCalendarException(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
     }
 
     @GetMapping("/{calendarid}")
@@ -52,16 +64,6 @@ public class PetController {
     public ResponseEntity<?> addPetWeight(@PathVariable("petid") String petId, @PathVariable double weight) {
         try {
             PetDto pet = petService.addPetWeight(petId, weight);
-        } catch (ExecutionException e) {
-        } catch (InterruptedException e) {
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-    @PostMapping("/add")
-    @ApiOperation(value = "반려동물 추가")
-    public ResponseEntity<?> addPet(String calendarId, PetDto petDto) {
-        try {
-            PetDto pet = petService.addPet(calendarId, petDto);
         } catch (ExecutionException e) {
         } catch (InterruptedException e) {
         }

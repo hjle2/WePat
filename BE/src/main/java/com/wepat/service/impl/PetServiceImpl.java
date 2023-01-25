@@ -4,6 +4,7 @@ import com.wepat.dto.PetDto;
 import com.wepat.repository.CalendarRepository;
 import com.wepat.repository.PetRepository;
 import com.wepat.service.PetService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,11 +12,13 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Service
+@RequiredArgsConstructor
 public class PetServiceImpl implements PetService {
     private final PetRepository petRepo;
-    @Autowired
-    public PetServiceImpl(PetRepository petRepo) {
-        this.petRepo = petRepo;
+
+    @Override
+    public PetDto addPet(String calendarId, PetDto pet) throws ExecutionException, InterruptedException {
+        return petRepo.addPet(calendarId, pet);
     }
 
     @Override
@@ -26,11 +29,6 @@ public class PetServiceImpl implements PetService {
     @Override
     public PetDto getPet(String calendarId) throws ExecutionException, InterruptedException {
         return petRepo.getPet(calendarId);
-    }
-
-    @Override
-    public PetDto addPet(String calendarId, PetDto pet) throws ExecutionException, InterruptedException {
-        return petRepo.addPet(calendarId, pet);
     }
 
     @Override
