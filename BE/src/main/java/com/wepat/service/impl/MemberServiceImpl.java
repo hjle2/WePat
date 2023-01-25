@@ -5,9 +5,9 @@ import com.wepat.entity.MemberEntity;
 import com.wepat.repository.MemberRepository;
 import com.wepat.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import utils.JwtUtil;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -66,7 +66,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public String createJwt(String memberId, String pwd) throws ExecutionException, InterruptedException {
+    public String createJwt(String memberId, String pwd) {
         Long expireMs = 1000 * 60 * 60L;
         return JwtUtil.createJwt(memberId,expireMs);
     }
@@ -118,5 +118,10 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberEntity addWarnMember(String memberId, String warnMemberId) throws ExecutionException, InterruptedException {
         return memberRepo.addWarnMember(memberId, warnMemberId);
+    }
+
+    @Override
+    public MemberEntity addBlockMember(String memberId, String blockMemberId) throws ExecutionException, InterruptedException {
+        return null;
     }
 }

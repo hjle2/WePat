@@ -46,12 +46,12 @@ public class MemberController {
     }
     @PostMapping("/signin")
     @ApiOperation(value = "로그인 시도",  notes = "로그인 요청을 한다.",response = MemberDto.class)
-    public MemberEntity signIn(String memberId, String pwd) {
+    public ResponseEntity<?> signIn(String memberId, String pwd) {
         try {
-            MemberDto memberResult = memberService.signIn(memberId, pwd);
+            MemberEntity memberResult = memberService.signIn(memberId, pwd);
             if(memberResult!=null){//로그인에서 객체를 받아왔다.
                 String memberToken = memberService.createJwt(memberId, pwd);
-                return new ResponseEntity<String>(memberToken, HttpStatus.OK());
+                return new ResponseEntity<String>(memberToken, HttpStatus.OK);
             }
 //            return memberService.signIn(memberId, pwd);
         } catch (IdWriteException e) {
@@ -64,6 +64,7 @@ public class MemberController {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
+        return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
     }
     @PostMapping("/findid")
     @ApiOperation(value = "아이디 찾기", notes = "이메일을 확인하여 해당 아이디 제공", response = String.class)
