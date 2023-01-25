@@ -2,22 +2,28 @@ package com.wepat.dto;
 
 import io.swagger.annotations.ApiParam;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.security.Timestamp;
-import java.util.List;
+import java.time.LocalDate;
 
 @Data
+@NoArgsConstructor
 public class PetDto {
-    @ApiParam(value = "반려동물 이름", required = true)
+    @ApiParam(value = "반려동물 데이터가 표시되는 달력")
+    private String calendarId;
+    @ApiParam(value = "반려동물 이름")
     private String name;
     @ApiParam(value = "반려동물 나이")
     private int age;
+    @ApiParam(value = "반려동물 프로필")
+    private String photoURL;
+    @ApiParam(value = "프로필 색상")
+    private String color;
     @ApiParam(value = "반려동물 생일")
-    private Timestamp birthday;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate birthday;
     @ApiParam(value = "반려동물 입양일")
-    private Timestamp adaptday;
-    @ApiParam(value = "스캐줄ID 리스트")
-    private List<ScheduleDto> schedule;
-    @ApiParam(value = "몸무게 정보(Dto) 리스트")
-    private List<WeightDto> weightList;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate adaptday;
 }

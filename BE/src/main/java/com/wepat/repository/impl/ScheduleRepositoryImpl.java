@@ -4,11 +4,13 @@ import com.wepat.dto.ScheduleDto;
 import com.wepat.repository.ScheduleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+@Repository
 public class ScheduleRepositoryImpl implements ScheduleRepository {
     private final static Logger logger = LoggerFactory.getLogger(ScheduleRepositoryImpl.class);
     private final static String COLLECTION_NAME = "schedule";
