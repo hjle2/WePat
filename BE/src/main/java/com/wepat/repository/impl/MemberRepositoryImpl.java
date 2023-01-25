@@ -3,6 +3,7 @@ package com.wepat.repository.impl;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
+import com.wepat.config.security.OpenCrypt;
 import com.wepat.dto.MemberDto;
 import com.wepat.entity.CalendarEntity;
 import com.wepat.entity.MemberEntity;
@@ -20,13 +21,21 @@ public class MemberRepositoryImpl implements MemberRepository {
     private final static Logger logger = LoggerFactory.getLogger(MemberRepository.class);
     private final static String CALENDAR_COLLECTION = "calendar";
     private final static String MEMBER_COLLECTION = "member";
+    private final static String MEMBER_TOKEN_COLLECTION = "member-Token";
     private final Firestore db = FirestoreClient.getFirestore();
     private final CollectionReference calCollection = db.collection(CALENDAR_COLLECTION);
     private final CollectionReference memCollection = db.collection(MEMBER_COLLECTION);
 
+    private final CollectionReference memTokenCollection = db.collection(MEMBER_TOKEN_COLLECTION);
+
     //캘린더 ID가 있을 때, 회원가입 (ID 값이 틀렸다고 에러)
     @Override
     public MemberEntity signUpWithCalendar(MemberDto member) throws ExecutionException, InterruptedException {
+
+        //비밀번호 값 암호화
+        member.setPwd(new String(OpenCrypt.getSHA256(member.getPwd(),"salt")));
+
+
         logger.info("signUpWithCalendar Repo called!");
 
         //memberId(member Collection)와 CalendarId(calendar Collection)
@@ -83,6 +92,10 @@ public class MemberRepositoryImpl implements MemberRepository {
     //캘린더 ID null일 때, 회원가입
     @Override
     public MemberEntity signUp(MemberDto member) throws ExecutionException, InterruptedException {
+
+        //비밀번호 값 암호화
+        member.setPwd(new String(OpenCrypt.getSHA256(member.getPwd(),"salt")));
+
         logger.info("signUp Repo called!");
 
         // memberId인 document 를 가져옴(없으면 생성)
@@ -129,6 +142,10 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public MemberEntity signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
+
+        //입력받은 비밀번호 값도 암호화
+      final String pwdEncode = (new String(OpenCrypt.getSHA256(pwd,"salt")));
+
         logger.info("signIn called!");
 
         final DocumentReference memDocRef = memCollection.document(memberId);
@@ -140,7 +157,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
             if (!memSnapshot.exists()) { // 멤버ID가 없을 경우
                 return "IdWriteException";
-            } else if (memSnapshot.exists() && memberEntity.getPwd().equals(pwd)) { //해당 멤버ID가 있고, pwd가 같다면 로그인 성공
+            } else if (memSnapshot.exists() && memberEntity.getPwd().equals(pwdEncode)) { //해당 멤버ID가 있고, pwd가 같다면 로그인 성공
                 logger.info("success");
                 return "success";
             } else { //비밀번호가 다르다면

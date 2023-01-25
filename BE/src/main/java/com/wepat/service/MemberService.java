@@ -16,6 +16,8 @@ public interface MemberService {
     MemberEntity deleteMember(String memberId) throws ExecutionException, InterruptedException;
     MemberEntity logout(String memberId) throws ExecutionException, InterruptedException;
 
+
+
     // 관리자 기능
     MemberEntity warnMember(String memberId) throws ExecutionException, InterruptedException;
     MemberEntity blockMember(String memberId) throws ExecutionException, InterruptedException;
@@ -26,5 +28,13 @@ public interface MemberService {
 
     MemberEntity addBlockMember(String memberId, String blockMemberId) throws ExecutionException, InterruptedException;
 
-    String createJwt(String memberId, String pwd);
+
+    //JWT
+    String createAccessToken(String memberId, String pwd);
+
+    String createRefreshToken(String memberId, String pwd);
+
+    String createJwt(String memberId, String subject, String pwd, Long expireMs);
+
+    void saveRefreshToken(String memberId, String refreshToken);
 }
