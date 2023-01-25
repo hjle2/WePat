@@ -2,7 +2,6 @@ package com.wepat.gcp;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.*;
-import io.swagger.models.Response;
 import net.bytebuddy.utility.RandomString;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -53,7 +52,7 @@ public class DataBucketUtil {
             LOGGER.info("Get StorageOptions");
             Storage storage = options.getService();
             LOGGER.info("Get Storage");
-            Bucket bucket = storage.get(gcpBucketId,Storage.BucketGetOption.fields());
+            Bucket bucket = storage.get(gcpBucketId, Storage.BucketGetOption.fields());
             LOGGER.info("Get Bucket");
 
             RandomString id = new RandomString(6, ThreadLocalRandom.current());
