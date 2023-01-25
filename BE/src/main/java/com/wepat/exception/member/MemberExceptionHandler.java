@@ -62,7 +62,16 @@ public class MemberExceptionHandler {
         ErrorDto errorDto = new ErrorDto("MessageError", e.getMessage());
         return new ResponseEntity<>(errorDto, HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS);
     }
-
+    @ExceptionHandler(AlreadyWarnMember.class)
+    public ResponseEntity<?> AlreadyWarnMember(AlreadyWarnMember e) {
+        ErrorDto errorDto = new ErrorDto("AlreadyWarnMember", e.getMessage());
+        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(BlockMember.class)
+    public ResponseEntity<?> BlockMember(BlockMember e) {
+        ErrorDto errorDto = new ErrorDto("BlockMember", e.getMessage());
+        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
+    }
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ErrorDto exHandler(Exception e) {

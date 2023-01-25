@@ -10,8 +10,11 @@ import com.wepat.exception.member.*;
 import com.wepat.repository.MemberRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.List;
 
@@ -26,15 +29,11 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     //캘린더 ID가 있을 때, 회원가입 (ID 값이 틀렸다고 에러)
     @Override
-    public MemberEntity signUpWithCalendar(MemberDto member) throws ExecutionException, InterruptedException {
-        logger.info("signUpWithCalendar Repo called!");
+    public MemberDto signUpWithCalendar(MemberDto member) throws ExecutionException, InterruptedException {
 
         //memberId(member Collection)와 CalendarId(calendar Collection)
         final DocumentReference memDocRef = memCollection.document(member.getMemberId());
         final DocumentReference calDocRef = calCollection.document(member.getCalendarId());
-
-        logger.info("memDocRef " + memDocRef.getId()); //입력한 ID
-        logger.info("calDocRef " + calDocRef.getId()); //입력한 캘린더ID
 
         boolean EmailCheck;
         List<QueryDocumentSnapshot> documents = memCollection.get().get().getDocuments();
@@ -76,21 +75,18 @@ public class MemberRepositoryImpl implements MemberRepository {
         } else if ((stringApiFuture.get()).equals("NotExistCalendarException")) {
             throw new NotExistCalendarException("존재하지 않는 코드입니다!");
         } else {
-            return memCollection.document(member.getMemberId()).get().get().toObject(MemberEntity.class);
+            return memCollection.document(member.getMemberId()).get().get().toObject(MemberDto.class);
         }
     }
 
     //캘린더 ID null일 때, 회원가입
     @Override
-    public MemberEntity signUp(MemberDto member) throws ExecutionException, InterruptedException {
-        logger.info("signUp Repo called!");
+    public MemberDto signUp(MemberDto member) throws ExecutionException, InterruptedException {
 
         // memberId인 document 를 가져옴(없으면 생성)
         final DocumentReference memDocRef = memCollection.document(member.getMemberId());
         // calendar document 를 생성 (docId 는 랜덤값)
         final DocumentReference calDocRef = calCollection.document();
-        logger.info("memDocRef " + memDocRef.getId());
-        logger.info("calDocRef " + calDocRef.getId());
 
         boolean EmailCheck;
         List<QueryDocumentSnapshot> documents = memCollection.get().get().getDocuments();
@@ -123,12 +119,12 @@ public class MemberRepositoryImpl implements MemberRepository {
         } else if ((stringApiFuture.get()).equals("ExistIdException")) {
             throw new ExistIdException("이미 존재하는 아이디입니다!");
         } else {
-            return memCollection.document(member.getMemberId()).get().get().toObject(MemberEntity.class);
+            return memCollection.document(member.getMemberId()).get().get().toObject(MemberDto.class);
         }
     }
 
     @Override
-    public MemberEntity signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
+    public MemberDto signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
         logger.info("signIn called!");
 
         final DocumentReference memDocRef = memCollection.document(memberId);
@@ -140,11 +136,11 @@ public class MemberRepositoryImpl implements MemberRepository {
 
             if (!memSnapshot.exists()) { // 멤버ID가 없을 경우
                 return "IdWriteException";
+            } else if (memSnapshot.toObject(MemberEntity.class).isBlock()) { //차단된 계정
+                return "BlockMember";
             } else if (memSnapshot.exists() && memberEntity.getPwd().equals(pwd)) { //해당 멤버ID가 있고, pwd가 같다면 로그인 성공
-                logger.info("success");
                 return "success";
             } else { //비밀번호가 다르다면
-                logger.info("throw exception");
                 return "PwdWriteException";
             }
         });
@@ -152,27 +148,25 @@ public class MemberRepositoryImpl implements MemberRepository {
         // 트랜잭션 실행 결과를 반환
         if ((stringApiFuture.get()).equals("IdWriteException")) {
             throw new IdWriteException("존재하지 않는 아이디입니다!");
+        } else if ((stringApiFuture.get()).equals("BlockMember")) {
+            throw new BlockMember("차단된 계정입니다!");
         } else if ((stringApiFuture.get()).equals("PwdWriteException")) {
             throw new PwdWriteException("비밀번호가 일치하지 않습니다!");
         } else {
-            return memCollection.document(memberId).get().get().toObject(MemberEntity.class);
+            return memCollection.document(memberId).get().get().toObject(MemberDto.class);
         }
     }
 
     @Override
-    public MemberEntity findId(String email) throws ExecutionException, InterruptedException {
+    public MemberDto findId(String email) throws ExecutionException, InterruptedException {
         logger.info("findId called!");
 
         // asynchronously retrieve the document
-        List<MemberEntity> memberEntity = memCollection.whereEqualTo("email", email).get().get().toObjects(MemberEntity.class);
+        List<MemberDto> memberDto = memCollection.whereEqualTo("email", email).get().get().toObjects(MemberDto.class);
 
-        if (memberEntity.size() > 0) {
-            System.out.println(memberEntity.get(0));
-            System.out.println(memberEntity);
-            return memberEntity.get(0);
+        if (memberDto.size() > 0) {
+            return memberDto.get(0);
         } else {
-            // Exception ??
-            logger.info("NotExistEmailException");
             throw new NotExistEmailException("존재하지 않는 회원입니다!");
         }
     }
@@ -196,8 +190,7 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public MemberEntity modifyPwd(String memberId, String pwd) throws ExecutionException, InterruptedException {
-        logger.info("modifyPwd called!");
+    public MemberDto modifyPwd(String memberId, String pwd) throws ExecutionException, InterruptedException {
 
         // run an asynchronous transaction
         final DocumentReference memDocRef = memCollection.document(memberId);
@@ -214,14 +207,14 @@ public class MemberRepositoryImpl implements MemberRepository {
             }
         });
         if ((stringApiFuture.get()).equals("success")) {
-            return memCollection.document(memberId).get().get().toObject(MemberEntity.class);
+            return memCollection.document(memberId).get().get().toObject(MemberDto.class);
         } else {
             throw new NotExistMember("존재하지 않는 회원입니다!");
         }
     }
 
     @Override
-    public MemberEntity getMember(String memberId) throws ExecutionException, InterruptedException {
+    public MemberDto getMember(String memberId) throws ExecutionException, InterruptedException {
         logger.info("getMember called!");
 
         // asynchronously retrieve multiple documents
@@ -229,45 +222,39 @@ public class MemberRepositoryImpl implements MemberRepository {
         List<QueryDocumentSnapshot> documents = memCollection.get().get().getDocuments();
         memberIdCheck = documents.stream().anyMatch(docs -> (docs.getId()).equals(memberId));
         if (memberIdCheck) {
-            return memCollection.document(memberId).get().get().toObject(MemberEntity.class);
+            return memCollection.document(memberId).get().get().toObject(MemberDto.class);
         } else {
             throw new NotExistMember("존재하지 않는 회원입니다!");
         }
     }
 
     @Override
-    public MemberEntity modifyMember(MemberDto member) throws ExecutionException, InterruptedException {
-        logger.info("modifyMember called!");
+    public MemberDto modifyMember(String memberId, String nickName) throws ExecutionException, InterruptedException {
 
-        final DocumentReference memDocRef = memCollection.document(member.getMemberId());
+        final DocumentReference memDocRef = memCollection.document(memberId);
         // asynchronously modify a document
         // run an asynchronous transaction
         ApiFuture<?> memberEntityApiFuture = db.runTransaction(transaction -> {
 
             if (transaction.get(memDocRef).get().exists()) {
-                MemberEntity memberEntity = new MemberEntity(member);
-                memberEntity.setCalendarId(member.getCalendarId());
-                transaction.set(memDocRef, memberEntity);
-                System.out.println("modifyMember Transaction호출!!>>>");
-                System.out.println("Transaction내부 >>> " + memCollection.document(member.getMemberId()).get().get().toObject(MemberEntity.class));
+                transaction.update(memDocRef, "nickName", nickName);
                 return "success";
             } else {
-                return "fail";
+                return "NotExistMember";
             }
         });
 
         if (memberEntityApiFuture.get().equals("success")) {
-            return memCollection.document(member.getMemberId()).get().get().toObject(MemberEntity.class);
+            return memCollection.document(memberId).get().get().toObject(MemberDto.class);
         } else {
-            throw new RuntimeException("서버 오류");
+            throw new NotExistMember("존재하지 않는 회원입니다!");
         }
     }
 
     @Override
-    public MemberEntity deleteMember(String memberId) throws ExecutionException, InterruptedException {
-        logger.info("deleteMember called!");
+    public ResponseEntity<?> deleteMember(String memberId) throws ExecutionException, InterruptedException {
 
-        MemberEntity member = getMember(memberId);
+        MemberDto member = getMember(memberId);
         // asynchronously delete a document
         List<String> calMember = calCollection.document(member.getCalendarId()).get().get().toObject(CalendarEntity.class).getMemberId();
         calMember.remove(memberId);
@@ -277,26 +264,17 @@ public class MemberRepositoryImpl implements MemberRepository {
         } else {
             calCollection.document(member.getCalendarId()).update("memberId", calMember);
         }
-        System.out.println("호출");
 
         List<QueryDocumentSnapshot> documents = memCollection.get().get().getDocuments();
         for (QueryDocumentSnapshot docs : documents) {
             if (!(docs.getId()).equals(memberId)) {
-                System.out.println(docs.getId());
-                List<String> warnMemberList = docs.toObject(MemberEntity.class).getWarnMemberList();
-                warnMemberList.remove(memberId);
-                memCollection.document(docs.getId()).update("warnMemberList", warnMemberList);
-                List<String> blockMemberList = docs.toObject(MemberEntity.class).getBlockMemberList();
-                blockMemberList.remove(memberId);
-                memCollection.document(docs.getId()).update("blockMemberList", blockMemberList);
+                List<String> reportList = docs.toObject(MemberEntity.class).getReportList();
+                reportList.remove(memberId);
+                memCollection.document(docs.getId()).update("reportList", reportList);
             }
         }
-
-        ApiFuture<WriteResult> writeResult = memCollection.document(memberId).delete();
-        // ...
-        logger.info("Update time : " + writeResult.get().getUpdateTime());
-
-        return member;
+        memCollection.document(memberId).delete();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override
@@ -306,77 +284,87 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public MemberEntity warnMember(String memberId) throws ExecutionException, InterruptedException {
-        logger.info("warnMember called!");
-        MemberEntity memberEntity = memCollection.document(memberId).get().get().toObject(MemberEntity.class);
-        List<String> warnMemberList = memberEntity.getWarnMemberList();
-        System.out.println(warnMemberList);
-        return memberEntity;
-    }
-
-    @Override
-    public MemberEntity blockMember(String memberId) throws ExecutionException, InterruptedException {
-        logger.info("blockMember called!");
-        MemberEntity memberEntity = memCollection.document(memberId).get().get().toObject(MemberEntity.class);
-        List<String> blockMemberList = memberEntity.getBlockMemberList();
-        System.out.println(blockMemberList);
-        return memberEntity;
-    }
-
-    @Override
-    public MemberEntity addWarnMember(String memberId, String warnMemberId) throws ExecutionException, InterruptedException {
+    public ResponseEntity<?> addWarnMember(String memberId, String warnMemberId) throws ExecutionException, InterruptedException {
 
         final DocumentReference memDocRef = memCollection.document(memberId);
         final DocumentReference warnMemDocRef = memCollection.document(warnMemberId);
-        System.out.println("addWarnMember 호출!!!!");
 
-        db.runTransaction(transaction -> {
+        ApiFuture<String> stringApiFuture = db.runTransaction(transaction -> {
 
             DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
             DocumentSnapshot warnMemSnapShot = transaction.get(warnMemDocRef).get();
             if (memSnapshot.exists() && warnMemSnapShot.exists()) {
-                List<String> warnMemberList = memDocRef.get().get().toObject(MemberEntity.class).getWarnMemberList();
-                if (!(warnMemberList.contains(warnMemberId))) {
-                    warnMemberList.add(warnMemberId);
-                    transaction.update(memDocRef, "warnMemberList", warnMemberList);
-                    return memSnapshot.toObject(MemberEntity.class);
+                List<String> reportList = warnMemDocRef.get().get().toObject(MemberEntity.class).getReportList();
+                if (!(reportList.contains(memberId))) {
+                    reportList.add(memberId);
+                    transaction.update(warnMemDocRef, "reportList", reportList);
+                    return "success";
                 } else {
-                    logger.info("이미 신고한 회원입니다!");
-                    return "fail";
+                    return "AlreadyWarnMember";
                 }
             } else {
-                logger.info("존재하지 않는 회원입니다!");
-                return "fail";
+                return "NotExistMember";
             }
         });
-        System.out.println("repo>>>> " + memDocRef.get().get().toObject(MemberEntity.class));
-        return memDocRef.get().get().toObject(MemberEntity.class);
+        if ((stringApiFuture.get()).equals("success")) {
+            return new ResponseEntity<>("신고 성공", HttpStatus.OK);
+        } else if ((stringApiFuture.get()).equals("AlreadyWarnMember")) {
+            throw new AlreadyWarnMember("이미 신고한 회원입니다!");
+        } else {
+            throw new NotExistMember("존재하지 않은 회원입니다!");
+        }
     }
 
     @Override
-    public MemberEntity addBlockMember(String memberId, String blockMemberId) throws ExecutionException, InterruptedException {
+    public List<String> warnMember() throws ExecutionException, InterruptedException {
 
-        final DocumentReference memDocRef = memCollection.document(memberId);
+        List<String> reportList = new ArrayList<>();
+        List<QueryDocumentSnapshot> documents = memCollection.get().get().getDocuments();
+        for (QueryDocumentSnapshot docs : documents) {
+            if ((docs.toObject(MemberEntity.class).getReportList()).size() >= 3) {
+                reportList.add(docs.getId());
+            }
+        }
+        return reportList;
+    }
+
+    @Override
+    public ResponseEntity<?> addBlockMember(String blockMemberId) throws ExecutionException, InterruptedException {
+
         final DocumentReference blockMemDocRef = memCollection.document(blockMemberId);
 
-        db.runTransaction(transaction -> {
-            DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
+        ApiFuture<String> stringApiFuture = db.runTransaction(transaction -> {
             DocumentSnapshot blockMemSnapShot = transaction.get(blockMemDocRef).get();
-            if (memSnapshot.exists() && blockMemSnapShot.exists()) {
-                List<String> blockMemberList = memDocRef.get().get().toObject(MemberEntity.class).getBlockMemberList();
-                if (!(blockMemberList.contains(blockMemberId))) {
-                    blockMemberList.add(blockMemberId);
-                    transaction.update(memDocRef, "blockMemberList", blockMemberList);
-                    return "success";
+            if (blockMemSnapShot.exists()) {
+                boolean block = blockMemDocRef.get().get().toObject(MemberEntity.class).isBlock();
+                if (block) {
+                    transaction.update(blockMemDocRef, "block", !block);
+                    return "cancelBlockMember";
                 } else {
-                    logger.info("이미 차단한 회원입니다!");
-                    return "fail";
+                    transaction.update(blockMemDocRef, "block", !block);
+                    return "AddBlockMember";
                 }
             } else {
-                logger.info("존재하지 않는 회원입니다!");
-                return "fail";
+                return "NotExistMember";
             }
         });
-        return memDocRef.get().get().toObject(MemberEntity.class);
+
+        if ((stringApiFuture.get()).equals("cancelBlockMember")) {
+            return new ResponseEntity<>("유저 차단 해제", HttpStatus.OK);
+        } else if ((stringApiFuture.get()).equals("AddBlockMember")) {
+            return new ResponseEntity<>("유저 차단", HttpStatus.OK);
+        } else {
+            throw new NotExistMember("존재하지 않은 회원입니다!");
+        }
     }
+
+//    @Override
+//    public MemberEntity blockMember(String memberId) throws ExecutionException, InterruptedException {
+//        logger.info("blockMember called!");
+//        MemberEntity memberEntity = memCollection.document(memberId).get().get().toObject(MemberEntity.class);
+//        List<String> blockMemberList = memberEntity.getBlockMemberList();
+//        System.out.println(blockMemberList);
+//        return memberEntity;
+//    }
+//
 }

@@ -5,6 +5,7 @@ import com.wepat.entity.MemberEntity;
 import com.wepat.repository.MemberRepository;
 import com.wepat.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import utils.JwtUtil;
@@ -13,6 +14,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Service
@@ -22,7 +24,7 @@ public class MemberServiceImpl implements MemberService {
     private final JavaMailSender javaMailSender;
 
     @Override
-    public MemberEntity signUp(MemberDto member) throws ExecutionException, InterruptedException {
+    public MemberDto signUp(MemberDto member) throws ExecutionException, InterruptedException {
         if (member.getCalendarId()==null) {
             return memberRepo.signUp(member);
         } else {
@@ -31,59 +33,16 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberEntity signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
+    public MemberDto signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
         return memberRepo.signIn(memberId, pwd);
     }
 
     @Override
-    public MemberEntity findId(String email) throws ExecutionException, InterruptedException {
+    public MemberDto findId(String email) throws ExecutionException, InterruptedException {
         return memberRepo.findId(email);
     }
-
-    @Override
-    public MemberEntity modifyPwd(String memberId, String pwd) throws ExecutionException, InterruptedException {
-        return memberRepo.modifyPwd(memberId, pwd);
-    }
-
-    @Override
-    public MemberEntity getMember(String memberId) throws ExecutionException, InterruptedException {
-        return memberRepo.getMember(memberId);
-    }
-
-    @Override
-    public MemberEntity modifyMember(MemberDto member) throws ExecutionException, InterruptedException {
-        return memberRepo.modifyMember(member);
-    }
-
-    @Override
-    public MemberEntity deleteMember(String memberId) throws ExecutionException, InterruptedException {
-        return memberRepo.deleteMember(memberId);
-    }
-
-    @Override
-    public MemberEntity logout(String memberId) throws ExecutionException, InterruptedException {
-        return memberRepo.logout(memberId);
-    }
-
-    @Override
-    public String createJwt(String memberId, String pwd) {
-        Long expireMs = 1000 * 60 * 60L;
-        return JwtUtil.createJwt(memberId,expireMs);
-    }
-
-    @Override
-    public MemberEntity warnMember(String memberId) throws ExecutionException, InterruptedException {
-        return memberRepo.warnMember(memberId);
-    }
-
-    @Override
-    public MemberEntity blockMember(String memberId) throws ExecutionException, InterruptedException {
-        return memberRepo.blockMember(memberId);
-    }
-
     @Override
     public void findPwd(String memberId, String email) throws ExecutionException, InterruptedException, MessagingException {
-        System.out.println("service호출!");
         /**
          * 링크 사용시 사용
          */
@@ -99,7 +58,6 @@ public class MemberServiceImpl implements MemberService {
 
         memberRepo.findPwd(randomPassword, memberId);
 
-        System.out.println("메일 전송!!!!!");
         MimeMessage message = javaMailSender.createMimeMessage();
         message.setFrom("qwas15788@gmail.com");
         message.setSubject("WePat 임시비밀번호 안내 이메일입니다.", "UTF-8");
@@ -110,18 +68,60 @@ public class MemberServiceImpl implements MemberService {
         message.addRecipient(Message.RecipientType.TO,
                 new InternetAddress(email));
 
-        System.out.println(">>>!!" + message);
         javaMailSender.send(message);
-        System.out.println("success");
     }
 
     @Override
-    public MemberEntity addWarnMember(String memberId, String warnMemberId) throws ExecutionException, InterruptedException {
+    public MemberDto modifyPwd(String memberId, String pwd) throws ExecutionException, InterruptedException {
+        return memberRepo.modifyPwd(memberId, pwd);
+    }
+
+    @Override
+    public MemberDto getMember(String memberId) throws ExecutionException, InterruptedException {
+        return memberRepo.getMember(memberId);
+    }
+
+    @Override
+    public MemberDto modifyMember(String memberId, String nickName) throws ExecutionException, InterruptedException {
+        return memberRepo.modifyMember(memberId, nickName);
+    }
+
+    @Override
+    public ResponseEntity<?> deleteMember(String memberId) throws ExecutionException, InterruptedException {
+        return memberRepo.deleteMember(memberId);
+    }
+
+    @Override
+    public MemberEntity logout(String memberId) throws ExecutionException, InterruptedException {
+        return memberRepo.logout(memberId);
+    }
+
+    @Override
+    public String createJwt(String memberId, String pwd) {
+        Long expireMs = 1000 * 60 * 60L;
+        return JwtUtil.createJwt(memberId,expireMs);
+    }
+
+    @Override
+    public ResponseEntity<?> addWarnMember(String memberId, String warnMemberId) throws ExecutionException, InterruptedException {
         return memberRepo.addWarnMember(memberId, warnMemberId);
     }
 
     @Override
-    public MemberEntity addBlockMember(String memberId, String blockMemberId) throws ExecutionException, InterruptedException {
-        return null;
+    public List<String> warnMember() throws ExecutionException, InterruptedException {
+        return memberRepo.warnMember();
     }
+
+    @Override
+    public ResponseEntity<?> addBlockMember(String blockMemberId) throws ExecutionException, InterruptedException {
+        return memberRepo.addBlockMember(blockMemberId);
+    }
+
+//    @Override
+//    public MemberEntity blockMember(String memberId) throws ExecutionException, InterruptedException {
+//        return memberRepo.blockMember(memberId);
+//    }
+//
+
+
 }
