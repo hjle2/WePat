@@ -50,7 +50,11 @@ public class FileService {
         return inputFiles;
     }
 
-    public void downloadFile(String fileURL, String fileName) {
-        dataBucketUtil.downloadFile(fileURL, fileName);
+    public void downloadFile(String fileName) {
+        dataBucketUtil.downloadFile(fileName);
+    }
+
+    public void deleteFile(String fileName) throws IOException {
+        dataBucketUtil.deleteFile(fileName);
     }
 }

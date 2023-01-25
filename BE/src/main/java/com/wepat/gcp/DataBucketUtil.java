@@ -36,24 +36,28 @@ public class DataBucketUtil {
 
     @Value("${gcp.dir.name}")
     private String gcpDirectoryName;
-
-
+    private Storage storage = null;
+    private Bucket bucket = null;
+    private Storage getStorage() throws IOException {
+        if (this.storage != null) return storage;
+        InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream();
+        StorageOptions storageOptions = StorageOptions.newBuilder().setProjectId(gcpProjectId)
+                .setCredentials(GoogleCredentials.fromStream(inputStream)).build();
+        storage = storageOptions.getService();
+        return storage;
+    }
+    private Bucket getBucket() throws IOException {
+        if (bucket != null) return bucket;
+        bucket = storage.get(gcpBucketId, Storage.BucketGetOption.fields());
+        return bucket;
+    }
     public FileDto uploadFile(MultipartFile multipartFile, String fileName, String contentType) {
 
         try{
             LOGGER.info("Start file uploading process on GCS");
             byte[] fileData = FileUtils.readFileToByteArray(convertFile(multipartFile));
 
-            InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream();
-            LOGGER.info("Get InputStream");
-
-            StorageOptions options = StorageOptions.newBuilder().setProjectId(gcpProjectId)
-                    .setCredentials(GoogleCredentials.fromStream(inputStream)).build();
-            LOGGER.info("Get StorageOptions");
-            Storage storage = options.getService();
-            LOGGER.info("Get Storage");
-            Bucket bucket = storage.get(gcpBucketId, Storage.BucketGetOption.fields());
-            LOGGER.info("Get Bucket");
+            Bucket bucket = getBucket();
 
             RandomString id = new RandomString(6, ThreadLocalRandom.current());
             LOGGER.info("Get RandomString");
@@ -73,23 +77,11 @@ public class DataBucketUtil {
         }
         throw new GCPFileUploadException("An error occurred while storing data to GCS");
     }
-
-    public Blob downloadFile(Storage storage, String fileName) {
-        Blob blob = storage.get(gcpBucketId, fileName);
-        return blob;
-    }
-    public ResponseEntity<?> downloadFile(String fileURL, String fileName) {
-        LOGGER.info("{}, {}", fileURL, fileName);
+    public ResponseEntity<?> downloadFile(String fileName) {
         try{
             LOGGER.info("Start file downloading process on GCS");
 
-            InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream();
-            LOGGER.info("Get InputStream");
-
-            StorageOptions options = StorageOptions.newBuilder().setProjectId(gcpProjectId)
-                    .setCredentials(GoogleCredentials.fromStream(inputStream)).build();
-            LOGGER.info("Get StorageOptions");
-            Storage storage = options.getService();
+            Storage storage = getStorage();
             LOGGER.info("Get Storage");
 
             BlobId blobId = BlobId.of(gcpBucketId, fileName);
@@ -142,21 +134,31 @@ public class DataBucketUtil {
         LOGGER.error("Not a permitted file type");
         throw new InvalidFileTypeException("Not a permitted file type");
     }
-    // fileName : 파일이 다운로드 될 위치 + 파일 이름인 전체 경로
-    public void download(String fileURL, String fileName) {
-        try (BufferedInputStream in = new BufferedInputStream(new URL(fileURL).openStream());
-             FileOutputStream fileOutputStream = new FileOutputStream(fileName)) {
+    public void deleteFile(String fileName) throws IOException {
+        // The ID of your GCP project
+        // String projectId = "your-project-id";
 
-            byte[] dataBuffer = new byte[1024];
-            int bytesRead;
+        // The ID of your GCS bucket
+        // String bucketName = "your-unique-bucket-name";
 
-            while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
-                fileOutputStream.write(dataBuffer, 0, bytesRead);
-            }
-        } catch (MalformedURLException e) {
-            LOGGER.info("MalformedURLException occured!");
-        } catch (IOException e) {
-            LOGGER.info("IOException occured!");
+        // The ID of your GCS object
+        // String objectName = "your-object-name";
+
+        Storage storage = getStorage();
+        Blob blob = storage.get(gcpBucketId, fileName);
+        if (blob == null) {
+            System.out.println("The file " + fileName + " wasn't found in " + gcpBucketId);
+            return;
         }
+
+        // Optional: set a generation-match precondition to avoid potential race
+        // conditions and data corruptions. The request to upload returns a 412 error if
+        // the object's generation number does not match your precondition.
+        Storage.BlobSourceOption precondition =
+                Storage.BlobSourceOption.generationMatch(blob.getGeneration());
+
+        storage.delete(gcpBucketId, fileName, precondition);
+
+        System.out.println("Object " + fileName + " was deleted from " + gcpBucketId);
     }
 }
