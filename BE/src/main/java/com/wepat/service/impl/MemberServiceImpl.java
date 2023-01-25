@@ -22,7 +22,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberDto signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
+    public String signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
         return memberRepo.signIn(memberId, pwd);
     }
 

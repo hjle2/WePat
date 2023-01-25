@@ -8,6 +8,7 @@ import com.wepat.repository.MemberRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import utils.JwtUtil;
 
 import java.util.concurrent.ExecutionException;
 import java.util.List;
@@ -25,7 +26,7 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public MemberDto signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
+    public String signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
         logger.info("signIn called!");
         DocumentReference docRef = collection.document(memberId);
         // asynchronously retrieve the document
@@ -39,8 +40,10 @@ public class MemberRepositoryImpl implements MemberRepository {
             member = document.toObject(MemberDto.class);
         } else {
         }
-        if (member.getPwd().equals(pwd))
-            return member;
+        if (member.getPwd().equals(pwd)) {
+            Long expireMs = 1000 * 60 * 60L;
+            return JwtUtil.createJwt(memberId, expireMs);
+        }
         else
             return null;
     }

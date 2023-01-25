@@ -7,7 +7,7 @@ import java.util.concurrent.ExecutionException;
 
 public interface MemberRepository {
     MemberDto signUp(MemberDto member) throws ExecutionException, InterruptedException;
-    MemberDto signIn(String memberId, String pwd) throws ExecutionException, InterruptedException;
+    String signIn(String memberId, String pwd) throws ExecutionException, InterruptedException;
     MemberDto findId(String email) throws ExecutionException, InterruptedException;
     MemberDto modifyPwd(String memberId, String pwd) throws ExecutionException, InterruptedException ;
     MemberDto getMember(String memberId) throws ExecutionException, InterruptedException;

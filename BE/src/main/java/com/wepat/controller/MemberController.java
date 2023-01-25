@@ -40,7 +40,7 @@ public class MemberController {
     @PostMapping("signin")
     @ApiOperation(value = "로그인 시도",  notes = "로그인 요청을 한다.",response = MemberDto.class)
     public ResponseEntity<?> signIn(String memberId, String pwd) {
-        MemberDto memberResult = null;
+        String memberResult = null;
         logger.info("signIn called!");
         try {
             memberResult = memberService.signIn(memberId, pwd);
@@ -52,7 +52,7 @@ public class MemberController {
             System.out.println("e2");
             throw new RuntimeException(e);
         }
-        return new ResponseEntity<MemberDto>(memberResult, HttpStatus.OK);
+        return new ResponseEntity<String>(memberResult, HttpStatus.OK);
     }
     @PostMapping("findid")
     @ApiOperation(value = "아이디 찾기", notes = "이메일을 확인하여 해당 아이디 제공", response = String.class)
