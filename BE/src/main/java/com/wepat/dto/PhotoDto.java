@@ -2,11 +2,15 @@ package com.wepat.dto;
 
 import io.swagger.annotations.ApiParam;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
 public class PhotoDto {
 
     @ApiParam(value = "업로드한 사용자ID")
@@ -16,11 +20,16 @@ public class PhotoDto {
     @ApiParam(value = "댓글Dto 리스트")
     private List<CommentDto> commentList;
     @ApiParam(value = "SNS 등록 여부")
-    private boolean isOnSNS;
+    private boolean sns;
     @ApiParam(value = "좋아요 수")
     private int like;
     @ApiParam(value = "신고자 명단")
     private List<String> reportIdList;
     @ApiParam(value = "등록일")
-    private Timestamp date;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate date;
+
+    public boolean getSns() {
+        return sns;
+    }
 }

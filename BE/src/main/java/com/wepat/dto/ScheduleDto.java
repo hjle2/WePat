@@ -2,11 +2,15 @@ package com.wepat.dto;
 
 import io.swagger.annotations.ApiParam;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
 public class ScheduleDto {
     @ApiParam(value = "스케쥴 이름")
     private String title;
@@ -15,11 +19,17 @@ public class ScheduleDto {
     @ApiParam(value = "반복여부")
     private boolean isRepeated;
     @ApiParam(value = "일정 시작일")
-    private Timestamp startDate;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate startDate;
     @ApiParam(value = "일정 종료일")
-    private Timestamp endDate;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate endDate;
+    @ApiParam(value = "일정 수행 날짜")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate date;
     @ApiParam(value = "일정 작성일")
-    private Timestamp writtenDate;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate writtenDate;
     @ApiParam(value = "일정 수행 여부")
     private boolean isCompleted = false;
     @ApiParam(value = "반복 주기")
@@ -32,6 +42,6 @@ public class ScheduleDto {
     private String memo;
     @ApiParam(value = "사진ID 리스트")
     private List<String> photoList;
-    @ApiParam(value = "댓글Dto 리스트")
-    private List<CommentDto> reviewList;
+    @ApiParam(value = "댓글 리스트")
+    private List<CommentDto> commandList;
 }

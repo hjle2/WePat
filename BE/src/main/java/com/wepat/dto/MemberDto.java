@@ -19,10 +19,6 @@ public class MemberDto {
     private String nickName;
     @ApiParam(value = "사용자 E-mail", required = true)
     private String email;
-    @ApiParam(value = "사용자의 달력 ID")
+    @ApiParam(value = "CalendarId")
     private String calendarId;
-    @ApiParam(value = "신고한 회원 목록")
-    private List<String> warnMemberList;
-    @ApiParam(value = "차단한 계정")
-    private List<String> blockMemberList;
 }

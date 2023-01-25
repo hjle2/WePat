@@ -1,60 +1,36 @@
 package com.wepat.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.wepat.dto.MemberDto;
 import io.swagger.annotations.ApiParam;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.security.core.GrantedAuthority;
+import lombok.NoArgsConstructor;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
-public class MemberEntity implements MemberDetails {
-    @ApiParam(value = "사용자 PK", required = true)
-    private String docId;
-    @ApiParam(value = "사용자 ID", required = true)
-    private String memberId;
-    @ApiParam(value = "사용자 E-mail", required = true)
-    private String email;
+@NoArgsConstructor
+@AllArgsConstructor
+public class MemberEntity {
+    public MemberEntity(MemberDto member) {
+        this.pwd = member.getPwd();
+        this.nickName = member.getNickName();
+        this.email = member.getEmail();
+        this.calendarId = member.getCalendarId();
+        this.warnMemberList = new ArrayList<>();
+        this.blockMemberList = new ArrayList<>();
+    }
+    @ApiParam(value = "사용자 비밀번호", required = true)
+    private String pwd;
     @ApiParam(value = "사용자 이름", required = true)
     private String nickName;
-    @ApiParam(value = "사용자 비밀번호", required = true)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String pwd;
+    @ApiParam(value = "사용자 E-mail", required = true)
+    private String email;
     @ApiParam(value = "사용자의 달력 ID")
     private String calendarId;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
-    }
-
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Override
-    public String getPassword() {
-        return pwd;
-    }
-
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Override
-    public String getMemberName() {
-        return memberId;
-    }
-
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Override
-    public boolean isCredentialNonExpired() {
-        return true;
-    }
-
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
+    @ApiParam(value = "신고한 회원 목록")
+    private List<String> warnMemberList;
+    @ApiParam(value = "차단한 계정")
+    private List<String> blockMemberList;
 }
