@@ -1,4 +1,4 @@
-package com.wepat.config;
+package com.wepat.config.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

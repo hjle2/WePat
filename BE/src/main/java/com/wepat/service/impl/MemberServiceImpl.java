@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import utils.JwtUtil;
 
 import java.util.concurrent.ExecutionException;
 
@@ -22,7 +23,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public String signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
+    public MemberDto signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
         return memberRepo.signIn(memberId, pwd);
     }
 
@@ -54,6 +55,12 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberDto logout(String memberId) throws ExecutionException, InterruptedException {
         return memberRepo.logout(memberId);
+    }
+
+    @Override
+    public String createJwt(String memberId, String pwd) throws ExecutionException, InterruptedException {
+        Long expireMs = 1000 * 60 * 60L;
+        return JwtUtil.createJwt(memberId,expireMs);
     }
 
     @Override

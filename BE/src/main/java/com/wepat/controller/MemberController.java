@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import utils.JwtUtil;
 
 import java.util.concurrent.ExecutionException;
 
@@ -40,10 +41,14 @@ public class MemberController {
     @PostMapping("signin")
     @ApiOperation(value = "로그인 시도",  notes = "로그인 요청을 한다.",response = MemberDto.class)
     public ResponseEntity<?> signIn(String memberId, String pwd) {
-        String memberResult = null;
+        MemberDto memberResult = null;
+        String memberToken=null;
         logger.info("signIn called!");
         try {
             memberResult = memberService.signIn(memberId, pwd);
+            if(memberResult!=null){//로그인에서 객체를 받아왔다.
+                memberToken=memberService.createJwt(memberId, pwd);
+            }
             System.out.println(memberResult);
         } catch (ExecutionException e) {
             System.out.println("e1");
@@ -52,7 +57,7 @@ public class MemberController {
             System.out.println("e2");
             throw new RuntimeException(e);
         }
-        return new ResponseEntity<String>(memberResult, HttpStatus.OK);
+        return new ResponseEntity<String>(memberToken, HttpStatus.OK);
     }
     @PostMapping("findid")
     @ApiOperation(value = "아이디 찾기", notes = "이메일을 확인하여 해당 아이디 제공", response = String.class)
