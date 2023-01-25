@@ -193,7 +193,6 @@ public class MemberController {
         MemberEntity memberResult = null;
         try {
             memberResult = memberService.blockMember(memberId);
-            System.out.println("controller block >> " + memberResult);
             return new ResponseEntity<MemberEntity>(memberResult, HttpStatus.OK);
         } catch (ExecutionException e) {
             e.printStackTrace();
