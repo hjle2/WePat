@@ -1,6 +1,8 @@
 package com.wepat.controller;
 
+import com.wepat.dto.WeightDto;
 import com.wepat.exception.member.NotExistCalendarException;
+import com.wepat.exception.pet.NotExistPet;
 import com.wepat.service.PetService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -26,10 +28,10 @@ public class PetController {
 
     @PostMapping("/add")
     @ApiOperation(value = "반려동물 추가")
-    public ResponseEntity<?> addPet(String calendarId, PetDto petDto) {
+    public ResponseEntity<?> addPet(PetDto petDto) {
         System.out.println(">>>>>>>>>>.. 컨트롤러 호출!!");
         try {
-            return new ResponseEntity<>(petService.addPet(calendarId, petDto), HttpStatus.OK);
+            return new ResponseEntity<>(petService.addPet(petDto), HttpStatus.OK);
         } catch (NotExistCalendarException e) {
             throw new NotExistCalendarException(e.getMessage());
         } catch (Exception e) {
@@ -37,47 +39,52 @@ public class PetController {
         }
     }
 
-    @GetMapping("/{calendarid}")
-    @ApiOperation(value = "반려동물 상세페이지")
+    @GetMapping("/all/{calendarid}")
+    @ApiOperation(value = "등록된 모든 반려동물")
     public ResponseEntity<?> getAllPet(@PathVariable("calendarid") String calendarId) {
         try {
-            List<PetDto> petList = petService.getAllPet(calendarId);
-        } catch (ExecutionException e) {
-        } catch (InterruptedException e) {
+            return new ResponseEntity<>(petService.getAllPet(calendarId), HttpStatus.OK);
+        } catch (Exception e) {
+            throw new RuntimeException();
         }
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/{petid}")
     @ApiOperation(value = "반려동물 상세페이지")
     public ResponseEntity<?> getPet(@PathVariable("petid") String petId) {
         try {
-            PetDto pet = petService.getPet(petId);
-        } catch (ExecutionException e) {
-        } catch (InterruptedException e) {
+            return new ResponseEntity<>(petService.getPet(petId), HttpStatus.OK);
+        } catch (NotExistPet e) {
+            throw new NotExistPet(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException();
         }
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/{petid}/{weight}")
+    @PutMapping("/add/weight")
     @ApiOperation(value = "몸무게 추가")
-    public ResponseEntity<?> addPetWeight(@PathVariable("petid") String petId, @PathVariable double weight) {
+    public ResponseEntity<?> addPetWeight(String petId, WeightDto weightDto) {
         try {
-            PetDto pet = petService.addPetWeight(petId, weight);
-        } catch (ExecutionException e) {
-        } catch (InterruptedException e) {
+            return new ResponseEntity<>(petService.addPetWeight(petId, weightDto), HttpStatus.OK);
+        } catch (NotExistPet e) {
+            throw new NotExistPet(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException();
         }
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{calendarid}/{petid}")
     @ApiOperation(value = "반려동물 삭제")
-    public ResponseEntity deletePet(@PathVariable("calendarid") String calendarId, @PathVariable("petid") String petId) {
+    public ResponseEntity<?> deletePet(@PathVariable("calendarid") String calendarId, @PathVariable("petid") String petId) {
         try {
-            PetDto pet = petService.deletePet(calendarId, petId);
-        } catch (ExecutionException e) {
-        } catch (InterruptedException e) {
+            return new ResponseEntity<>(petService.deletePet(calendarId, petId), HttpStatus.OK);
+        } catch (NotExistPet e) {
+            throw new NotExistPet(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException();
         }
-        return new ResponseEntity<>(HttpStatus.OK);
     }
+
+
+
 }

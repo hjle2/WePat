@@ -17,16 +17,22 @@ import java.util.List;
 @AllArgsConstructor
 public class PetEntity {
     public PetEntity(PetDto pet) {
+        this.calendarId = pet.getCalendarId();
+        this.petId = pet.getPetId();
         this.name = pet.getName();
         this.animalType = pet.getAnimalType();
         this.age = pet.getAge();
         this.photoURL = pet.getPhotoURL();
         this.color = pet.getColor();
-        this.birthday = Timestamp.valueOf(pet.getBirthday().atStartOfDay());
-        this.adaptday = Timestamp.valueOf(pet.getAdaptday().atStartOfDay());
+        this.birthday = pet.getBirthday();
+        this.adaptday = pet.getAdaptday();
         this.schedule = new ArrayList<>();
         this.weightList = new ArrayList<>();
     }
+    @ApiParam(value = "캘린더 ID")
+    private String calendarId;
+    @ApiParam(value = "반려동물 ID")
+    private String petId;
     @ApiParam(value = "반려동물 이름")
     private String name;
     @ApiParam(value = "동물 종류")
@@ -38,13 +44,9 @@ public class PetEntity {
     @ApiParam(value = "프로필 색상")
     private String color;
     @ApiParam(value = "반려동물 생일")
-//    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private Timestamp birthday;
-//    private LocalDate birthday;
+    private String birthday;
     @ApiParam(value = "반려동물 입양일")
-    private Timestamp adaptday;
-//    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-//    private LocalDate adaptday;
+    private String adaptday;
     @ApiParam(value = "스캐줄ID 리스트")
     private List<String> schedule;
     @ApiParam(value = "몸무게 정보(Dto) 리스트")

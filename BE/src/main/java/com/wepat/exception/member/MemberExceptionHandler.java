@@ -1,6 +1,7 @@
 package com.wepat.exception.member;
 
 import com.wepat.controller.MemberController;
+import com.wepat.controller.PetController;
 import com.wepat.exception.ErrorDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

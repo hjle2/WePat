@@ -1,12 +1,14 @@
 package com.wepat.service.impl;
 
 import com.wepat.dto.PetDto;
-import com.wepat.repository.CalendarRepository;
+import com.wepat.dto.WeightDto;
+import com.wepat.entity.PetEntity;
 import com.wepat.repository.PetRepository;
 import com.wepat.service.PetService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -17,8 +19,9 @@ public class PetServiceImpl implements PetService {
     private final PetRepository petRepo;
 
     @Override
-    public PetDto addPet(String calendarId, PetDto pet) throws ExecutionException, InterruptedException {
-        return petRepo.addPet(calendarId, pet);
+    @Transactional
+    public PetDto addPet(PetDto pet) throws ExecutionException, InterruptedException {
+        return petRepo.addPet(pet);
     }
 
     @Override
@@ -37,12 +40,13 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public PetDto addPetWeight(String petId, double weight) throws ExecutionException, InterruptedException {
-        return petRepo.addPetWeight(petId, weight);
+    public PetEntity addPetWeight(String petId, WeightDto weightDto) throws ExecutionException, InterruptedException {
+        return petRepo.addPetWeight(petId, weightDto);
     }
 
     @Override
-    public PetDto deletePet(String CalendarId, String petId) throws ExecutionException, InterruptedException {
+    public ResponseEntity<?> deletePet(String CalendarId, String petId) throws ExecutionException, InterruptedException {
         return petRepo.deletePet(CalendarId, petId);
     }
+
 }
