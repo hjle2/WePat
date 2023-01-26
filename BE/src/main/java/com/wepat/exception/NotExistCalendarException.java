@@ -1,4 +1,4 @@
-package com.wepat.exception.member;
+package com.wepat.exception;
 
 public class NotExistCalendarException extends RuntimeException{
     public NotExistCalendarException() {

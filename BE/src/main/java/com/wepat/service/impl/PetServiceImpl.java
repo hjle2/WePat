@@ -3,6 +3,7 @@ package com.wepat.service.impl;
 import com.wepat.dto.PetDto;
 import com.wepat.dto.WeightDto;
 import com.wepat.entity.PetEntity;
+import com.wepat.exception.NotExistPet;
 import com.wepat.repository.PetRepository;
 import com.wepat.service.PetService;
 import lombok.RequiredArgsConstructor;

@@ -1,22 +1,18 @@
 package com.wepat.controller;
 
 import com.wepat.dto.WeightDto;
-import com.wepat.exception.member.NotExistCalendarException;
-import com.wepat.exception.pet.NotExistPet;
+import com.wepat.exception.NotExistCalendarException;
+import com.wepat.exception.NotExistPet;
 import com.wepat.service.PetService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.wepat.dto.PetDto;
 import io.swagger.annotations.ApiOperation;
-
-import java.util.concurrent.ExecutionException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/pet")
@@ -84,7 +80,5 @@ public class PetController {
             throw new RuntimeException();
         }
     }
-
-
 
 }

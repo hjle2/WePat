@@ -6,6 +6,7 @@ import com.google.firebase.cloud.FirestoreClient;
 import com.wepat.dto.MemberDto;
 import com.wepat.entity.CalendarEntity;
 import com.wepat.entity.MemberEntity;
+import com.wepat.exception.NotExistCalendarException;
 import com.wepat.exception.member.*;
 import com.wepat.repository.MemberRepository;
 import org.slf4j.Logger;

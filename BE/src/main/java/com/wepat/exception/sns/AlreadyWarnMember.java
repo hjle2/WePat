@@ -1,4 +1,4 @@
-package com.wepat.exception.member;
+package com.wepat.exception.sns;
 
 public class AlreadyWarnMember extends RuntimeException {
     public AlreadyWarnMember() {

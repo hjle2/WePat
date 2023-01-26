@@ -2,23 +2,18 @@ package com.wepat.controller;
 
 import com.wepat.dto.MemberDto;
 import com.wepat.entity.MemberEntity;
+import com.wepat.exception.NotExistCalendarException;
 import com.wepat.exception.member.*;
 import com.wepat.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.apache.http.HttpResponse;
-import org.apache.http.protocol.HTTP;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import utils.JwtUtil;
 
-import javax.mail.MessagingException;
-import java.io.UnsupportedEncodingException;
 import java.util.concurrent.ExecutionException;
 
 @RestController

@@ -7,8 +7,8 @@ import com.wepat.dto.PetDto;
 import com.wepat.dto.WeightDto;
 import com.wepat.entity.CalendarEntity;
 import com.wepat.entity.PetEntity;
-import com.wepat.exception.member.NotExistCalendarException;
-import com.wepat.exception.pet.NotExistPet;
+import com.wepat.exception.NotExistCalendarException;
+import com.wepat.exception.NotExistPet;
 import com.wepat.repository.MemberRepository;
 import com.wepat.repository.PetRepository;
 import org.slf4j.Logger;
@@ -154,4 +154,5 @@ public class PetRepositoryImpl implements PetRepository {
             throw new NotExistPet("등록되지 않은 반려동물입니다!");
         }
     }
+
 }

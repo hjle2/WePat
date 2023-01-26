@@ -1,4 +1,4 @@
-package com.wepat.exception.pet;
+package com.wepat.exception;
 
 public class NotExistPet extends RuntimeException {
     public NotExistPet() {
