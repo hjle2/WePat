@@ -1,93 +1,81 @@
 <script>
-import { defineComponent } from "vue"
 import FullCalendar from "@fullcalendar/vue3"
 import dayGridPlugin from "@fullcalendar/daygrid"
-import timeGridPlugin from "@fullcalendar/timegrid"
 import interactionPlugin from "@fullcalendar/interaction"
-import { INITIAL_EVENTS, createEventId } from "./event-utils"
+import timeGridPlugin from "@fullcalendar/timegrid"
+import AddTodoView from "@/views/mainpage/AddTodoView.vue"
 
-export default defineComponent({
+export default {
   components: {
-    FullCalendar,
+    FullCalendar, // make the <FullCalendar> tag available
   },
-  data() {
+  data: function () {
     return {
       calendarOptions: {
-        plugins: [
-          dayGridPlugin,
-          timeGridPlugin,
-          interactionPlugin, // needed for dateClick
-        ],
+        plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin],
+        locale: "ko",
         headerToolbar: {
-          left: "prev today",
-          center: "title",
-          right: "next",
+          left: "today",
+          center: "prev title next",
+          right: "addevent",
         },
         initialView: "dayGridMonth",
-        initialEvents: INITIAL_EVENTS, // alternatively, use the `events` setting to fetch from a feed
-        editable: true,
         selectable: true,
-        selectMirror: true,
-        dayMaxEvents: true,
+        selectHelper: true,
+        select: this.addEvent,
+        editable: true,
         weekends: true,
-        select: this.handleDateSelect,
-        eventClick: this.handleEventClick,
-        eventsSet: this.handleEvents,
-        /* you can update a remote database when these fire:
-        eventAdd:
-        eventChange:
-        eventRemove:
-        */
+        buttonIcons: true,
+        navLinks: true,
+        dayMaxEvents: false,
+        customButtons: {
+          addevent: {
+            img: "@/assets/add_todo.png",
+            text: "일정 추가",
+            click: function () {
+              // addEvent2
+              // console.log(document.addEvent2)
+              alert("clicked custom button 1!")
+            },
+          },
+        },
+        events: [
+          // { title: 'Meeting', start: new Date() }
+        ],
       },
-      currentEvents: [],
     }
   },
-  methods: {
-    handleWeekendsToggle() {
-      this.calendarOptions.weekends = !this.calendarOptions.weekends // update a property
-    },
-    handleDateSelect(selectInfo) {
-      let title = prompt("Please enter a new title for your event")
-      let calendarApi = selectInfo.view.calendar
-
-      calendarApi.unselect() // clear date selection
-
-      if (title) {
-        calendarApi.addEvent({
-          id: createEventId(),
-          title,
-          start: selectInfo.startStr,
-          end: selectInfo.endStr,
-          allDay: selectInfo.allDay,
-        })
-      }
-    },
-    handleEventClick(clickInfo) {
-      if (
-        confirm(
-          `Are you sure you want to delete the event '${clickInfo.event.title}'`
-        )
-      ) {
-        clickInfo.event.remove()
-      }
-    },
-    handleEvents(events) {
-      this.currentEvents = events
-    },
+  computed: {
+    // addEvent2() {
+    //   return this.addEvent1()
+    // },
   },
-})
+  methods: {
+    addEvent(start) {
+      // let startday = this.date
+      // console.log(todayStr)
+      this.$router.push({
+        name: AddTodoView,
+        params: { calendarid: "aaa", start: start.startStr, end: start.endStr },
+      })
+    },
+    // addEvent1() {
+    //   // let startday = this.date
+    //   // console.log(todayStr)
+    //   this.$router.push({
+    //     name: AddTodoView,
+    //     params: { calendarid: "aaa" },
+    //   })
+    // },
+  },
+}
 </script>
 
 <template>
-  <div class="app">
-    <div class="app-main">
-      <FullCalendar class="app-calendar" :options="calendarOptions">
-        <template v-slot:eventContent="arg">
-          <b>{{ arg.timeText }}</b>
-          <i>{{ arg.event.title }}</i>
-        </template>
-      </FullCalendar>
-    </div>
+  <FullCalendar :options="calendarOptions" id="calendar" />
+
+  <div id="calendar-container">
+    <div id="calendar"></div>
   </div>
 </template>
 
@@ -128,5 +116,52 @@ b {
   /* the calendar root */
   max-width: 1100px;
   margin: 0 auto;
+}
+
+/* 일요일 날짜 빨간색 */
+.fc-day-sun a {
+  color: red;
+  text-decoration: none;
+}
+
+/* 토요일 날짜 파란색 */
+.fc-day-sat a {
+  color: blue;
+  text-decoration: none;
+}
+
+:root {
+  --fc-small-font-size: 0.85em;
+  --fc-page-bg-color: #fff;
+  --fc-neutral-bg-color: rgba(208, 208, 208, 0.3);
+  --fc-neutral-text-color: #808080;
+  --fc-border-color: #ddd;
+
+  --fc-button-text-color: #fff;
+  --fc-button-bg-color: #d57412;
+  --fc-button-border-color: #;
+  --fc-button-hover-bg-color: #1a252f;
+  --fc-button-hover-border-color: #1a252f;
+  --fc-button-active-bg-color: #1a252f;
+  --fc-button-active-border-color: #151e27;
+
+  --fc-event-bg-color: #3788d8;
+  --fc-event-border-color: #3788d8;
+  --fc-event-text-color: #fff;
+  --fc-event-selected-overlay-color: rgba(0, 0, 0, 0.25);
+
+  --fc-more-link-bg-color: #d0d0d0;
+  --fc-more-link-text-color: inherit;
+
+  --fc-event-resizer-thickness: 8px;
+  --fc-event-resizer-dot-total-width: 8px;
+  --fc-event-resizer-dot-border-width: 1px;
+
+  --fc-non-business-color: rgba(215, 215, 215, 0.3);
+  --fc-bg-event-color: rgb(143, 223, 130);
+  --fc-bg-event-opacity: 0.3;
+  --fc-highlight-color: rgba(188, 232, 241, 0.3);
+  --fc-today-bg-color: rgba(255, 220, 40, 0.15);
+  --fc-now-indicator-color: red;
 }
 </style>

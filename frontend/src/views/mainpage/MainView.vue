@@ -1,7 +1,6 @@
 <template>
   <p>55 메인페이지 아인교</p>
-  <p>{{ UserNickName }}의 캘린더 아잉교</p>
-  <div @click="LogOut">로그아웃</div>
+  <p>{{ NickName }}의 캘린더 아잉교</p>
   <br />
   <MainCalendar/>
   <TodoList/>
@@ -32,12 +31,13 @@ import MainCalendar from "@/components/mainpage/MainCalendar.vue"
 import TodoList from "@/components/mainpage/TodoList.vue"
 import PetIcon from "@/components/mainpage/PetIcon.vue";
 import BottomNavbar1 from "@/components/common/BottomNavbar1.vue";
+import axios from "axios"
 
 export default {
   name: "MainView",
   data() {
     return {
-      UserNickName: null,
+      NickName: null,
     }
   },
   components: {
@@ -47,29 +47,32 @@ export default {
     BottomNavbar1
   },
   computed: {
-    isLogin() {
-      return this.$store.getters.isLogin
-    }
-  },
-  methods: {
-    LoginCheck() {
-      console.log(this.isLogin)
-      if (this.isLogin) {
-        console.log('로그인 되어 있음.')
-        this.UserNickName = localStorage.getItem("NICKNAME")
-      }
-      else {
-        alert('로그인이 되어있지 않습니다. 로그인 페이지로 이동합니다.')
-        this.$router.replace({ path: '/' })
-      }
-    },
-    LogOut() {
-      this.$store.dispatch('logOut')
-    },
 
   },
+  methods: {
+    getNickname() {
+      axios({
+          method: 'get',
+          url: `http://70.12.247.124:8080/member/${localStorage.getItem("memberId")}`,
+          headers: {Authorization: this.$store.state.accessToken},
+        })
+        .then((res) => {
+          this.NickName = res.data.nickName
+        })
+        .catch((err) => {
+              console.log(err)
+              console.log(err.response.status)
+              if (err.response.status === 401) {
+                if (localStorage.getItem("token")) {
+                  this.$store.dispatch('refresh', localStorage.getItem("token"))
+                  this.dispatch('getNickname')
+                }
+              }
+            })
+    }
+  },
   created() {
-    this.LoginCheck()
+    this.getNickname()
   }
   
 }

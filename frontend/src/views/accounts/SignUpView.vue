@@ -1,9 +1,12 @@
 <template>
+<div>
   <div> <span>Email</span> <input type="text" v-model="email">
   </div>
   <div> <span>Id</span> <input type="text" v-model="memberId">
   </div>
   <div> <span>nickName</span> <input type="text" v-model="nickName">
+  </div>
+  <div> <span>캘린더 초대코드</span> <input type="text" v-model="calenderId">
   </div>
   <div> <span>Password</span> <input type="password" v-model="pwd">
   </div>
@@ -13,6 +16,7 @@
       <button>약관동의 보기</button>
   </router-link>
       <button @click="signUp()">가입하기</button>
+</div>
 </template>
 
 <script>
@@ -22,6 +26,7 @@ export default {
     email:"",
     memberId:"",
     nickName:"",
+    calenderId:"",
     pwd:"",
     pwd2:"",
     }
@@ -35,10 +40,11 @@ export default {
         const email = this.email
         const memberId = this.memberId
         const nickName = this.nickName
+        const calendarId = this. calendarId
         const pwd = this.pwd
 
         const payload = {
-          email, memberId, nickName, pwd
+          email, memberId, nickName, calendarId, pwd
         }
         this.$store.dispatch('signUp', payload)
       }

@@ -25,15 +25,18 @@ import SignUpView from "@/views/accounts/SignUpView.vue"
 import AgreeView from "@/views/accounts/AgreeView.vue"
 import FindIdView from "@/views/accounts/FindIdView.vue"
 import FindPwView from "@/views/accounts/FindPwView.vue"
+import PageNotFound from "@/views/errors/404View.vue"
+import PetUpdateView from "@/views/petprofile/PetUpdateView.vue"
+
 
 // 라우터 설계
 const routes = [
   { path: "/mainpage", name: MainView, component: MainView },
-  { path: "/todo/add", name : AddTodoView, component: AddTodoView },
+  { path: "/calendar/add/:calendarid", name : AddTodoView, component: AddTodoView },
   { path: "/alarm", name : AlarmView, component: AlarmView },
   { path: "/todo/detail", name : DetailTodoView, component: DetailTodoView },
   { path: "/todo/update", name : UpdateTodoView, component: UpdateTodoView },
-  { path: "/petprofile", name : PetProfileView, component: PetProfileView },
+  { path: "/petprofile/:id", name : PetProfileView, component: PetProfileView },
   { path: "/financial", name : FinancialView, component: FinancialView },
   { path: "/financial/add", name : PlusFinancialView, component: PlusFinancialView },
   { path: "/sns", name : SnsView, component: SnsView },
@@ -52,6 +55,10 @@ const routes = [
   { path: "/agree", name : AgreeView, component: AgreeView },
   { path: "/findid", name : FindIdView, component: FindIdView },
   { path: "/findpw", name : FindPwView, component: FindPwView },
+  { path: "/404", name : PageNotFound, component: PageNotFound },
+
+  { path: '/:pathMatch(.*)*', redirect: "/404"},
+  { path: "/petupdate/:id", name : PetUpdateView, component: PetUpdateView },
   
 ]
 

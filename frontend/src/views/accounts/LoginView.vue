@@ -1,8 +1,8 @@
 <template>
   <div>
     <form @submit.prevent="logIn">
-      <label class="inputText" @keyup.enter="logIn" for="memberId"> ID :  </label> <input class="input inputLogin" type="text" id="memberId" v-model="memberId"><br>
-      <label class="inputText" @keyup.enter="logIn" for="pwd"> PW :  </label> <input class="input inputLogin" type="pwd" id="pwd" v-model="pwd"><br>
+      <label class="inputText" @keyup.enter="logIn" for="memberId"> ID :  </label> <input type="text" id="memberId" v-model="memberId"><br>
+      <label class="inputText" @keyup.enter="logIn" for="pwd"> PW :  </label> <input type="password" id="pwd" v-model="pwd"><br>
       <button type="submit" >로그인</button>
     </form>
   <br /> 
@@ -21,6 +21,14 @@
 </template>
 
 <script>
+// import anime from 'animejs/lib/anime.es.js'
+// anime({
+//   targets: 'div',
+//   translateX: 250,
+//   rotate: '1turn',
+//   backgroundColor: '#FFF',
+//   duration: 800
+// })
 export default {
   name: 'LoginView',
   data() {
@@ -71,4 +79,5 @@ export default {
 </script>
 
 <style>
+
 </style>
