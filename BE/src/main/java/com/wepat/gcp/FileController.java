@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -17,14 +18,21 @@ public class FileController {
     private final FileService fileService;
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public List<InputFile> addFile(@RequestParam("files")MultipartFile[] files) {
-        LOGGER.info("Call addFile API");
+    public List<InputFile> uploadFile(@RequestParam("files")MultipartFile[] files) {
         return fileService.uploadFiles(files);
     }
 
     @GetMapping
-    public void getFile(String fileURL, String fileName) {
-        LOGGER.info("Call getFile API");
-        fileService.downloadFile(fileURL, fileName);
+    public void downloadFile(String fileName) {
+        fileService.downloadFile(fileName);
+    }
+
+    @DeleteMapping
+    public void deleteFile(String fileName) {
+        try {
+            fileService.deleteFile(fileName);
+        } catch (IOException e) {
+
+        }
     }
 }

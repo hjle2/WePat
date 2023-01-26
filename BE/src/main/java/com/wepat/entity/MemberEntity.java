@@ -20,6 +20,7 @@ public class MemberEntity {
         this.calendarId = member.getCalendarId();
         this.warnMemberList = new ArrayList<>();
         this.blockMemberList = new ArrayList<>();
+        this.refreshToken = member.getRefreshToken();
     }
     @ApiParam(value = "사용자 비밀번호", required = true)
     private String pwd;
@@ -33,4 +34,6 @@ public class MemberEntity {
     private List<String> warnMemberList;
     @ApiParam(value = "차단한 계정")
     private List<String> blockMemberList;
+    @ApiParam(value = "리프레쉬 토큰")
+    private String refreshToken;
 }

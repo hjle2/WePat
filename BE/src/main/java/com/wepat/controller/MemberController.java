@@ -18,7 +18,10 @@ import org.springframework.web.bind.annotation.*;
 import utils.JwtUtil;
 
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -48,10 +51,17 @@ public class MemberController {
     @ApiOperation(value = "로그인 시도",  notes = "로그인 요청을 한다.",response = MemberDto.class)
     public ResponseEntity<?> signIn(String memberId, String pwd) {
         try {
-            MemberEntity memberResult = memberService.signIn(memberId, pwd);
-            if(memberResult!=null){//로그인에서 객체를 받아왔다.
-                String memberToken = memberService.createJwt(memberId, pwd);
-                return new ResponseEntity<String>(memberToken, HttpStatus.OK);
+            MemberEntity memberResult = memberService.signIn(memberId, pwd);//유저가 로그인 가능한 유저인지 확인
+            String accessToken = null;
+            String refreshToken = null;//유저가 로그인 되면 토큰을 생성하여 저장할 String
+            if(memberResult != null){//로그인에서 객체를 받아왔다.
+                accessToken = memberService.createAccessToken(memberId);//유저 AT를 생성
+                refreshToken = memberService.createRefreshToken(memberId);//우저 RT를 생성
+                System.out.println("controller: "+refreshToken);
+                logger.info("controller: "+refreshToken);
+                memberService.saveRefreshToken(memberId , refreshToken);//
+                String[] tokens=new String[]{accessToken,refreshToken};
+                return new ResponseEntity<String[]>(tokens, HttpStatus.OK);
             }
 //            return memberService.signIn(memberId, pwd);
         } catch (IdWriteException e) {
@@ -66,6 +76,41 @@ public class MemberController {
         }
         return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
     }
+
+    @PostMapping("/refresh")
+    public String refreshToken(String memberId, HttpServletRequest request)
+            throws Exception {
+        logger.info("리프레쉬 들어감~~~~~");
+        String token = request.getHeader("refresh-token");
+        if (JwtUtil.checkToken(token)) {//RT 만료 여부 확인
+            //RT가 유효하면 RT를 이용해 AT 재발급
+            if (token.equals(memberService.getRefreshToken(memberId))){
+                String accessToken = memberService.createAccessToken(memberId);
+                return accessToken;
+            }
+        } else {
+            //RT도 만료되면 재인증 필요
+            logger.debug("리프레쉬토큰도 만료됨");
+        }
+    return null;
+    }
+
+    @GetMapping("/logout/{memberid}")
+    @ApiOperation(value = "로그아웃", notes = "현재 로그인되어있는 사용자 로그아웃", response = HttpResponse.class)
+    public ResponseEntity<?> logout(@PathVariable("memberid") String refreshToken) {
+        MemberEntity memberResult = null;
+        try {
+            memberResult = memberService.logout(refreshToken);
+            return new ResponseEntity<MemberEntity>(memberResult, HttpStatus.OK);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PostMapping("/findid")
     @ApiOperation(value = "아이디 찾기", notes = "이메일을 확인하여 해당 아이디 제공", response = String.class)
     public MemberEntity findId(String email) {
@@ -90,17 +135,7 @@ public class MemberController {
             throw new RuntimeException();
         }
     }
-    @PutMapping("modifypwd")
-    @ApiOperation(value = "비밀번호 변경", response = HttpResponse.class)
-    public MemberEntity modifyPwd(String memberId, String pwd) {
-        try {
-            return memberService.modifyPwd(memberId, pwd);
-        } catch (NotExistMember e) {
-            throw new NotExistMember(e.getMessage());
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
-    }
+
     @GetMapping("/{memberid}")
     @ApiOperation(value = "마이페이지", notes = "현재 로그인되어있는 회원의 정보 조회", response = MemberDto.class)
     public MemberEntity getMember(@PathVariable("memberid") String memberId) {
@@ -112,6 +147,26 @@ public class MemberController {
             throw new RuntimeException();
         }
     }
+
+
+    @PutMapping("modifypwd")
+    public boolean getInfo( HttpServletRequest request) {
+//        try {
+//            return memberService.modifyPwd(memberId, pwd);
+//        } catch (NotExistMember e) {
+//            throw new NotExistMember(e.getMessage());
+//        } catch (Exception e) {
+//            throw new RuntimeException(e.getMessage());
+//        }
+//        if (JwtUtil.checkToken(request.getHeader("Authorization"))) {
+//            logger.info("사용 가능한 토큰!!!");
+//
+//        } else {
+//            logger.error("사용 불가능 토큰!!!");
+//        }
+        return JwtUtil.checkToken(request.getHeader("accessToken")) ;
+    }
+
     @PutMapping("/modify")
     @ApiOperation(value = "회원 정보 수정", notes = "현재 회원의 정보를 수정한다.", response = MemberDto.class)
     public ResponseEntity<?> modifyMember(MemberDto member) {
@@ -143,21 +198,7 @@ public class MemberController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-    @GetMapping("/logout/{memberid}")
-    @ApiOperation(value = "로그아웃", notes = "현재 로그인되어있는 사용자 로그아웃", response = HttpResponse.class)
-    public ResponseEntity<?> logout(@PathVariable("memberid") String memberId) {
-        MemberEntity memberResult = null;
-        try {
-            memberResult = memberService.logout(memberId);
-            return new ResponseEntity<MemberEntity>(memberResult, HttpStatus.OK);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
+
     @GetMapping("/warn/{memberid}")
     @ApiOperation(value = "신고한 회원 목록 조회")
     public ResponseEntity<?> warnMember(@PathVariable("memberid") String memberId) {

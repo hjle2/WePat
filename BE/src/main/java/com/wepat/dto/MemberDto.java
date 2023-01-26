@@ -21,4 +21,6 @@ public class MemberDto {
     private String email;
     @ApiParam(value = "CalendarId")
     private String calendarId;
+    @ApiParam(value = "RefreshToken")
+    private String refreshToken;
 }

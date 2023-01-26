@@ -61,14 +61,40 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberEntity logout(String memberId) throws ExecutionException, InterruptedException {
-        return memberRepo.logout(memberId);
+    public MemberEntity logout(String refreshToken) throws ExecutionException, InterruptedException {
+        return memberRepo.logout(refreshToken);
+    }
+
+
+
+
+    @Override
+    public String createJwt(String memberId, String subject, Long expireMs) {
+
+        return JwtUtil.createJwt(memberId,subject,expireMs);
     }
 
     @Override
-    public String createJwt(String memberId, String pwd) {
-        Long expireMs = 1000 * 60 * 60L;
-        return JwtUtil.createJwt(memberId,expireMs);
+    public String createAccessToken(String memberId) {
+        Long expireMs = 1000*60L;//유지 시간을 3시간(임의)으로 설정
+        return createJwt(memberId,"Access",expireMs);
+    }
+    @Override
+    public String createRefreshToken(String memberId) {
+        Long expireMs = 1000 * 60 * 60*24*365L;//1년간 유지(임의)
+        return createJwt(memberId,"Refresh", expireMs);
+    }
+
+
+
+    @Override
+    public void saveRefreshToken(String memberId, String refreshToken) throws ExecutionException, InterruptedException {
+        memberRepo.saveRefreshToken(memberId,refreshToken);// 일단 킵해두고 member에 RT 컬럼을 추가하는걸로
+    }
+
+    @Override
+    public String getRefreshToken(String memberId) {
+        return memberRepo.getRefreshToken(memberId);
     }
 
     @Override

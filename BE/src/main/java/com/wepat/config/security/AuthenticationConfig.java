@@ -18,12 +18,8 @@ public class AuthenticationConfig {
                 .csrf().disable()
                 .cors().and()
                 .authorizeHttpRequests()
-                //.requestMatchers("/signin").permitAll()//로그인과 회원가입은 인증없이도 가능하게!
-                //.requestMatchers(HttpMethod.POST,"/api/v1/**").authenticated()//로그인 회원가입을 제외한 기능은 인증요청
-//                .mvcMatchers("/signup").permitAll()
-//                .mvcMatchers(HttpMethod.POST,"/mainpage").authenticated()
-                .antMatchers("/signup").permitAll()
-                .antMatchers(HttpMethod.POST,"/mainpage").authenticated()
+                .antMatchers("/mainpage").authenticated()//로그인 회원가입을 제외한 동작은 전부 권한 확인
+                .antMatchers("/signup","/signin").permitAll()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
