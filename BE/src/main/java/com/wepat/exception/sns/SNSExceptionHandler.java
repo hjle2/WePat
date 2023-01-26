@@ -24,10 +24,4 @@ public class SNSExceptionHandler {
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(AlreadyWarnMember.class)
-    public ResponseEntity<?> AlreadyWarnMember(AlreadyWarnMember e) {
-        ErrorDto errorDto = new ErrorDto("AlreadyWarnMember", e.getMessage());
-        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
-    }
-
 }

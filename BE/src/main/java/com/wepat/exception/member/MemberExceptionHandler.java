@@ -54,10 +54,10 @@ public class MemberExceptionHandler {
         return new ResponseEntity<>(errorDto, HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS);
     }
 
-    @ExceptionHandler(MessageError.class)
+    @ExceptionHandler(AlreadyWarnMember.class)
     public ResponseEntity<?> AlreadyWarnMember(AlreadyWarnMember e) {
         ErrorDto errorDto = new ErrorDto("AlreadyWarnMember", e.getMessage());
-        return new ResponseEntity<>(errorDto, HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS);
+        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(BlockMember.class)

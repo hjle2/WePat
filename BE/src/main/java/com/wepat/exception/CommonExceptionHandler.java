@@ -13,7 +13,7 @@ public class CommonExceptionHandler {
 
     @ExceptionHandler(NotExistCalendarException.class)
     public ResponseEntity<?> NotExistCalendarException(NotExistCalendarException e) {
-        ErrorDto errorDto = new ErrorDto("NotExistCalendarExceptionv", e.getMessage());
+        ErrorDto errorDto = new ErrorDto("NotExistCalendarException", e.getMessage());
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
