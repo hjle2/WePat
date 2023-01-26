@@ -66,9 +66,27 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public String createJwt(String memberId, String pwd) {
-        Long expireMs = 1000 * 60 * 60L;
-        return JwtUtil.createJwt(memberId,expireMs);
+    public String createJwt(String memberId, String subject, String pwd, Long expireMs) {
+
+        return JwtUtil.createJwt(memberId,subject,expireMs);
+    }
+
+    @Override
+    public String createAccessToken(String memberId, String pwd) {
+        Long expireMs = 1000 * 60 * 60*3L;//유지 시간을 3시간(임의)으로 설정
+        return createJwt(memberId,"Access", pwd,expireMs);
+    }
+    @Override
+    public String createRefreshToken(String memberId, String pwd) {
+        Long expireMs = 1000 * 60 * 60*24*365L;//1년간 유지(임의)
+        return createJwt(memberId,"Refresh", pwd,expireMs);
+    }
+
+
+
+    @Override
+    public void saveRefreshToken(String memberId, String refreshToken) {
+       // memberRepo.signUpWithCalendar(member); 일단 킵해두고 member에 RT 컬럼을 추가하는걸로
     }
 
     @Override

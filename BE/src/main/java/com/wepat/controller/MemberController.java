@@ -48,10 +48,14 @@ public class MemberController {
     @ApiOperation(value = "로그인 시도",  notes = "로그인 요청을 한다.",response = MemberDto.class)
     public ResponseEntity<?> signIn(String memberId, String pwd) {
         try {
-            MemberEntity memberResult = memberService.signIn(memberId, pwd);
-            if(memberResult!=null){//로그인에서 객체를 받아왔다.
-                String memberToken = memberService.createJwt(memberId, pwd);
-                return new ResponseEntity<String>(memberToken, HttpStatus.OK);
+            MemberEntity memberResult = memberService.signIn(memberId, pwd);//유저가 로그인 가능한 유저인지 확인
+            String accessToken = null;
+            String refreshToken = null;//유저가 로그인 되면 토큰을 생성하여 저장할 String
+            if(memberResult != null){//로그인에서 객체를 받아왔다.
+                accessToken = memberService.createAccessToken(memberId, pwd);//유저 AT를 생성
+                refreshToken = memberService.createRefreshToken(memberId, pwd);//우저 RT를 생성
+                memberService.saveRefreshToken(memberId , refreshToken);//
+                return new ResponseEntity<String>(accessToken, HttpStatus.OK);
             }
 //            return memberService.signIn(memberId, pwd);
         } catch (IdWriteException e) {
