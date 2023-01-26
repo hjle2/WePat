@@ -85,7 +85,7 @@ public class PetRepositoryImpl implements PetRepository {
     public PetDto getPet(String petId) throws ExecutionException, InterruptedException {
         //가족구성원 중 다른이가 삭제시 반려동물 존재여부 확인 필요?
         DocumentReference petDocRef = petCollection.document(petId);
-        final PetDto[] petDto = {null};
+//        final PetDto[] petDto = {null};
         ApiFuture<PetDto> stringApiFuture = db.runTransaction(transaction -> {
             DocumentSnapshot petSnapshot = transaction.get(petDocRef).get();
             if (petSnapshot.exists()) {
@@ -94,7 +94,7 @@ public class PetRepositoryImpl implements PetRepository {
                 return null;
             }
         });
-        if ((stringApiFuture.get()).equals(null)) {
+        if ((stringApiFuture.get())==null) {
             throw new NotExistPet("등록되지 않은 반려동물입니다!");
         } else {
             return stringApiFuture.get();

@@ -15,17 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PetDto {
-    public PetDto(PetDto pet) {
-        this.calendarId = pet.getCalendarId();
-        this.petId = pet.getPetId();
-        this.name = pet.getName();
-        this.animalType = pet.getAnimalType();
-        this.age = pet.getAge();
-        this.photoURL = pet.getPhotoURL();
-        this.color = pet.getColor();
-        this.birthday = pet.getBirthday();
-        this.adaptday = pet.getAdaptday();
-    }
     public PetDto(PetEntity pet) {
         this.calendarId = pet.getCalendarId();
         this.petId = pet.getPetId();
