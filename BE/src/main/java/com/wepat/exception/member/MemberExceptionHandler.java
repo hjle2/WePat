@@ -1,6 +1,6 @@
 package com.wepat.exception.member;
 
-import com.wepat.controller.MemberController;
+import com.wepat.member.MemberController;
 import com.wepat.exception.ErrorDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -8,8 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import javax.mail.MessagingException;
 
 @Slf4j
 @RestControllerAdvice(assignableTypes = {MemberController.class})
