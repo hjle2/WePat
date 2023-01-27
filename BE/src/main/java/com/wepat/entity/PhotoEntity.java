@@ -20,9 +20,10 @@ public class PhotoEntity {
         this.calendarId = photo.getCalendarId();
         this.photoId = photo.getPhotoId();
         this.url = photo.getUrl();
-        this.sns = photo.isSns();
-        this.date = photo.getDate();
         this.commentList = photo.getCommentList();
+        this.sns = photo.isSns();
+        this.like = photo.getLike();
+        this.date = photo.getDate();
 //        this.reportIdList = new ArrayList<>();
     }
     @ApiParam(value = "업로드한 사용자ID")

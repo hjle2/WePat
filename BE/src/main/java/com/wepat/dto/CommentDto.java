@@ -12,6 +12,8 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 public class CommentDto {
+    @ApiParam(value = "댓글 ID")
+    private String commentId;
     @ApiParam(value = "작성자", required = true)
     private String writter;
     @ApiParam(value = "글 내용", required = true)

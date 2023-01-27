@@ -2,7 +2,6 @@ package com.wepat.service.impl;
 
 import com.wepat.dto.CommentDto;
 import com.wepat.dto.PhotoDto;
-import com.wepat.entity.PhotoEntity;
 import com.wepat.repository.PhotoRepository;
 import com.wepat.service.PhotoService;
 import lombok.RequiredArgsConstructor;
@@ -22,13 +21,18 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public PhotoEntity getPhotoById(String calendarId, String photoId) throws ExecutionException, InterruptedException {
+    public PhotoDto getPhotoById(String calendarId, String photoId) throws ExecutionException, InterruptedException {
         return photoRepository.getPhotoById(calendarId, photoId);
     }
 
     @Override
-    public PhotoEntity addCommentByPhoto(String calendarId, String photoId, CommentDto commentDto) throws ExecutionException, InterruptedException {
-        return photoRepository.addCommentByPhoto(calendarId, photoId, commentDto);
+    public ResponseEntity<?> addPhoto(String calendarId, PhotoDto photoDto) {
+        return photoRepository.addPhoto(calendarId, photoDto);
+    }
+
+    @Override
+    public ResponseEntity<?> deletePhoto(String calendarId, String photoId) throws ExecutionException, InterruptedException {
+        return photoRepository.deletePhoto(calendarId, photoId);
     }
 
     @Override
@@ -37,8 +41,8 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public ResponseEntity<?> deletePhoto(String calendarId, String photoId) throws ExecutionException, InterruptedException {
-        return photoRepository.deletePhoto(calendarId, photoId);
+    public ResponseEntity<?> addCommentByPhoto(String calendarId, String photoId, CommentDto commentDto) throws ExecutionException, InterruptedException {
+        return photoRepository.addCommentByPhoto(calendarId, photoId, commentDto);
     }
 
     @Override
@@ -51,8 +55,4 @@ public class PhotoServiceImpl implements PhotoService {
         return null;
     }
 
-    @Override
-    public ResponseEntity<?> addPhoto(String PhotoURL) {
-        return photoRepository.addPhoto(PhotoURL);
-    }
 }

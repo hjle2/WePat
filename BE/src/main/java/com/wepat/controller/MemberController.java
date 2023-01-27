@@ -3,7 +3,6 @@ package com.wepat.controller;
 import com.wepat.dto.MemberDto;
 import com.wepat.entity.MemberEntity;
 import com.wepat.exception.member.ExistEmailException;
-import com.wepat.exception.NotExistCalendarException;
 import com.wepat.exception.member.*;
 import com.wepat.service.MemberService;
 import lombok.RequiredArgsConstructor;

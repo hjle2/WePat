@@ -15,9 +15,9 @@ import java.util.List;
 @AllArgsConstructor
 public class PhotoDto {
 
-    @ApiParam(value = "업로드한 사용자ID")
+    @ApiParam(value = "업로드한 사용자ID", required = true)
     private String memberId;
-    @ApiParam(value = "캘린더ID")
+    @ApiParam(value = "캘린더ID", required = true)
     private String calendarId;
     @ApiParam(value = "사진ID") //추후 sns에서도 사용 가능
     private String photoId;
@@ -27,10 +27,10 @@ public class PhotoDto {
     private List<CommentDto> commentList;
     @ApiParam(value = "SNS 등록 여부")
     private boolean sns;
-//    @ApiParam(value = "좋아요 수")
-//    private int like;
+    @ApiParam(value = "좋아요 수")
+    private int like;
 //    @ApiParam(value = "신고자 명단")
 //    private List<String> reportIdList;
-    @ApiParam(value = "등록일")
+    @ApiParam(value = "등록일", required = true)
     private String date;
 }

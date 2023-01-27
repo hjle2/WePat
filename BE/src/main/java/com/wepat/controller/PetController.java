@@ -1,8 +1,8 @@
 package com.wepat.controller;
 
 import com.wepat.dto.WeightDto;
-import com.wepat.exception.NotExistCalendarException;
-import com.wepat.exception.NotExistPet;
+import com.wepat.exception.member.NotExistCalendarException;
+import com.wepat.exception.member.NotExistPet;
 import com.wepat.service.PetService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
