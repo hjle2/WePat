@@ -14,6 +14,7 @@ public class PhotoExceptionHandler {
 
     @ExceptionHandler(NotExistImage.class)
     public ResponseEntity<?> NotExistImage(NotExistImage e) {
+        System.out.println("notExis호출!!!");
         ErrorDto errorDto = new ErrorDto("NotExistImage", e.getMessage());
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
