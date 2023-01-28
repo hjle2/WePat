@@ -20,28 +20,14 @@ public class ScheduleDto {
     private boolean isRepeated;
     @ApiParam(value = "일정 시작일")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private LocalDate startDate;
+    private String startDate;
     @ApiParam(value = "일정 종료일")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private LocalDate endDate;
-    @ApiParam(value = "일정 수행 날짜")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private LocalDate date;
-    @ApiParam(value = "일정 작성일")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private LocalDate writtenDate;
-    @ApiParam(value = "일정 수행 여부")
-    private boolean isCompleted = false;
+    private String endDate;
     @ApiParam(value = "반복 주기")
-    private int period;
-    @ApiParam(value = "반복 횟수")
-    private int nPeriod;
-    @ApiParam(value = "몸무게")
-    private double weight;
+    private int unit;
+    @ApiParam(value = "일 or 달")
+    private int unitSize;
     @ApiParam(value = "일정에 관한 메모")
     private String memo;
-    @ApiParam(value = "사진ID 리스트")
-    private List<String> photoList;
-    @ApiParam(value = "댓글 리스트")
-    private List<CommentDto> commandList;
 }

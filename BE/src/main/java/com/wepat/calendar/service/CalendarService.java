@@ -5,11 +5,12 @@ import com.wepat.schedule.ScheduleDto;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public interface CalendarService {
     // 현재 선택된 날짜 기준
     Map<String, List<String>> getScheduleByMonth(String calendarId, String date);
-    List<ScheduleDto> getScheduleListByDate(String calendarId, String date);
+    List<ScheduleDto> getScheduleListByDate(String calendarId, String date) throws ExecutionException, InterruptedException;
     // 일정 추가
     void addSchedule(ScheduleDto scheduleDto);
     ScheduleDto getScheduleByDate(String calendarId, String date);

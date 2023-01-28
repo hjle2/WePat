@@ -1,55 +1,49 @@
 package com.wepat.util;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 public class DateUtil {
-    public static int[] getDateFromString(String date) {
-        int y = Integer.parseInt(date.substring(0, 4));
-        int m = Integer.parseInt(date.substring(4, 6));
-        int d = Integer.parseInt(date.substring(6, 8));
-
-        return new int[] {y, m, d};
+    private static final DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+    public static String getStringDate(Date date) {
+        return dateFormat.format(date);
     }
 
-    public static int[] getFirstDayofMonth(int[] ymd) {
-        ymd[2] = 1;
-        return ymd;
-    }
-
-    public static int[] getFirstDayofNextMonth(int[] ymd) {
-        ymd[2] = 1;
-        // next month
-        ymd[1] += 1;
-
-        // next year
-        if (ymd[1] > 12) {
-            ymd[1] = 1;
-            ymd[0] += 1;
-        }
-        return ymd;
-    }
-
-    public static int getEndDayByMonth(int y, int m) {
-        if (m == 2) {
-            if (isLeapYear(y)) {
-                return 29;
-            } else {
-                return 28;
+    public static Date getDate(String ymd) {
+        Date date = null;
+        try {
+            date = dateFormat.parse(ymd);
+        } catch (ParseException e) {
+            try {
+                date = new SimpleDateFormat("yyyyMMddHHmmss").parse(ymd);
+            } catch (ParseException ex) {
+                throw new RuntimeException(ex);
             }
         }
-        if (m == 4 || m == 6 || m == 9 || m == 11) {
-            return 30;
-        } else {
-            return 31;
-        }
+        return date;
+    }
+    public static Date addDays(Date date, int unit, int CALENDAR_UNIT) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        calendar.add(CALENDAR_UNIT, unit);
+        return calendar.getTime();
+    }
+    public static String getFirstDayOfMonth(String ymd) {
+        Date date = getDate(ymd);
+        date.setDate(1);
+
+        return dateFormat.format(date);
     }
 
-    public static boolean isLeapYear(int y) {
-        if (y % 4 == 0) {
-            if (y % 400 != 0 & y % 100 == 0) {
-                return false;
-            }
-            return true;
-        }
-        return false;
-    }
+    public static String getFirstDayOfNextMonth(String ymd) {
+        Date date = getDate(ymd);
+        date = addDays(date, 1, Calendar.MONTH);
+        date.setDate(1);
 
+        return dateFormat.format(date);
+    }
 }
