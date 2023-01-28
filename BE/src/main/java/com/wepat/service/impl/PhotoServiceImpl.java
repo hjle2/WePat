@@ -46,6 +46,16 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
+    public ResponseEntity<?> deleteCommentByPhoto(String calendarId, String photoId, String commentId) throws ExecutionException, InterruptedException {
+        return photoRepository.deleteCommentByPhoto(calendarId, photoId, commentId);
+    }
+
+    @Override
+    public ResponseEntity<?> updateCommentByPhoto(String calendarId, String photoId, String commentId, CommentDto commentDto) throws ExecutionException, InterruptedException {
+        return photoRepository.updateCommentByPhoto(calendarId, photoId, commentId, commentDto);
+    }
+
+    @Override
     public PhotoDto addLike(String photoId) throws ExecutionException, InterruptedException {
         return null;
     }

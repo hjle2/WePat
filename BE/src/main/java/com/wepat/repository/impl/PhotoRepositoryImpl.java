@@ -112,20 +112,68 @@ public class PhotoRepositoryImpl implements PhotoRepository {
     @Override
     public ResponseEntity<?> addCommentByPhoto(String calendarId, String photoId, CommentDto commentDto) throws ExecutionException, InterruptedException {
         DocumentReference photoDocRef = photoCollection.document(photoId);
+        DocumentReference random = photoCollection.document();
 
         ApiFuture<?> responseEntityApiFuture = db.runTransaction(transaction -> {
             DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
             if (photoSnapshot.exists()) {
                 List<CommentDto> commentList = photoDocRef.get().get().toObject(PhotoEntity.class).getCommentList();
+                commentDto.setCommentId(random.getId());
                 commentList.add(commentDto);
                 transaction.update(photoDocRef, "commentList", commentList);
-                return new ResponseEntity<>(HttpStatus.OK);
+                return new ResponseEntity<>("댓글 작성 성공", HttpStatus.OK);
             } else {
                 return null;
             }
         });
         if (responseEntityApiFuture.get()!=null) {
             return (ResponseEntity<?>) responseEntityApiFuture.get();
+        } else {
+            throw new NotExistImage();
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> deleteCommentByPhoto(String calendarId, String photoId, String commentId) throws ExecutionException, InterruptedException {
+        DocumentReference photoDocRef = photoCollection.document(photoId);
+        ApiFuture<ResponseEntity> responseEntityApiFuture = db.runTransaction(transaction -> {
+            DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
+            if (photoSnapshot.exists()) {
+                List<CommentDto> commentList = photoDocRef.get().get().toObject(PhotoEntity.class).getCommentList();
+                commentList.stream().filter(commentDto -> commentDto.getCommentId().equals(commentId)).forEach(commentList::remove);
+                return new ResponseEntity("댓글 삭제 성공", HttpStatus.OK);
+            } else {
+                return null;
+            }
+        });
+        if (responseEntityApiFuture.get()!=null) {
+            return responseEntityApiFuture.get();
+        } else {
+            throw new NotExistImage();
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> updateCommentByPhoto(String calendarId, String photoId, String commentId, CommentDto commentDto) throws ExecutionException, InterruptedException {
+        DocumentReference photoDocRef = photoCollection.document(photoId);
+        ApiFuture<ResponseEntity<String>> responseEntityApiFuture = db.runTransaction(transaction -> {
+            DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
+            if (photoSnapshot.exists()) {
+                List<CommentDto> commentList = photoDocRef.get().get().toObject(PhotoEntity.class).getCommentList();
+                for (CommentDto comment : commentList) {
+                    if (comment.getCommentId().equals(commentId)) {
+                        comment.setDate(commentDto.getDate());
+                        comment.setContent(commentDto.getContent());
+                        break;
+                    }
+                }
+                return new ResponseEntity<>("댓글 변경 성공", HttpStatus.OK);
+            } else {
+                return null;
+            }
+        });
+        if (responseEntityApiFuture.get()!=null) {
+            return responseEntityApiFuture.get();
         } else {
             throw new NotExistImage();
         }

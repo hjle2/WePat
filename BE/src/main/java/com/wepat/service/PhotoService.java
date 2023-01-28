@@ -20,6 +20,10 @@ public interface PhotoService {
     ResponseEntity<?> updateSNSByPhoto(String calendarId, String photoId) throws ExecutionException, InterruptedException;
     // 댓글 작성
     ResponseEntity<?> addCommentByPhoto(String calendarId, String photoId, CommentDto commentDto) throws ExecutionException, InterruptedException;
+    // 댓글 삭제
+    ResponseEntity<?> deleteCommentByPhoto(String calendarId, String photoId, String commentId) throws ExecutionException, InterruptedException;
+    // 댓글 수정
+    ResponseEntity<?> updateCommentByPhoto(String calendarId, String photoId, String commentId, CommentDto commentDto) throws ExecutionException, InterruptedException;
 
     // 사진 좋아요 반영하기
     PhotoDto addLike(String photoId) throws ExecutionException, InterruptedException ;
