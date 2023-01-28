@@ -16,4 +16,6 @@ public interface SNSRepository {
     ResponseEntity<?> reportSNS(String photoId, String memberId) throws ExecutionException, InterruptedException;
 
     List<PhotoDto> reportList() throws ExecutionException, InterruptedException;
+
+    ResponseEntity<?> blockSNSByPhoto(String photoId) throws ExecutionException, InterruptedException;
 }

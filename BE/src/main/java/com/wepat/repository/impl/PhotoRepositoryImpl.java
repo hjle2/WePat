@@ -58,6 +58,7 @@ public class PhotoRepositoryImpl implements PhotoRepository {
         PhotoEntity photoEntity = new PhotoEntity(photoDto);
         photoEntity.setCalendarId(calendarId);
         photoEntity.setPhotoId(photoDocRef.getId());
+        photoEntity.setReportIdList(new ArrayList<>());
         photoCollection.document(photoDocRef.getId()).set(photoEntity);
         return new ResponseEntity<>("등록 성공!", HttpStatus.OK);
     }

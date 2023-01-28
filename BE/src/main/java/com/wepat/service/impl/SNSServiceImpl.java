@@ -40,4 +40,9 @@ public class SNSServiceImpl implements SNSService {
     public List<PhotoDto> reportList() throws ExecutionException, InterruptedException {
         return snsRepository.reportList();
     }
+
+    @Override
+    public ResponseEntity<?> blockSNSByPhoto(String photoId) throws ExecutionException, InterruptedException {
+        return snsRepository.blockSNSByPhoto(photoId);
+    }
 }

@@ -23,6 +23,7 @@ public class PhotoEntity {
         this.sns = new Boolean(false);
         this.like = 0;
         this.date = photo.getDate();
+        this.block = new Boolean(false);
     }
     @ApiParam(value = "업로드한 사용자ID")
     private String memberId;
@@ -42,4 +43,6 @@ public class PhotoEntity {
     private List<String> reportIdList;
     @ApiParam(value = "등록일")
     private String date;
+    @ApiParam(value = "차단 여부")
+    private boolean block;
 }

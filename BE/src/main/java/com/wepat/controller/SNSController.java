@@ -1,12 +1,10 @@
 package com.wepat.controller;
 
-import com.wepat.dto.MemberDto;
 import com.wepat.dto.PhotoDto;
-import com.wepat.exception.photo.NotExistImage;
 import com.wepat.exception.sns.AlreadyReportImage;
+import com.wepat.exception.sns.NotExistImage;
 import com.wepat.service.SNSService;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,6 +65,8 @@ public class SNSController {
             return new ResponseEntity<>(snsService.reportSNS(photoId, memberId), HttpStatus.OK);
         } catch (AlreadyReportImage e) {
             throw new AlreadyReportImage();
+        } catch (NotExistImage e) {
+            throw new NotExistImage();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -77,6 +77,18 @@ public class SNSController {
     public ResponseEntity<?> reportList() {
         try {
             return new ResponseEntity<>(snsService.reportList(), HttpStatus.OK);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PutMapping("/block/{photoid}")
+    @ApiOperation(value = "게시물 차단")
+    public ResponseEntity<?> blockSNSByPhoto(@PathVariable("photoid") String photoId) {
+        try {
+            return new ResponseEntity<>(snsService.blockSNSByPhoto(photoId), HttpStatus.OK);
+        } catch (NotExistImage e) {
+            throw new NotExistImage();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
