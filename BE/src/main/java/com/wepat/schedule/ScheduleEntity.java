@@ -3,7 +3,7 @@ package com.wepat.schedule;
 import com.wepat.photo.CommentDto;
 import io.swagger.annotations.ApiParam;
 import lombok.Data;
-import java.sql.Timestamp;
+
 import java.util.List;
 
 @Data
@@ -17,11 +17,11 @@ public class ScheduleEntity {
     @ApiParam(value = "반복여부")
     private boolean isRepeated;
     @ApiParam(value = "일정 시작일")
-    private Timestamp startDate;
+    private String startDate;
     @ApiParam(value = "일정 종료일")
-    private Timestamp endDate;
+    private String endDate;
     @ApiParam(value = "일정 작성일")
-    private Timestamp writtenDate;
+    private String date;
     @ApiParam(value = "일정 수행 여부")
     private boolean isCompleted = false;
     @ApiParam(value = "반복 주기")

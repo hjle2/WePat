@@ -1,20 +1,22 @@
 package com.wepat.calendar.service;
 
-import com.wepat.pet.PetDto;
-import com.wepat.finance.FinanceDto;
+import com.wepat.schedule.ScheduleDto;
 
-import java.sql.Timestamp;
-import java.util.concurrent.ExecutionException;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 public interface CalendarService {
-    // 반려동물 추가하기
-    PetDto addPet(String calendarId, PetDto pet) throws ExecutionException, InterruptedException;
-    // 반려동물 삭제하기
-    PetDto deletePet(String calendarId, PetDto pet) throws ExecutionException, InterruptedException;
-    // 가계부 데이터 추가하기
-    FinanceDto addFinance(String calendarId, Timestamp writtendate) throws ExecutionException, InterruptedException;
-    // 가계부 데이터 수정하기
-    FinanceDto modifyFinance(String calendarId, Timestamp writtendate) throws ExecutionException, InterruptedException;
-    // 가계부 데이터 삭제하기
-    FinanceDto deleteFinance(String calendarId, Timestamp writtendate) throws ExecutionException, InterruptedException;
+    // 현재 선택된 날짜 기준
+    Map<String, List<String>> getScheduleByMonth(String calendarId, String date);
+    List<ScheduleDto> getScheduleListByDate(String calendarId, String date);
+    // 일정 추가
+    void addSchedule(ScheduleDto scheduleDto);
+    ScheduleDto getScheduleByDate(String calendarId, String date);
+    // 일정 변경
+    void modifySchedule(ScheduleDto scheduleDto, String date);
+    // 일정 삭제
+    void deleteSchedule(String calendarId, String date);
+    // 일정 상세 정보 읽기
+    ScheduleDto getScheduleDetailByDate(String calendarId, String date);
 }
