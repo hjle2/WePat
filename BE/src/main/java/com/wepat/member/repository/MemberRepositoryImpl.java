@@ -12,21 +12,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import java.lang.reflect.Member;
 import java.util.concurrent.ExecutionException;
 import java.util.List;
 
 @Repository
 public class MemberRepositoryImpl implements MemberRepository {
     private final static Logger logger = LoggerFactory.getLogger(MemberRepository.class);
-    private final static String CALENDAR_COLLECTION = "calendar";
-    private final static String MEMBER_COLLECTION = "member";
-    private final static String MEMBER_TOKEN_COLLECTION = "member-Token";
+    private static final String CALENDAR_COLLECTION = "calendar";
+    private static final String MEMBER_COLLECTION = "member";
     private final Firestore db = FirestoreClient.getFirestore();
     private final CollectionReference calCollection = db.collection(CALENDAR_COLLECTION);
     private final CollectionReference memCollection = db.collection(MEMBER_COLLECTION);
 
-    private final CollectionReference memTokenCollection = db.collection(MEMBER_TOKEN_COLLECTION);
 
     //캘린더 ID가 있을 때, 회원가입 (ID 값이 틀렸다고 에러)
     @Override
@@ -34,9 +31,6 @@ public class MemberRepositoryImpl implements MemberRepository {
 
         //비밀번호 값 암호화
         member.setPwd(new String(OpenCrypt.getSHA256(member.getPwd(),"salt")));
-
-
-        logger.info("signUpWithCalendar Repo called!");
 
         //memberId(member Collection)와 CalendarId(calendar Collection)
         final DocumentReference memDocRef = memCollection.document(member.getMemberId());
@@ -136,8 +130,6 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public MemberEntity signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
-
-        logger.info("signIn called!");
 
         final DocumentReference memDocRef = memCollection.document(memberId);
         // run an asynchronous transaction

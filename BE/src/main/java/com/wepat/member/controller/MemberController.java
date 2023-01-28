@@ -4,7 +4,7 @@ import com.wepat.exception.member.*;
 import com.wepat.member.MemberDto;
 import com.wepat.member.MemberEntity;
 import com.wepat.member.service.MemberService;
-import com.wepat.member.service.JwtService;
+import com.wepat.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ import java.util.concurrent.ExecutionException;
 public class MemberController {
     private final static Logger logger = LoggerFactory.getLogger(MemberController.class);
     private final MemberService memberService;
-    private final JwtService jwtService;
+    private final JwtUtil jwtUtil;
     @PostMapping("/signup")
     @ApiOperation(value = "회원가입", notes = "정보를 받아 회원가입 시도한다.", response = MemberDto.class)
     public MemberEntity signUp(MemberDto member) {
@@ -48,8 +48,8 @@ public class MemberController {
             String accessToken = null;
             String refreshToken = null;//유저가 로그인 되면 토큰을 생성하여 저장할 String
             if(memberResult != null){//로그인에서 객체를 받아왔다.
-                accessToken = jwtService.createAccessToken(memberId, pwd);
-                refreshToken = jwtService.createRefreshToken(memberId, pwd);
+                accessToken = jwtUtil.createAccessToken(memberId, pwd);
+                refreshToken = jwtUtil.createRefreshToken(memberId, pwd);
                 memberService.saveRefreshToken(memberId , refreshToken);//
                 return new ResponseEntity<>(accessToken, HttpStatus.OK);
             }

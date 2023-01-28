@@ -118,7 +118,6 @@ public class MemberServiceImpl implements MemberService {
 
         memberRepository.findPwd(randomPassword, memberId);
 
-        System.out.println("메일 전송!!!!!");
         MimeMessage message = javaMailSender.createMimeMessage();
         message.setFrom("qwas15788@gmail.com");
         message.setSubject("WePat 임시비밀번호 안내 이메일입니다.", "UTF-8");

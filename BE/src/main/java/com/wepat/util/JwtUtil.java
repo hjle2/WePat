@@ -1,4 +1,4 @@
-package com.wepat.member.service;
+package com.wepat.util;
 
 import com.wepat.exception.UnAuthorizedException;
 import io.jsonwebtoken.Claims;
@@ -8,7 +8,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -18,19 +18,16 @@ import java.security.Key;
 import java.util.Date;
 import java.util.Map;
 
-@Service
-public class JwtServiceImpl implements JwtService {
-    public static final Logger logger = LoggerFactory.getLogger(JwtServiceImpl.class);
-    private static final String SALT = "wepatsecret";
-    private static Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+@Component
+public class JwtUtil {
+    public static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
+    private static final String SALT = "wepatsecretkeythisissecretsecretkeybyhj";
     private static final int ACCESS_TOKEN_EXPIRE_MINUTES = 1; // 분단위
     private static final int REFRESH_TOKEN_EXPIRE_MINUTES = 2; // 주단위
-    @Override
     public <T> String createAccessToken(String key, T data) {
         return create(key, data, "access-token", 1000 * 10 * ACCESS_TOKEN_EXPIRE_MINUTES);
     }
 
-    @Override
     public <T> String createRefreshToken(String key, T data) {
         return create(key, data, "refresh-token", 1000 * 30 * ACCESS_TOKEN_EXPIRE_MINUTES);
     }
@@ -43,7 +40,6 @@ public class JwtServiceImpl implements JwtService {
      * expire : 토큰 유효기간 설정을 위한 값
      * jwt 토큰의 구성 : header+payload+signature
      */
-    @Override
     public <T> String create(String key, T data, String subject, long expire) {
         String jwt = Jwts.builder()
                 // Header 설정 : 토큰의 타입, 해쉬 알고리즘 정보 세팅.
@@ -54,20 +50,19 @@ public class JwtServiceImpl implements JwtService {
                 .setSubject(subject) // 토큰 제목 설정 ex) access-token, refresh-token
                 .claim(key, data) // 저장할 데이터
                 // Signature 설정 : secret key를 활용한 암호화.
-                .signWith(secretKey)
+                .signWith(SignatureAlgorithm.HS256, SALT.getBytes())
                 .compact(); // 직렬화 처리.
         logger.info(jwt);
         return jwt;
     }
 
-    @Override
     public Map<String, Object> get(String key) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
                 .getRequest();
         String jwt = request.getHeader("access-token");
         Jws<Claims> claims = null;
         try {
-            claims = Jwts.parser().setSigningKey(SALT.getBytes("UTF-8")).parseClaimsJws(jwt);
+            claims = Jwts.parser().setSigningKey(key).parseClaimsJws(jwt);
         } catch (Exception e) {
 //			if (logger.isInfoEnabled()) {
 //				e.printStackTrace();
@@ -85,7 +80,6 @@ public class JwtServiceImpl implements JwtService {
         return value;
     }
 
-    @Override
     public String getUserId() {
         return (String) this.get("user").get("userid");
     }
@@ -106,16 +100,17 @@ public class JwtServiceImpl implements JwtService {
         return key;
     }
 
-    @Override
-    public boolean verifyToken(String jwt) {
+    public boolean validateToken(String jwt) {
         try {
 //			Json Web Signature? 서버에서 인증을 근거로 인증정보를 서버의 private key로 서명 한것을 토큰화 한것
 //			setSigningKey : JWS 서명 검증을 위한  secret key 세팅
 //			parseClaimsJws : 파싱하여 원본 jws 만들기
-            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwt);
-//			Claims 는 Map의 구현체 형태
+            Claims claims = Jwts.parser().setSigningKey(SALT.getBytes()).parseClaimsJws(jwt).getBody();
             logger.debug("claims: {}", claims);
-            return true;
+            if (!claims.getExpiration().before(new Date()))
+                return true;
+            else
+                return false;
         } catch (Exception e) {
 //			if (logger.isInfoEnabled()) {
 //				e.printStackTrace();

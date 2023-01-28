@@ -18,7 +18,6 @@ import java.util.concurrent.ExecutionException;
 public class CalendarServiceImpl implements CalendarService{
     private static final Logger logger = LoggerFactory.getLogger(CalendarServiceImpl.class);
     private final CalendarRepository calendarRepository;
-    private static final int DAY = 1000 * 60 * 60 * 24;
     @Override
     public Map<String, List<String>> getScheduleByMonth(String calendarId, String date) {
         String startdate = DateUtil.getFirstDayOfMonth(date);
@@ -34,7 +33,7 @@ public class CalendarServiceImpl implements CalendarService{
 
     @Override
     public void addSchedule(ScheduleDto scheduleDto) {
-        Date startdate = DateUtil.getDate(scheduleDto.getStartDate());
+        Date startdate = DateUtil.getDate(scheduleDto.getDate());
         Date enddate = DateUtil.getDate(scheduleDto.getEndDate());
 
         int unit = scheduleDto.getUnit();

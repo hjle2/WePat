@@ -18,8 +18,6 @@ public class CalendarController {
     private final static Logger logger = LoggerFactory.getLogger(CalendarController.class);
     private final CalendarService calService;
 
-    //    private final PetService        petService;
-//    private final PhotoService      photoService;
     @GetMapping("/{calendarid}/{date}")
     @ApiOperation(value = "캘린더 메인페이지", notes = "캘린더에 해당 달에 대한 모든 스케쥴조회", response = ScheduleDto.class)
     public ResponseEntity<?> getScheduleByMonth(@PathVariable("calendarid") String calendarId,

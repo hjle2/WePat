@@ -63,8 +63,7 @@ public class MemberExceptionHandler {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    public ErrorDto exHandler(Exception e) {
-        System.out.println("익셉션 핸들러 호출!!!!!!!!!!!!");
+    public ErrorDto ExceptionHandler(Exception e) {
         return new ErrorDto("Exception", "서버에 오류가 발생했습니다. 죄송합니다.");
     }
 

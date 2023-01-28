@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import com.wepat.pet.PetDto;
-import com.wepat.finance.FinanceDto;
 import com.wepat.schedule.ScheduleDto;
 
 public interface CalendarRepository {

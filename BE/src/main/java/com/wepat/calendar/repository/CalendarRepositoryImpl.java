@@ -1,7 +1,6 @@
 package com.wepat.calendar.repository;
 
 import com.google.cloud.firestore.CollectionReference;
-import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.firebase.cloud.FirestoreClient;
 import com.wepat.schedule.ScheduleDto;
@@ -17,16 +16,10 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @Repository
-public class CalendarRepositoryImpl implements CalendarRepository
-{
+public class CalendarRepositoryImpl implements CalendarRepository {
     private final static Logger logger = LoggerFactory.getLogger(CalendarRepositoryImpl.class);
-    private final static String CALENDAR_COLLECTION = "calendar";
     private final static String SCHEDULE_COLLECTION = "schedule";
-    private final static String PET_COLLECTION = "pet";
-    private final static Firestore db = FirestoreClient.getFirestore();
-    private final static CollectionReference calendarCollelction = db.collection(CALENDAR_COLLECTION);
-    private final static CollectionReference scheduleCollection = db.collection(SCHEDULE_COLLECTION);
-    private final static CollectionReference petCollection = db.collection(PET_COLLECTION);
+    private final CollectionReference scheduleCollection = null;//FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
 
     @Override
     public Map<String, List<String>> getScheduleByMonth(String calendarId, String startDate, String endDate) {
