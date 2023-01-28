@@ -31,6 +31,6 @@ public class MemberEntity {
     private String calendarId;
     @ApiParam(value = "나를 신고한 회원 목록")
     private List<String> reportList;
-    @ApiParam(value = "차단한 계정")
+    @ApiParam(value = "차단당한 계정 여부")
     private boolean block;
 }

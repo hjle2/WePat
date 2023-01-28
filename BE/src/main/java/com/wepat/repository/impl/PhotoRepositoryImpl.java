@@ -23,12 +23,8 @@ import java.util.concurrent.ExecutionException;
 @Repository
 public class PhotoRepositoryImpl implements PhotoRepository {
     private final static Logger logger = LoggerFactory.getLogger(MemberRepository.class);
-    private final static String CALENDAR_COLLECTION = "calendar";
-    private final static String MEMBER_COLLECTION = "member";
     private final static String PHOTO_COLLECTION = "photo";
     private final Firestore db = FirestoreClient.getFirestore();
-    private final CollectionReference calCollection = db.collection(CALENDAR_COLLECTION);
-    private final CollectionReference memCollection = db.collection(MEMBER_COLLECTION);
     private final CollectionReference photoCollection = db.collection(PHOTO_COLLECTION);
 
     // 가족 앨범 전체 조회

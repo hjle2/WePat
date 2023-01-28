@@ -30,9 +30,15 @@ public class SNSExceptionHandler {
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(NotExistPet.class)
-    public ResponseEntity<?> NotExistPet(NotExistPet e) {
-        ErrorDto errorDto = new ErrorDto("NotExistPet", e.getMessage());
+    @ExceptionHandler(NotExistImage.class)
+    public ResponseEntity<?> NotExistImage(NotExistImage e) {
+        ErrorDto errorDto = new ErrorDto("NotExistImage", e.getMessage());
+        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AlreadyReportImage.class)
+    public ResponseEntity<?> AlreadyReportImage(AlreadyReportImage e) {
+        ErrorDto errorDto = new ErrorDto("AlreadyReportImage", e.getMessage());
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
