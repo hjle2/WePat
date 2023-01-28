@@ -17,10 +17,10 @@ public class ScheduleDto {
     @ApiParam(value = "펫ID(PK)", required = true)
     private String petId;
     @ApiParam(value = "반복여부")
-    private boolean isRepeated;
+    private boolean repeat;
     @ApiParam(value = "일정 시작일")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private String startDate;
+    private String date;
     @ApiParam(value = "일정 종료일")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private String endDate;

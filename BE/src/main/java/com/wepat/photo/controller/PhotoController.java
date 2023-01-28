@@ -1,5 +1,7 @@
-package com.wepat.photo;
+package com.wepat.photo.controller;
 
+import com.wepat.photo.CommentDto;
+import com.wepat.photo.PhotoDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.CrossOrigin;

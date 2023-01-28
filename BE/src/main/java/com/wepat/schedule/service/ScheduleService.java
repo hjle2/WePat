@@ -4,17 +4,20 @@ import com.wepat.schedule.ScheduleDto;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public interface ScheduleService {
-    // 전체 일정 가져오기
-    List<Timestamp> getAllSchedule(String calendarId) throws ExecutionException, InterruptedException ;
-    // 일정 추가하기
-    ScheduleDto addSchedule(ScheduleDto Schedule) throws ExecutionException, InterruptedException ;
-    // 펫의 일정 가져오기
-    List<Timestamp> getScheduleByPet(String petId) throws ExecutionException, InterruptedException ;
-    // 특정 날짜의 일정 가져오기
-    List<ScheduleDto> getScheduleByDate(String CalendarId, Timestamp date) throws ExecutionException, InterruptedException ;
-    // 일정 변경하기
-    ScheduleDto modifySchedule(String calendarId, Timestamp writtenTime, ScheduleDto scheduleDto) throws ExecutionException, InterruptedException ;
-}
+
+    // 현재 선택된 날짜 기준
+    Map<String, List<String>> getScheduleByMonth(String calendarId, String date);
+    List<ScheduleDto> getScheduleListByDate(String calendarId, String date) throws ExecutionException, InterruptedException;
+    // 일정 추가
+    void addSchedule(ScheduleDto scheduleDto);
+    ScheduleDto getScheduleByDate(String calendarId, String date);
+    // 일정 변경
+    void modifySchedule(ScheduleDto scheduleDto, String date);
+    // 일정 삭제
+    void deleteSchedule(String calendarId, String date);
+    // 일정 상세 정보 읽기
+    ScheduleDto getScheduleDetailByDate(String calendarId, String date);}

@@ -20,26 +20,21 @@ import java.util.ArrayList;
 public class SwaggerConfig {
     private String version;
     private String title;
-    @Bean
-    public Docket api() {
-        final ApiInfo apiInfo = new ApiInfoBuilder().title("WePat 사용자관리 API")
+
+    private ApiInfo appiInfo() {
+        return new ApiInfoBuilder().title("WePat 사용자관리 API")
                 .description("<h3>RestApi에 대한 문서를 제공한다.</h3>")
                 .contact(new Contact("WePat", "https://www.wepat.com", "wepat@wepat.com")).license("MIT License")
                 .version("1.0").build();
+    }
+    @Bean
+    public Docket api() {
 
         return new Docket(DocumentationType.SWAGGER_2) // Swagger 2.0 기반의 문서 작성
-                .apiInfo(apiInfo) // 문서에 대한 정보를 설정한다.
+                .apiInfo(this.appiInfo()) // 문서에 대한 정보를 설정한다.
                 .select() // ApiSelectorBuilder를 반환하며 상세한 설정 처리
-                .apis(RequestHandlerSelectors.basePackage("com.wepat.member.controller"))// 대상으로하는 api 설정
-//                .apis(RequestHandlerSelectors.basePackage("com.wepat.calendar.controller"))
-//                .apis(RequestHandlerSelectors.basePackage("com.wepat.schedule.controller"))
-//                .apis(RequestHandlerSelectors.basePackage("com.wepat.finance.controller"))
-//                .apis(RequestHandlerSelectors.basePackage("com.wepat.photo.controller"))
-//                .apis(RequestHandlerSelectors.basePackage("com.wepat.sns.controller"))
-//                .apis(RequestHandlerSelectors.basePackage("com.wepat.pet.controller"))
-                .paths(PathSelectors.ant("/**")) // controller에서 swagger를 지정할 대상 path 설정
+                .apis(RequestHandlerSelectors.any())// 대상으로하는 api 설정 -> 모든 controller
+                .paths(PathSelectors.any()) // controller에서 swagger를 지정할 대상 path 설정
                 .build();  // Docket 객체 생성
     }
-
-
 }

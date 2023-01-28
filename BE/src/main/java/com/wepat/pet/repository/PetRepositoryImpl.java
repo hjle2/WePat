@@ -15,8 +15,8 @@ import java.util.concurrent.ExecutionException;
 
 @Repository
 public class PetRepositoryImpl implements PetRepository {
-    private final Logger logger = LoggerFactory.getLogger(MemberRepository.class);
-    private final String COLLECTION_NAME = "pet";
+    private final static Logger logger = LoggerFactory.getLogger(MemberRepository.class);
+    private final static String COLLECTION_NAME = "pet";
     private final CollectionReference collection = FirestoreClient.getFirestore().collection(COLLECTION_NAME);
     @Override
     public List<PetDto> getAllPets(String calendarId) throws ExecutionException, InterruptedException {
