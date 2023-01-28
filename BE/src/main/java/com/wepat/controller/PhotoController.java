@@ -51,11 +51,9 @@ public class PhotoController {
         }
     }
 
-    // calendarId => PhotoDto 안에 calendarId
     @PostMapping("/add/photo/{calendarid}")
-    @ApiOperation(value = "이미지 추가", notes = "사용자ID, 캘린더ID, 사진URL, 등록일 입력")
+    @ApiOperation(value = "이미지 추가", notes = "사용자ID, 사진URL, 등록일 입력")
     public ResponseEntity<?> addPhoto(@PathVariable("calendarid") String calendarId, @RequestBody PhotoDto photoDto) {
-
         return new ResponseEntity<>(photoService.addPhoto(calendarId, photoDto), HttpStatus.OK);
     }
 
@@ -85,7 +83,7 @@ public class PhotoController {
         }
     }
 
-    // phodoId X
+    // calendarid X
     @PostMapping("/{calendarid}/{photoid}")
     @ApiOperation(value = "앨범 댓글 작성")
     public ResponseEntity<?> addCommentByPhoto(@PathVariable("calendarid") String calendarId, @PathVariable("photoid") String photoId,
@@ -114,6 +112,7 @@ public class PhotoController {
     }
 
     @PutMapping("comment/{calendarid}/{photoid}/{commentid}")
+    @ApiOperation(value = "앨범 댓글 수정")
     public ResponseEntity<?> updateCommentByPhoto(@PathVariable("calendarid") String calendarId, @PathVariable("photoid") String photoId,
                                                   @PathVariable("commentid") String commentId, @RequestBody CommentDto commentDto) {
         try {

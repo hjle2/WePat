@@ -54,15 +54,4 @@ public class PhotoServiceImpl implements PhotoService {
     public ResponseEntity<?> updateCommentByPhoto(String calendarId, String photoId, String commentId, CommentDto commentDto) throws ExecutionException, InterruptedException {
         return photoRepository.updateCommentByPhoto(calendarId, photoId, commentId, commentDto);
     }
-
-    @Override
-    public PhotoDto addLike(String photoId) throws ExecutionException, InterruptedException {
-        return null;
-    }
-
-    @Override
-    public PhotoDto addReport(String photoId) throws ExecutionException, InterruptedException {
-        return null;
-    }
-
 }

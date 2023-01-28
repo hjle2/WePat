@@ -17,8 +17,8 @@ public class PhotoDto {
 
     @ApiParam(value = "업로드한 사용자ID", required = true)
     private String memberId;
-    @ApiParam(value = "캘린더ID", required = true)
-    private String calendarId;
+//    @ApiParam(value = "캘린더ID", required = true)
+//    private String calendarId;
     @ApiParam(value = "사진ID") //추후 sns에서도 사용 가능
     private String photoId;
     @ApiParam(value = "사진 url", required = true)

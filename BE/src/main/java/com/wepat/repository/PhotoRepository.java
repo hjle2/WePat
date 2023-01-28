@@ -25,10 +25,4 @@ public interface PhotoRepository {
     // 댓글 수정
     ResponseEntity<?> updateCommentByPhoto(String calendarId, String photoId, String commentId, CommentDto commentDto) throws ExecutionException, InterruptedException;
 
-
-    // 사진 좋아요 반영하기
-    PhotoDto addLike(String photoId) throws ExecutionException, InterruptedException;
-    // 사진 신고 반영하기
-    PhotoDto addReport(String photoId) throws ExecutionException, InterruptedException;
-
 }

@@ -59,8 +59,10 @@ public class PhotoRepositoryImpl implements PhotoRepository {
     @Override
     public ResponseEntity<?> addPhoto(String calendarId, PhotoDto photoDto) {
         DocumentReference photoDocRef = photoCollection.document();
-        photoDto.setPhotoId(photoDocRef.getId());
-        photoCollection.document(photoDocRef.getId()).set(photoDto);
+        PhotoEntity photoEntity = new PhotoEntity(photoDto);
+        photoEntity.setCalendarId(calendarId);
+        photoEntity.setPhotoId(photoDocRef.getId());
+        photoCollection.document(photoDocRef.getId()).set(photoEntity);
         return new ResponseEntity<>("등록 성공!", HttpStatus.OK);
     }
 
@@ -108,7 +110,7 @@ public class PhotoRepositoryImpl implements PhotoRepository {
             return (ResponseEntity<?>) responseEntityApiFuture.get();
         }
     }
-
+    // 댓글 추가
     @Override
     public ResponseEntity<?> addCommentByPhoto(String calendarId, String photoId, CommentDto commentDto) throws ExecutionException, InterruptedException {
         DocumentReference photoDocRef = photoCollection.document(photoId);
@@ -132,7 +134,7 @@ public class PhotoRepositoryImpl implements PhotoRepository {
             throw new NotExistImage();
         }
     }
-
+    // 댓글 삭제
     @Override
     public ResponseEntity<?> deleteCommentByPhoto(String calendarId, String photoId, String commentId) throws ExecutionException, InterruptedException {
         DocumentReference photoDocRef = photoCollection.document(photoId);
@@ -140,7 +142,12 @@ public class PhotoRepositoryImpl implements PhotoRepository {
             DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
             if (photoSnapshot.exists()) {
                 List<CommentDto> commentList = photoDocRef.get().get().toObject(PhotoEntity.class).getCommentList();
-                commentList.stream().filter(commentDto -> commentDto.getCommentId().equals(commentId)).forEach(commentList::remove);
+                for (CommentDto commentDto : commentList) {
+                    if (commentDto.getCommentId().equals(commentId)) {
+                        commentList.remove(commentDto);
+                    }
+                }
+                transaction.update(photoDocRef, "commentList", commentList);
                 return new ResponseEntity("댓글 삭제 성공", HttpStatus.OK);
             } else {
                 return null;
@@ -153,40 +160,32 @@ public class PhotoRepositoryImpl implements PhotoRepository {
         }
     }
 
+    // 댓글 수정
     @Override
     public ResponseEntity<?> updateCommentByPhoto(String calendarId, String photoId, String commentId, CommentDto commentDto) throws ExecutionException, InterruptedException {
         DocumentReference photoDocRef = photoCollection.document(photoId);
-        ApiFuture<ResponseEntity<String>> responseEntityApiFuture = db.runTransaction(transaction -> {
+        ApiFuture<?> responseEntityApiFuture = db.runTransaction(transaction -> {
             DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
             if (photoSnapshot.exists()) {
                 List<CommentDto> commentList = photoDocRef.get().get().toObject(PhotoEntity.class).getCommentList();
                 for (CommentDto comment : commentList) {
-                    if (comment.getCommentId().equals(commentId)) {
+                    if ((comment.getCommentId()).equals(commentId)) {
                         comment.setDate(commentDto.getDate());
                         comment.setContent(commentDto.getContent());
                         break;
                     }
                 }
+                transaction.update(photoDocRef, "commentList", commentList);
                 return new ResponseEntity<>("댓글 변경 성공", HttpStatus.OK);
             } else {
                 return null;
             }
         });
         if (responseEntityApiFuture.get()!=null) {
-            return responseEntityApiFuture.get();
+            return (ResponseEntity<?>) responseEntityApiFuture.get();
         } else {
             throw new NotExistImage();
         }
-    }
-
-    @Override
-    public PhotoDto addLike(String photoId) throws ExecutionException, InterruptedException {
-        return null;
-    }
-
-    @Override
-    public PhotoDto addReport(String photoId) throws ExecutionException, InterruptedException {
-        return null;
     }
 
 }
