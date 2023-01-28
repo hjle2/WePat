@@ -1,8 +1,8 @@
 package com.wepat.config.interceptor;
 
-import com.wepat.domain.member.MemberRepository;
+import com.wepat.member.repository.MemberRepository;
 import com.wepat.exception.UnAuthorizedException;
-import com.wepat.domain.member.JwtService;
+import com.wepat.member.service.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

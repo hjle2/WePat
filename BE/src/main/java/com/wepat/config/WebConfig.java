@@ -19,7 +19,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         // login auth
 //        registry.addInterceptor(new JwtAuthIntercepptor())
-//                .addPathPatterns("/*")
+//                .addPathPatterns("/**")
 //                .excludePathPatterns(INTERCEPTOR_WRITE_LIST);
     }
 }
