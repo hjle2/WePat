@@ -1,7 +1,7 @@
 package com.wepat.sns;
 
-import com.wepat.photo.PhotoDto;
-import com.wepat.pet.PetController;
+import com.wepat.domain.photo.PhotoDto;
+import com.wepat.domain.pet.PetController;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
