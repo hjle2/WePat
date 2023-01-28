@@ -1,7 +1,6 @@
 package com.wepat.repository;
 
 import com.wepat.dto.PhotoDto;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -11,11 +10,11 @@ public interface SNSRepository {
 
     PhotoDto getSNSByPhotoId(String photoId) throws ExecutionException, InterruptedException;
 
-    ResponseEntity<?> updateSNSLike(String photoId) throws ExecutionException, InterruptedException;
+    void updateSNSLike(String photoId) throws ExecutionException, InterruptedException;
 
-    ResponseEntity<?> reportSNS(String photoId, String memberId) throws ExecutionException, InterruptedException;
+    void reportSNS(String photoId, String memberId) throws ExecutionException, InterruptedException;
 
     List<PhotoDto> reportList() throws ExecutionException, InterruptedException;
 
-    ResponseEntity<?> blockSNSByPhoto(String photoId) throws ExecutionException, InterruptedException;
+    void blockSNSByPhoto(String photoId) throws ExecutionException, InterruptedException;
 }

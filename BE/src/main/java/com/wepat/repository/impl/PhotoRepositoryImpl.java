@@ -8,12 +8,11 @@ import com.wepat.dto.PhotoDto;
 import com.wepat.entity.PhotoEntity;
 import com.wepat.exception.photo.AlreadyDeleteImage;
 import com.wepat.exception.photo.NotExistImage;
+import com.wepat.exception.photo.UpdateSNSCancel;
 import com.wepat.repository.MemberRepository;
 import com.wepat.repository.PhotoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -22,6 +21,10 @@ import java.util.concurrent.ExecutionException;
 
 @Repository
 public class PhotoRepositoryImpl implements PhotoRepository {
+
+    public enum ReturnType {
+        SUCCESS, NotExistImage, AlreadyDeleteImage, UpdateSNSCancel
+    }
     private final static Logger logger = LoggerFactory.getLogger(MemberRepository.class);
     private final static String PHOTO_COLLECTION = "photo";
     private final Firestore db = FirestoreClient.getFirestore();
@@ -53,31 +56,30 @@ public class PhotoRepositoryImpl implements PhotoRepository {
 
     // 이미지 추가
     @Override
-    public ResponseEntity<?> addPhoto(String calendarId, PhotoDto photoDto) {
+    public void addPhoto(String calendarId, PhotoDto photoDto) {
         DocumentReference photoDocRef = photoCollection.document();
         PhotoEntity photoEntity = new PhotoEntity(photoDto);
         photoEntity.setCalendarId(calendarId);
         photoEntity.setPhotoId(photoDocRef.getId());
         photoEntity.setReportIdList(new ArrayList<>());
         photoCollection.document(photoDocRef.getId()).set(photoEntity);
-        return new ResponseEntity<>("등록 성공!", HttpStatus.OK);
     }
 
     // 이미지 삭제
     @Override
-    public ResponseEntity<?> deletePhoto(String calendarId, String photoId) throws ExecutionException, InterruptedException {
+    public void deletePhoto(String calendarId, String photoId) throws ExecutionException, InterruptedException {
         DocumentReference photoDocRef = photoCollection.document(photoId);
         ApiFuture<?> responseEntityApiFuture = db.runTransaction(transaction -> {
             DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
             if (photoSnapshot.exists()) {
                 transaction.delete(photoDocRef);
-                return new ResponseEntity<>(HttpStatus.OK);
+                return ReturnType.SUCCESS;
             } else {
-                return null;
+                return ReturnType.AlreadyDeleteImage;
             }
         });
-        if (responseEntityApiFuture.get()!=null) {
-            return new ResponseEntity<>("삭제 성공", HttpStatus.OK);
+        if (responseEntityApiFuture.get() == ReturnType.SUCCESS) {
+            responseEntityApiFuture.get();
         } else {
             throw new AlreadyDeleteImage();
         }
@@ -85,31 +87,34 @@ public class PhotoRepositoryImpl implements PhotoRepository {
 
     // SNS 업로드
     @Override
-    public ResponseEntity<?> updateSNSByPhoto(String calendarId, String photoId) throws ExecutionException, InterruptedException {
+    public void updateSNSByPhoto(String calendarId, String photoId) throws ExecutionException, InterruptedException {
         DocumentReference photoDocRef = photoCollection.document(photoId);
         ApiFuture<?> responseEntityApiFuture = db.runTransaction(transaction -> {
             DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
             if (photoSnapshot.exists()) {
                 boolean sns = photoCollection.document(photoId).get().get().toObject(PhotoEntity.class).isSns();
                 transaction.update(photoDocRef, "sns", !sns);
-                if (sns) {
-                    return new ResponseEntity<>("업로드 취소!", HttpStatus.OK);
-                } else {
-                    return new ResponseEntity<>("업로드 성공!", HttpStatus.OK);
+                if (sns) { // 취소
+                    return ReturnType.UpdateSNSCancel;
+                } else { // 성공
+                    return ReturnType.SUCCESS;
                 }
             } else {
-                return null;
+                return ReturnType.NotExistImage;
             }
         });
-        if (responseEntityApiFuture.get()==null) {
+        if (responseEntityApiFuture.get()==ReturnType.NotExistImage) {
             throw new NotExistImage();
+        } else if (responseEntityApiFuture.get()==ReturnType.UpdateSNSCancel) {
+            throw new UpdateSNSCancel();
         } else {
-            return (ResponseEntity<?>) responseEntityApiFuture.get();
+            responseEntityApiFuture.get();
         }
     }
+
     // 댓글 추가
     @Override
-    public ResponseEntity<?> addCommentByPhoto(String calendarId, String photoId, CommentDto commentDto) throws ExecutionException, InterruptedException {
+    public void addCommentByPhoto(String calendarId, String photoId, CommentDto commentDto) throws ExecutionException, InterruptedException {
         DocumentReference photoDocRef = photoCollection.document(photoId);
         DocumentReference random = photoCollection.document();
 
@@ -120,22 +125,23 @@ public class PhotoRepositoryImpl implements PhotoRepository {
                 commentDto.setCommentId(random.getId());
                 commentList.add(commentDto);
                 transaction.update(photoDocRef, "commentList", commentList);
-                return new ResponseEntity<>("댓글 작성 성공", HttpStatus.OK);
+                return ReturnType.SUCCESS;
             } else {
-                return null;
+                return ReturnType.NotExistImage;
             }
         });
-        if (responseEntityApiFuture.get()!=null) {
-            return (ResponseEntity<?>) responseEntityApiFuture.get();
+        if (responseEntityApiFuture.get()==ReturnType.SUCCESS) {
+            responseEntityApiFuture.get();
         } else {
             throw new NotExistImage();
         }
     }
     // 댓글 삭제
     @Override
-    public ResponseEntity<?> deleteCommentByPhoto(String calendarId, String photoId, String commentId) throws ExecutionException, InterruptedException {
+    public void deleteCommentByPhoto(String calendarId, String photoId, String commentId) throws ExecutionException, InterruptedException {
         DocumentReference photoDocRef = photoCollection.document(photoId);
-        ApiFuture<ResponseEntity> responseEntityApiFuture = db.runTransaction(transaction -> {
+
+        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
             DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
             if (photoSnapshot.exists()) {
                 List<CommentDto> commentList = photoDocRef.get().get().toObject(PhotoEntity.class).getCommentList();
@@ -145,13 +151,13 @@ public class PhotoRepositoryImpl implements PhotoRepository {
                     }
                 }
                 transaction.update(photoDocRef, "commentList", commentList);
-                return new ResponseEntity("댓글 삭제 성공", HttpStatus.OK);
+                return ReturnType.SUCCESS;
             } else {
-                return null;
+                return ReturnType.NotExistImage;
             }
         });
-        if (responseEntityApiFuture.get()!=null) {
-            return responseEntityApiFuture.get();
+        if (returnTypeApiFuture.get()==ReturnType.SUCCESS) {
+            returnTypeApiFuture.get();
         } else {
             throw new NotExistImage();
         }
@@ -159,7 +165,7 @@ public class PhotoRepositoryImpl implements PhotoRepository {
 
     // 댓글 수정
     @Override
-    public ResponseEntity<?> updateCommentByPhoto(String calendarId, String photoId, String commentId, CommentDto commentDto) throws ExecutionException, InterruptedException {
+    public void updateCommentByPhoto(String calendarId, String photoId, String commentId, CommentDto commentDto) throws ExecutionException, InterruptedException {
         DocumentReference photoDocRef = photoCollection.document(photoId);
         ApiFuture<?> responseEntityApiFuture = db.runTransaction(transaction -> {
             DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
@@ -173,13 +179,13 @@ public class PhotoRepositoryImpl implements PhotoRepository {
                     }
                 }
                 transaction.update(photoDocRef, "commentList", commentList);
-                return new ResponseEntity<>("댓글 변경 성공", HttpStatus.OK);
+                return ReturnType.SUCCESS;
             } else {
-                return null;
+                return ReturnType.NotExistImage;
             }
         });
-        if (responseEntityApiFuture.get()!=null) {
-            return (ResponseEntity<?>) responseEntityApiFuture.get();
+        if (responseEntityApiFuture.get()==ReturnType.SUCCESS) {
+            responseEntityApiFuture.get();
         } else {
             throw new NotExistImage();
         }

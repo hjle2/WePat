@@ -11,8 +11,6 @@ import com.wepat.repository.MemberRepository;
 import com.wepat.repository.SNSRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -24,8 +22,8 @@ import java.util.concurrent.ExecutionException;
 @Repository
 public class SNSRepositoryImpl implements SNSRepository {
 
-    public enum ErrorType {
-        AlreadyReportImage, NotExistImage
+    public enum ReturnType {
+        SUCCESS, AlreadyReportImage, NotExistImage
     }
 
     private final static Logger logger = LoggerFactory.getLogger(MemberRepository.class);
@@ -71,51 +69,50 @@ public class SNSRepositoryImpl implements SNSRepository {
     }
 
     @Override
-    public ResponseEntity<?> updateSNSLike(String photoId) throws ExecutionException, InterruptedException {
+    public void updateSNSLike(String photoId) throws ExecutionException, InterruptedException {
         DocumentReference photoDocRef = photoCollection.document(photoId);
-        ApiFuture<ResponseEntity<String>> responseEntityApiFuture = db.runTransaction(transaction -> {
+        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
             DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
             if (photoSnapshot.exists()) {
                 int like = photoSnapshot.toObject(PhotoEntity.class).getLike();
                 transaction.update(photoDocRef, "like", like + 1);
-                return new ResponseEntity<>("좋아요 클릭", HttpStatus.OK);
+                return ReturnType.SUCCESS;
             } else {
-                return null;
+                return ReturnType.NotExistImage;
             }
         });
-        if (responseEntityApiFuture.get()!=null) {
-            return responseEntityApiFuture.get();
+        if (returnTypeApiFuture.get()==ReturnType.SUCCESS) {
+            returnTypeApiFuture.get();
         } else {
             throw new NotExistImage();
         }
     }
 
     @Override
-    public ResponseEntity<?> reportSNS(String photoId, String memberId) throws ExecutionException, InterruptedException {
+    public void reportSNS(String photoId, String memberId) throws ExecutionException, InterruptedException {
         DocumentReference photoDocRef = photoCollection.document(photoId);
         System.out.println("ghcnf!");
-        ApiFuture<?> responseEntityApiFuture = db.runTransaction(transaction -> {
+        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
             DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
             if (photoSnapshot.exists()) {
                 List<String> reportIdList = photoSnapshot.toObject(PhotoEntity.class).getReportIdList();
                 if (reportIdList.contains(memberId)) {
-                    return ErrorType.AlreadyReportImage;
+                    return ReturnType.AlreadyReportImage;
                 } else {
                     reportIdList.add(memberId);
                     transaction.update(photoDocRef, "reportIdList", reportIdList);
-                    return new ResponseEntity<>("신고 성공", HttpStatus.OK);
+                    return ReturnType.SUCCESS;
                 }
             } else {
-                return ErrorType.NotExistImage;
+                return ReturnType.NotExistImage;
             }
         });
-        System.out.println(responseEntityApiFuture.get());
-        if ((responseEntityApiFuture.get()) == ErrorType.AlreadyReportImage) {
+        if (returnTypeApiFuture.get() == ReturnType.AlreadyReportImage) {
             throw new AlreadyReportImage();
-        } else if (responseEntityApiFuture.get() == ErrorType.NotExistImage) {
+        } else if (returnTypeApiFuture.get() == ReturnType.NotExistImage) {
             throw new NotExistImage();
         } else {
-            return (ResponseEntity<?>) responseEntityApiFuture.get();
+            returnTypeApiFuture.get();
         }
     }
 
@@ -132,19 +129,19 @@ public class SNSRepositoryImpl implements SNSRepository {
     }
 
     @Override
-    public ResponseEntity<?> blockSNSByPhoto(String photoId) throws ExecutionException, InterruptedException {
+    public void blockSNSByPhoto(String photoId) throws ExecutionException, InterruptedException {
         DocumentReference photoDocRef = photoCollection.document(photoId);
-        ApiFuture<ResponseEntity<String>> responseEntityApiFuture = db.runTransaction(transaction -> {
+        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
             DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
             if (photoSnapshot.exists()) {
                 transaction.update(photoDocRef, "block", true);
-                return new ResponseEntity<>("차단 성공", HttpStatus.OK);
+                return ReturnType.SUCCESS;
             } else {
-                return null;
+                return ReturnType.NotExistImage;
             }
         });
-        if (responseEntityApiFuture.get()!=null) {
-            return responseEntityApiFuture.get();
+        if (returnTypeApiFuture.get()==ReturnType.SUCCESS) {
+            returnTypeApiFuture.get();
         } else {
             throw new NotExistImage();
         }

@@ -2,7 +2,6 @@ package com.wepat.repository;
 
 import com.wepat.dto.CommentDto;
 import com.wepat.dto.PhotoDto;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -13,16 +12,16 @@ public interface PhotoRepository {
     // 특정 사진 선택 시 보여주기
     PhotoDto getPhotoById(String calendarId, String photoId) throws ExecutionException, InterruptedException;
     // 이미지 추가
-    ResponseEntity<?> addPhoto(String calendarId, PhotoDto photoDto);
+    void addPhoto(String calendarId, PhotoDto photoDto);
     // 사진 삭제하기
-    ResponseEntity<?> deletePhoto(String calendarId, String photoId) throws ExecutionException, InterruptedException;
+    void deletePhoto(String calendarId, String photoId) throws ExecutionException, InterruptedException;
     // SNS 업로드
-    ResponseEntity<?> updateSNSByPhoto(String calendarId, String photoId) throws ExecutionException, InterruptedException;
+    void updateSNSByPhoto(String calendarId, String photoId) throws ExecutionException, InterruptedException;
     // 댓글 작성
-    ResponseEntity<?> addCommentByPhoto(String calendarId, String photoId, CommentDto commentDto) throws ExecutionException, InterruptedException;
+    void addCommentByPhoto(String calendarId, String photoId, CommentDto commentDto) throws ExecutionException, InterruptedException;
     // 댓글 삭제
-    ResponseEntity<?> deleteCommentByPhoto(String calendarId, String photoId, String commentId) throws ExecutionException, InterruptedException;
+    void deleteCommentByPhoto(String calendarId, String photoId, String commentId) throws ExecutionException, InterruptedException;
     // 댓글 수정
-    ResponseEntity<?> updateCommentByPhoto(String calendarId, String photoId, String commentId, CommentDto commentDto) throws ExecutionException, InterruptedException;
+    void updateCommentByPhoto(String calendarId, String photoId, String commentId, CommentDto commentDto) throws ExecutionException, InterruptedException;
 
 }

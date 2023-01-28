@@ -2,12 +2,11 @@ package com.wepat.controller;
 
 import com.wepat.exception.photo.AlreadyDeleteImage;
 import com.wepat.exception.photo.NotExistImage;
+import com.wepat.exception.photo.UpdateSNSCancel;
 import com.wepat.service.PhotoService;
-import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/photo")
@@ -54,15 +52,16 @@ public class PhotoController {
     @PostMapping("/add/photo/{calendarid}")
     @ApiOperation(value = "이미지 추가", notes = "사용자ID, 사진URL, 등록일 입력")
     public ResponseEntity<?> addPhoto(@PathVariable("calendarid") String calendarId, @RequestBody PhotoDto photoDto) {
-        return new ResponseEntity<>(photoService.addPhoto(calendarId, photoDto), HttpStatus.OK);
+        photoService.addPhoto(calendarId, photoDto);
+        return new ResponseEntity<>("이미지 추가 성공", HttpStatus.OK);
     }
 
-    // calendarId X
     @DeleteMapping("delete/{calendarid}/{photoid}")
     @ApiOperation(value = "이미지 삭제")
     public ResponseEntity<?> deletePhoto(@PathVariable("calendarid") String calendarId, @PathVariable("photoid") String photoId) {
         try {
-            return new ResponseEntity<>(photoService.deletePhoto(calendarId, photoId), HttpStatus.OK);
+            photoService.deletePhoto(calendarId, photoId);
+            return new ResponseEntity<>("이미지 삭제 성공", HttpStatus.OK);
         } catch (AlreadyDeleteImage e) {
             throw new AlreadyDeleteImage();
         } catch (Exception e) {
@@ -70,12 +69,14 @@ public class PhotoController {
         }
     }
 
-    // calendarId X
     @PutMapping("/{calendarid}/{photoid}/sns")
     @ApiOperation(value = "SNS 에 사진 업로드하기")
     public ResponseEntity<?> updateSNSByPhoto(@PathVariable("calendarid") String calendarId, @PathVariable("photoid") String photoId) {
         try {
-            return photoService.updateSNSByPhoto(calendarId, photoId);
+            photoService.updateSNSByPhoto(calendarId, photoId);
+            return new ResponseEntity<>("업로드 성공", HttpStatus.OK);
+        } catch (UpdateSNSCancel e) {
+            throw new UpdateSNSCancel();
         } catch (NotExistImage e) {
             throw new NotExistImage();
         } catch (Exception e) {
@@ -90,20 +91,24 @@ public class PhotoController {
                                                   @RequestBody CommentDto commentDto) {
 
         try {
-            return new ResponseEntity<>(photoService.addCommentByPhoto(calendarId, photoId, commentDto), HttpStatus.OK);
+            photoService.addCommentByPhoto(calendarId, photoId, commentDto);
+            return new ResponseEntity<>("댓글 작성 성공", HttpStatus.OK);
         } catch (NotExistImage e) {
-            throw new NotExistImage(e.getMessage());
+            throw new NotExistImage();
         } catch (Exception e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
+
     }
 
     @DeleteMapping("{calendarid}/{photoid}/{commentid}")
     @ApiOperation(value = "앨범 댓글 삭제")
     public ResponseEntity<?> deleteCommentByPhoto(@PathVariable("calendarid") String calendarId, @PathVariable("photoid") String photoId,
                                                   @PathVariable("commentid") String commentId) {
+
         try {
-            return new ResponseEntity<>(photoService.deleteCommentByPhoto(calendarId, photoId, commentId), HttpStatus.OK);
+            photoService.deleteCommentByPhoto(calendarId, photoId, commentId);
+            return new ResponseEntity<>("댓글 삭제 성공", HttpStatus.OK);
         } catch (NotExistImage e) {
             throw new NotExistImage();
         } catch (Exception e) {
@@ -115,8 +120,10 @@ public class PhotoController {
     @ApiOperation(value = "앨범 댓글 수정")
     public ResponseEntity<?> updateCommentByPhoto(@PathVariable("calendarid") String calendarId, @PathVariable("photoid") String photoId,
                                                   @PathVariable("commentid") String commentId, @RequestBody CommentDto commentDto) {
+
         try {
-            return new ResponseEntity<>(photoService.updateCommentByPhoto(calendarId, photoId, commentId, commentDto), HttpStatus.OK);
+            photoService.updateCommentByPhoto(calendarId, photoId, commentId, commentDto);
+            return new ResponseEntity<>("댓글 수정 완료", HttpStatus.OK);
         } catch (NotExistImage e) {
             throw new NotExistImage();
         } catch (Exception e) {

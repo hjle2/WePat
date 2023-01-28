@@ -1,7 +1,6 @@
 package com.wepat.service.impl;
 
 import com.wepat.dto.MemberDto;
-import com.wepat.entity.MemberEntity;
 import com.wepat.repository.MemberRepository;
 import com.wepat.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +23,11 @@ public class MemberServiceImpl implements MemberService {
     private final JavaMailSender javaMailSender;
 
     @Override
-    public MemberDto signUp(MemberDto member) throws ExecutionException, InterruptedException {
+    public void signUp(MemberDto member) throws ExecutionException, InterruptedException {
         if (member.getCalendarId()==null) {
-            return memberRepo.signUp(member);
+            memberRepo.signUp(member);
         } else {
-            return memberRepo.signUpWithCalendar(member);
+            memberRepo.signUpWithCalendar(member);
         }
     }
 
@@ -38,7 +37,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberDto findId(String email) throws ExecutionException, InterruptedException {
+    public String findId(String email) throws ExecutionException, InterruptedException {
         return memberRepo.findId(email);
     }
     @Override
@@ -72,8 +71,8 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberDto modifyPwd(String memberId, String pwd) throws ExecutionException, InterruptedException {
-        return memberRepo.modifyPwd(memberId, pwd);
+    public void modifyPwd(String memberId, String pwd) throws ExecutionException, InterruptedException {
+        memberRepo.modifyPwd(memberId, pwd);
     }
 
     @Override
@@ -82,18 +81,23 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberDto modifyMember(String memberId, String nickName) throws ExecutionException, InterruptedException {
-        return memberRepo.modifyMember(memberId, nickName);
+    public void modifyMember(String memberId, String nickName) throws ExecutionException, InterruptedException {
+        memberRepo.modifyMember(memberId, nickName);
     }
 
     @Override
-    public ResponseEntity<?> deleteMember(String memberId) throws ExecutionException, InterruptedException {
-        return memberRepo.deleteMember(memberId);
+    public void deleteMember(String memberId) throws ExecutionException, InterruptedException {
+        memberRepo.deleteMember(memberId);
     }
 
     @Override
-    public MemberEntity logout(String memberId) throws ExecutionException, InterruptedException {
-        return memberRepo.logout(memberId);
+    public void logout(String memberId) throws ExecutionException, InterruptedException {
+        memberRepo.logout(memberId);
+    }
+
+    @Override
+    public void modifyCalendarId(String memberId, String calendarId) throws ExecutionException, InterruptedException {
+        memberRepo.modifyCalendarId(memberId, calendarId);
     }
 
     @Override
@@ -102,20 +106,20 @@ public class MemberServiceImpl implements MemberService {
         return JwtUtil.createJwt(memberId,expireMs);
     }
 
-    @Override
-    public ResponseEntity<?> addWarnMember(String memberId, String warnMemberId) throws ExecutionException, InterruptedException {
-        return memberRepo.addWarnMember(memberId, warnMemberId);
-    }
-
-    @Override
-    public List<String> warnMember() throws ExecutionException, InterruptedException {
-        return memberRepo.warnMember();
-    }
-
-    @Override
-    public ResponseEntity<?> addBlockMember(String blockMemberId) throws ExecutionException, InterruptedException {
-        return memberRepo.addBlockMember(blockMemberId);
-    }
+//    @Override
+//    public ResponseEntity<?> addWarnMember(String memberId, String warnMemberId) throws ExecutionException, InterruptedException {
+//        return memberRepo.addWarnMember(memberId, warnMemberId);
+//    }
+//
+//    @Override
+//    public List<String> warnMember() throws ExecutionException, InterruptedException {
+//        return memberRepo.warnMember();
+//    }
+//
+//    @Override
+//    public ResponseEntity<?> addBlockMember(String blockMemberId) throws ExecutionException, InterruptedException {
+//        return memberRepo.addBlockMember(blockMemberId);
+//    }
 
 //    @Override
 //    public MemberEntity blockMember(String memberId) throws ExecutionException, InterruptedException {

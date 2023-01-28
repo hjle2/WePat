@@ -25,23 +25,17 @@ public class PhotoExceptionHandler {
         ErrorDto errorDto = new ErrorDto("AlreadyDeleteImage", "이미 삭제된 이미지입니다.");
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
-    @ExceptionHandler(NotExistCalendarException.class)
-    public ResponseEntity<?> NotExistCalendarException(NotExistCalendarException e) {
-        ErrorDto errorDto = new ErrorDto("NotExistCalendarException", e.getMessage());
-        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
-    }
 
-    @ExceptionHandler(NotExistPet.class)
-    public ResponseEntity<?> NotExistPet(NotExistPet e) {
-        ErrorDto errorDto = new ErrorDto("NotExistPet", e.getMessage());
-        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(UpdateSNSCancel.class)
+    public ResponseEntity<?> UpdateSNSCancel(UpdateSNSCancel e) {
+        ErrorDto errorDto = new ErrorDto("UpdateSNSCancel", "업로드 취소");
+        return new ResponseEntity<>(errorDto, HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ErrorDto exHandler(Exception e) {
-        System.out.println("익셉션 핸들러 호출!!!!!!!!!!!!");
-        return new ErrorDto("Exception", "서버에 오류가 발생했습니다. 죄송합니다.");
+        return new ErrorDto("Exception", "서버에 오류가 발생했습니다.");
     }
 
 }

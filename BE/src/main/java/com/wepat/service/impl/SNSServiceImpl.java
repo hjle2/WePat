@@ -4,7 +4,6 @@ import com.wepat.dto.PhotoDto;
 import com.wepat.repository.SNSRepository;
 import com.wepat.service.SNSService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,13 +26,13 @@ public class SNSServiceImpl implements SNSService {
     }
 
     @Override
-    public ResponseEntity<?> updateSNSLike(String photoId) throws ExecutionException, InterruptedException {
-        return snsRepository.updateSNSLike(photoId);
+    public void updateSNSLike(String photoId) throws ExecutionException, InterruptedException {
+        snsRepository.updateSNSLike(photoId);
     }
 
     @Override
-    public ResponseEntity<?> reportSNS(String photoId, String memberId) throws ExecutionException, InterruptedException {
-        return snsRepository.reportSNS(photoId, memberId);
+    public void reportSNS(String photoId, String memberId) throws ExecutionException, InterruptedException {
+        snsRepository.reportSNS(photoId, memberId);
     }
 
     @Override
@@ -42,7 +41,7 @@ public class SNSServiceImpl implements SNSService {
     }
 
     @Override
-    public ResponseEntity<?> blockSNSByPhoto(String photoId) throws ExecutionException, InterruptedException {
-        return snsRepository.blockSNSByPhoto(photoId);
+    public void blockSNSByPhoto(String photoId) throws ExecutionException, InterruptedException {
+        snsRepository.blockSNSByPhoto(photoId);
     }
 }

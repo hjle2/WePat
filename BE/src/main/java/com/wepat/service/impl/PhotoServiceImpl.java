@@ -5,7 +5,6 @@ import com.wepat.dto.PhotoDto;
 import com.wepat.repository.PhotoRepository;
 import com.wepat.service.PhotoService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,32 +25,32 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public ResponseEntity<?> addPhoto(String calendarId, PhotoDto photoDto) {
-        return photoRepository.addPhoto(calendarId, photoDto);
+    public void addPhoto(String calendarId, PhotoDto photoDto) {
+        photoRepository.addPhoto(calendarId, photoDto);
     }
 
     @Override
-    public ResponseEntity<?> deletePhoto(String calendarId, String photoId) throws ExecutionException, InterruptedException {
-        return photoRepository.deletePhoto(calendarId, photoId);
+    public void deletePhoto(String calendarId, String photoId) throws ExecutionException, InterruptedException {
+        photoRepository.deletePhoto(calendarId, photoId);
     }
 
     @Override
-    public ResponseEntity<?> updateSNSByPhoto(String calendarId, String photoId) throws ExecutionException, InterruptedException {
-        return photoRepository.updateSNSByPhoto(calendarId, photoId);
+    public void updateSNSByPhoto(String calendarId, String photoId) throws ExecutionException, InterruptedException {
+        photoRepository.updateSNSByPhoto(calendarId, photoId);
     }
 
     @Override
-    public ResponseEntity<?> addCommentByPhoto(String calendarId, String photoId, CommentDto commentDto) throws ExecutionException, InterruptedException {
-        return photoRepository.addCommentByPhoto(calendarId, photoId, commentDto);
+    public void addCommentByPhoto(String calendarId, String photoId, CommentDto commentDto) throws ExecutionException, InterruptedException {
+        photoRepository.addCommentByPhoto(calendarId, photoId, commentDto);
     }
 
     @Override
-    public ResponseEntity<?> deleteCommentByPhoto(String calendarId, String photoId, String commentId) throws ExecutionException, InterruptedException {
-        return photoRepository.deleteCommentByPhoto(calendarId, photoId, commentId);
+    public void deleteCommentByPhoto(String calendarId, String photoId, String commentId) throws ExecutionException, InterruptedException {
+        photoRepository.deleteCommentByPhoto(calendarId, photoId, commentId);
     }
 
     @Override
-    public ResponseEntity<?> updateCommentByPhoto(String calendarId, String photoId, String commentId, CommentDto commentDto) throws ExecutionException, InterruptedException {
-        return photoRepository.updateCommentByPhoto(calendarId, photoId, commentId, commentDto);
+    public void updateCommentByPhoto(String calendarId, String photoId, String commentId, CommentDto commentDto) throws ExecutionException, InterruptedException {
+        photoRepository.updateCommentByPhoto(calendarId, photoId, commentId, commentDto);
     }
 }

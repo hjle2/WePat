@@ -33,4 +33,6 @@ public class MemberEntity {
     private List<String> reportList;
     @ApiParam(value = "차단당한 계정 여부")
     private boolean block;
+    @ApiParam(value = "RefreshToken")
+    private String refreshToken;
 }

@@ -15,75 +15,56 @@ public class MemberExceptionHandler {
 
     @ExceptionHandler(IdWriteException.class)
     public ResponseEntity<?> IdWriteException(IdWriteException e) {
-        ErrorDto errorDto = new ErrorDto("IdWriteException", e.getMessage());
+        ErrorDto errorDto = new ErrorDto("IdWriteException", "존재하지 않는 아이디입니다.");
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(PwdWriteException.class)
     public ResponseEntity<?> PwdWriteException(PwdWriteException e) {
-        ErrorDto errorDto = new ErrorDto("PwdWriteException", e.getMessage());
+        ErrorDto errorDto = new ErrorDto("PwdWriteException", "비밀번호가 일치하지 않습니다.");
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ExistEmailException.class)
     public ResponseEntity<?> ExistEmailException(ExistEmailException e) {
-        ErrorDto errorDto = new ErrorDto("ExistEmailException", e.getMessage());
+        ErrorDto errorDto = new ErrorDto("ExistEmailException", "이미 회원가입된 이메일입니다.");
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ExistIdException.class)
     public ResponseEntity<?> ExistIdException(ExistIdException e) {
-        ErrorDto errorDto = new ErrorDto("ExistIdException", e.getMessage());
+        ErrorDto errorDto = new ErrorDto("ExistIdException", "이미 존재하는 아이디입니다.");
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NotExistEmailException.class)
     public ResponseEntity<?> NotExistEmailException(NotExistEmailException e) {
-        ErrorDto errorDto = new ErrorDto("NotExistEmailException", e.getMessage());
+        ErrorDto errorDto = new ErrorDto("NotExistEmailException", "회원이 아닌 이메일입니다.");
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NotExistMember.class)
     public ResponseEntity<?> NotExistMember(NotExistMember e) {
-        ErrorDto errorDto = new ErrorDto("NotExistMember", e.getMessage());
-        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(MessageError.class)
-    public ResponseEntity<?> MessageError(MessageError e) {
-        ErrorDto errorDto = new ErrorDto("MessageError", e.getMessage());
-        return new ResponseEntity<>(errorDto, HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS);
-    }
-
-    @ExceptionHandler(AlreadyWarnMember.class)
-    public ResponseEntity<?> AlreadyWarnMember(AlreadyWarnMember e) {
-        ErrorDto errorDto = new ErrorDto("AlreadyWarnMember", e.getMessage());
+        ErrorDto errorDto = new ErrorDto("NotExistMember", "존재하지 않는 회원입니다");
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(BlockMember.class)
     public ResponseEntity<?> BlockMember(BlockMember e) {
-        ErrorDto errorDto = new ErrorDto("BlockMember", e.getMessage());
+        ErrorDto errorDto = new ErrorDto("BlockMember", "차단된 계정입니다.");
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NotExistCalendarException.class)
     public ResponseEntity<?> NotExistCalendarException(NotExistCalendarException e) {
-        ErrorDto errorDto = new ErrorDto("NotExistCalendarException", e.getMessage());
-        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(NotExistPet.class)
-    public ResponseEntity<?> NotExistPet(NotExistPet e) {
-        ErrorDto errorDto = new ErrorDto("NotExistPet", e.getMessage());
+        ErrorDto errorDto = new ErrorDto("NotExistCalendarException", "존재하지 않는 코드입니다.");
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ErrorDto exHandler(Exception e) {
-        System.out.println("익셉션 핸들러 호출!!!!!!!!!!!!");
-        return new ErrorDto("Exception", "서버에 오류가 발생했습니다. 죄송합니다.");
+        return new ErrorDto("Exception", "서버에 오류가 발생했습니다.");
     }
 
 }
