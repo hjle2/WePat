@@ -1,4 +1,4 @@
-package com.wepat.Aspect;
+package com.wepat.aop.aspect;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
@@ -18,13 +18,13 @@ public class LogAspect {
 
     @Before(value = "execution(* com.wepat..*.*(..))") //어떤 메서드에 적용할지를 표현식에 서술
     public void beforeMethod(JoinPoint joinPoint) {
-        logger.info("Called " + joinPoint.getSignature());
-        logger.info("params >> " + Arrays.toString(joinPoint.getArgs()));
+        logger.info("----> Call  : {}", joinPoint.getSignature().getName());
+        logger.info("----> Param : {}", Arrays.toString(joinPoint.getArgs()));
     }
 
     @After(value = "execution(* com.wepat..*.*(..))") //어떤 메서드에 적용할지를 표현식에 서술
     public void afterMethod(JoinPoint joinPoint) {
-        logger.info("Done " + joinPoint.getSignature().getName());
+        logger.info("----> Done  :  {}", joinPoint.getSignature().getName());
         //공통기능
     }
 
