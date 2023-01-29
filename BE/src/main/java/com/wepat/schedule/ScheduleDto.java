@@ -13,6 +13,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class ScheduleDto {
+    @ApiParam(value = "스케쥴 id", hidden = true)
+    private String scheduleId;
     @ApiParam(value = "스케쥴 이름")
     private String title;
     @ApiParam(value = "카테고리")
@@ -33,4 +35,8 @@ public class ScheduleDto {
     private int unitSize;
     @ApiParam(value = "일정에 관한 메모")
     private String memo;
+    @ApiParam(value = "사진ID 리스트", hidden = true)
+    private List<String> photoList;
+    @ApiParam(value = "댓글Dto 리스트", hidden = true)
+    private List<CommentDto> reviewList;
 }

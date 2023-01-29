@@ -1,10 +1,9 @@
 package com.wepat.schedule.repository;
 
-import com.google.cloud.firestore.CollectionReference;
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
+import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
+import com.wepat.exception.DataNotExitsException;
 import com.wepat.schedule.ScheduleDto;
 import com.wepat.schedule.ScheduleEntity;
 import org.slf4j.Logger;
@@ -68,11 +67,44 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
     }
 
     @Override
-    public void modifySchedule(String calendarId, ScheduleDto scheduleDto, String date) {
+    public void modifySchedule(String calendarId, ScheduleDto scheduleDto, String date) throws ExecutionException, InterruptedException {
+        Query query = scheduleCollection.whereEqualTo("calendarId", calendarId)
+                .whereEqualTo("scheduleId", scheduleDto.getScheduleId());
+
+        ApiFuture<?> future = db.runTransaction(transaction -> {
+            ApiFuture<QuerySnapshot> scheduleEntityList = transaction.get(query);
+            List<ScheduleEntity> entityList = scheduleEntityList.get().toObjects(ScheduleEntity.class);
+
+            if (entityList != null && entityList.size() > 0) {
+                transaction.set(scheduleEntityList.get().getDocuments().get(0).getReference(), scheduleDto);
+                return true;
+            }
+           return null;
+        });
+
+        if (future.get() == null) {
+            throw new DataNotExitsException();
+        }
     }
 
     @Override
-    public void deleteSchedule(String calendarId, String date) {
+    public void deleteSchedule(String calendarId, String scheduleId) {
+        Query query = scheduleCollection.whereEqualTo("calendarId", calendarId)
+                .whereEqualTo("scheduleId", scheduleId);
+
+        ApiFuture<?> future = db.runTransaction(transaction -> {
+            List<QueryDocumentSnapshot> scheduleEntityList = transaction.get(query).get().getDocuments();
+
+                for (QueryDocumentSnapshot docRef : scheduleEntityList) {
+                    transaction.delete(docRef.getReference());
+                }
+                if (scheduleEntityList != null && scheduleEntityList.size() > 0)
+                    return true;
+                return null;
+        });
+        if (future == null) {
+            throw new DataNotExitsException();
+        }
     }
 
     @Override

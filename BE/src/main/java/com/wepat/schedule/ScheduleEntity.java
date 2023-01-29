@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public class ScheduleEntity {
     @ApiParam(value = "스케쥴ID", required = true)
-    private String docId;
+    private String scheduleId;
     @ApiParam(value = "스케쥴 이름")
     private String title;
     @ApiParam(value = "카테고리")

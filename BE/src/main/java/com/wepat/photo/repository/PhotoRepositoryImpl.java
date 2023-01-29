@@ -3,6 +3,7 @@ package com.wepat.photo.repository;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
+import com.wepat.exception.DataNotExitsException;
 import com.wepat.exception.photo.AlreadyDeleteImage;
 import com.wepat.exception.photo.NotExistImage;
 import com.wepat.exception.photo.UpdateSNSCancel;
@@ -10,7 +11,6 @@ import com.wepat.member.repository.MemberRepository;
 import com.wepat.photo.CommentDto;
 import com.wepat.photo.PhotoDto;
 import com.wepat.photo.PhotoEntity;
-import com.wepat.photo.repository.PhotoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -182,7 +182,7 @@ public class PhotoRepositoryImpl implements PhotoRepository {
         if (responseEntityApiFuture.get() == ReturnType.SUCCESS) {
             responseEntityApiFuture.get();
         } else {
-            throw new NotExistImage();
+            throw new DataNotExitsException();
         }
     }
 
