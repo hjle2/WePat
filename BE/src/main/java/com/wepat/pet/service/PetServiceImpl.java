@@ -19,7 +19,6 @@ public class PetServiceImpl implements PetService {
     private final PetRepository petRepo;
 
     @Override
-    @Transactional
     public void addPet(PetDto pet) throws ExecutionException, InterruptedException {
         petRepo.addPet(pet);
     }
@@ -45,8 +44,13 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public void deletePet(String CalendarId, String petId) throws ExecutionException, InterruptedException {
-        petRepo.deletePet(CalendarId, petId);
+    public void modifyPetWeight(String petId, String date, WeightDto weightDto) throws ExecutionException, InterruptedException {
+        petRepo.modifyPetWeight(petId, date, weightDto);
+    }
+
+    @Override
+    public void deletePet(String petId) throws ExecutionException, InterruptedException {
+        petRepo.deletePet(petId);
     }
 
 }

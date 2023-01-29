@@ -10,6 +10,8 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 public class FinanceDto {
+    @ApiParam(value = "가계부ID")
+    private String financeId;
     @ApiParam(value = "사용자", required = true)
     private String nickName;
     @ApiParam(value = "돈")
