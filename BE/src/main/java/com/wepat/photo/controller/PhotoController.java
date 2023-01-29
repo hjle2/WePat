@@ -37,7 +37,7 @@ public class PhotoController {
     }
 
     // calendarId X
-    @GetMapping("/{photoid}")
+    @GetMapping("/detail/{photoid}")
     @ApiOperation(value = "앨범 상세보기", response = PhotoDto.class)
     public ResponseEntity<?> getPhotoById(@PathVariable("photoid") String photoId) {
         try {
@@ -122,7 +122,6 @@ public class PhotoController {
     public ResponseEntity<?> updateCommentByPhoto(@PathVariable("photoid") String photoId,
                                                   @PathVariable("commentid") String commentId,
                                                   @RequestBody CommentDto commentDto) {
-
         try {
             photoService.updateCommentByPhotoId(photoId, commentId, commentDto);
             return new ResponseEntity<>("댓글 수정 완료", HttpStatus.OK);

@@ -19,6 +19,5 @@ public class CommentDto {
     private String content;
     @ApiParam(value = "글 작성일", required = true)
     private String date;
-    @ApiParam(value = "글 작성한 시간 (PK, 글 변경 시 사용)", required = true)
-    private String writtenDate;
+
 }

@@ -60,6 +60,8 @@ public class PhotoServiceImpl implements PhotoService {
 
     @Override
     public void updateCommentByPhotoId(String photoId, String commentId, CommentDto commentDto) throws ExecutionException, InterruptedException {
-
+        photoRepository.updateCommentByPhotoId(photoId, commentId, commentDto);
     }
+
+
 }
