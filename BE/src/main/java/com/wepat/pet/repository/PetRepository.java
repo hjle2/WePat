@@ -17,9 +17,11 @@ public interface PetRepository {
     PetDto getPet(String calendarId) throws ExecutionException, InterruptedException;
     // 반려동물 정보 변경하기
     void modifyPet(String petId, PetDto pet) throws ExecutionException, InterruptedException;
-    // 반려동물 몸무게 정보 변경하기
+    // 반려동물 몸무게 추가
     void addPetWeight(String petId, WeightDto weightDto) throws ExecutionException, InterruptedException;
-    // 발려동물 삭제하기
-    void deletePet(String CalendarId, String petId) throws ExecutionException, InterruptedException;
+    // 반려동물 몸무게 정보 변경하기
+    void modifyPetWeight(String petId, String date, WeightDto weightDto) throws ExecutionException, InterruptedException;
+    // 반려동물 삭제하기
+    void deletePet(String petId) throws ExecutionException, InterruptedException;
 
 }

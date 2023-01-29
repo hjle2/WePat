@@ -23,7 +23,7 @@ public class PetDto {
         this.adaptday = pet.getAdaptday();
         this.weightList = pet.getWeightList();
     }
-    @ApiParam(value = "반려동물 데이터가 표시되는 달력")
+    @ApiParam(value = "반려동물 데이터가 표시되는 달력", required = true)
     private String calendarId;
     @ApiParam(value = "반려동물 ID", hidden = true)
     private String petId;

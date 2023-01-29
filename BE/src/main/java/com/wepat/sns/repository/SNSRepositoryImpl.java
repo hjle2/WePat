@@ -29,6 +29,7 @@ public class SNSRepositoryImpl implements SNSRepository {
     private final static String PHOTO_COLLECTION = "photo";
     private final Firestore db = FirestoreClient.getFirestore();
     private final CollectionReference photoCollection = db.collection(PHOTO_COLLECTION);
+    private final int warnCount = 3;
 
     @Override
     public List<PhotoDto> getSNS() throws ExecutionException, InterruptedException {
@@ -123,7 +124,7 @@ public class SNSRepositoryImpl implements SNSRepository {
         List<QueryDocumentSnapshot> documentsList = photoCollection.get().get().getDocuments();
         List<PhotoDto> photoDtoList = new ArrayList<>();
         for (QueryDocumentSnapshot snapshot : documentsList) {
-            if (snapshot.toObject(PhotoEntity.class).getReportIdList().size() >= 3) {
+            if (snapshot.toObject(PhotoEntity.class).getReportIdList().size() >= warnCount) {
                 photoDtoList.add(snapshot.toObject(PhotoDto.class));
             }
         }
