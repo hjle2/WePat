@@ -11,9 +11,11 @@ import java.util.concurrent.ExecutionException;
 @Service
 public class PetServiceImpl implements PetService {
     private final PetRepository petRepo;
-    @Autowired
-    public PetServiceImpl(PetRepository petRepo) {
-        this.petRepo = petRepo;
+
+    @Override
+    @Transactional
+    public PetDto addPet(PetDto pet) throws ExecutionException, InterruptedException {
+        return petRepo.addPet(pet);
     }
 
     @Override
@@ -27,22 +29,18 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public PetDto addPet(String calendarId, PetDto pet) throws ExecutionException, InterruptedException {
-        return petRepo.addPet(calendarId, pet);
-    }
-
-    @Override
     public PetDto modifyPet(String petId, PetDto pet) throws ExecutionException, InterruptedException {
         return petRepo.modifyPet(petId, pet);
     }
 
     @Override
-    public PetDto addPetWeight(String petId, double weight) throws ExecutionException, InterruptedException {
-        return petRepo.addPetWeight(petId, weight);
+    public PetEntity addPetWeight(String petId, WeightDto weightDto) throws ExecutionException, InterruptedException {
+        return petRepo.addPetWeight(petId, weightDto);
     }
 
     @Override
-    public PetDto deletePet(String CalendarId, String petId) throws ExecutionException, InterruptedException {
+    public ResponseEntity<?> deletePet(String CalendarId, String petId) throws ExecutionException, InterruptedException {
         return petRepo.deletePet(CalendarId, petId);
     }
+
 }

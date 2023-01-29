@@ -17,8 +17,8 @@ public class MemberEntity {
         this.nickName = member.getNickName();
         this.email = member.getEmail();
         this.calendarId = member.getCalendarId();
-        this.warnMemberList = new ArrayList<>();
-        this.blockMemberList = new ArrayList<>();
+        this.reportList = new ArrayList<>();
+        this.block = new Boolean(false);
     }
     @ApiParam(value = "사용자 비밀번호", required = true)
     private String pwd;
@@ -28,10 +28,10 @@ public class MemberEntity {
     private String email;
     @ApiParam(value = "사용자의 달력 ID")
     private String calendarId;
-    @ApiParam(value = "신고한 회원 목록")
-    private List<String> warnMemberList;
-    @ApiParam(value = "차단한 계정")
-    private List<String> blockMemberList;
-
-    private String token;
+    @ApiParam(value = "나를 신고한 회원 목록")
+    private List<String> reportList;
+    @ApiParam(value = "차단당한 계정 여부")
+    private boolean block;
+    @ApiParam(value = "RefreshToken")
+    private String refreshToken;
 }

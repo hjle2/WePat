@@ -17,22 +17,25 @@ import java.util.List;
 
 @Repository
 public class MemberRepositoryImpl implements MemberRepository {
-    private final static Logger logger = LoggerFactory.getLogger(MemberRepository.class);
+
+    public enum ReturnType {
+        SUCCESS, ExistEmailException, ExistIdException, NotExistCalendarException, IdWriteException, BlockMember,
+        PwdWriteException, NotExistMember
+    }
+    private static Logger logger = LoggerFactory.getLogger(MemberRepository.class);
     private static final String CALENDAR_COLLECTION = "calendar";
     private static final String MEMBER_COLLECTION = "member";
     private final Firestore db = FirestoreClient.getFirestore();
     private final CollectionReference calCollection = db.collection(CALENDAR_COLLECTION);
     private final CollectionReference memCollection = db.collection(MEMBER_COLLECTION);
-
+    private final CollectionReference petCollection = db.collection(PET_COLLECTION);
+    private final CollectionReference scheduleCollection = db.collection(SCHEDULE_COLLECTION);
+    private final CollectionReference photoCollection = db.collection(PHOTO_COLLECTION);
 
     //캘린더 ID가 있을 때, 회원가입 (ID 값이 틀렸다고 에러)
     @Override
-    public MemberEntity signUpWithCalendar(MemberDto member) throws ExecutionException, InterruptedException {
+    public void signUpWithCalendar(MemberDto member) throws ExecutionException, InterruptedException {
 
-        //비밀번호 값 암호화
-        member.setPwd(new String(OpenCrypt.getSHA256(member.getPwd(),"salt")));
-
-        //memberId(member Collection)와 CalendarId(calendar Collection)
         final DocumentReference memDocRef = memCollection.document(member.getMemberId());
         final DocumentReference calDocRef = calCollection.document(member.getCalendarId());
 
@@ -40,16 +43,15 @@ public class MemberRepositoryImpl implements MemberRepository {
         List<QueryDocumentSnapshot> documents = memCollection.get().get().getDocuments();
         EmailCheck = documents.stream().anyMatch(docs -> (docs.toObject(MemberEntity.class).getEmail()).equals(member.getEmail()));
 
-        // run an asynchronous transaction
-        ApiFuture<String> stringApiFuture = db.runTransaction(transaction -> {
+        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
             DocumentSnapshot memSnapshot = transaction.get(memDocRef).get(); //입력한ID 값을 갖는 snapshot
             DocumentSnapshot calSnapshot = transaction.get(calDocRef).get(); //입력한 캘린더ID 값을 갖는 snapshot
 
             if (EmailCheck) {
-                return "ExistEmailException";
+                return ReturnType.ExistEmailException;
             } else {
                 if (memSnapshot.exists()) {
-                    return "ExistIdException";
+                    return ReturnType.ExistIdException;
                 } else {
                     if (calSnapshot.exists()) {
                         member.setCalendarId(calDocRef.getId());
@@ -61,321 +63,282 @@ public class MemberRepositoryImpl implements MemberRepository {
                         memberId.add(member.getMemberId());
                         transaction.update(calDocRef, "memberId", memberId);
 
-                        return "success";
+                        return ReturnType.SUCCESS;
                     } else {
-                        return "NotExistCalendarException";
+                        return ReturnType.NotExistCalendarException;
                     }
                 }
             }
         });
         // 트랜잭션 실행 결과를 반환
-        if ((stringApiFuture.get()).equals("ExistEmailException")) {
-            throw new ExistEmailException("이미 회원가입된 이메일입니다!");
-        } else if ((stringApiFuture.get()).equals("ExistIdException")) {
-            throw new ExistIdException("이미 존재하는 아이디입니다!");
-        } else if ((stringApiFuture.get()).equals("NotExistCalendarException")) {
-            throw new NotExistCalendarException("존재하지 않는 코드입니다!");
+        if (returnTypeApiFuture.get()==ReturnType.ExistEmailException) {
+            throw new ExistEmailException();
+        } else if (returnTypeApiFuture.get()==ReturnType.ExistIdException) {
+            throw new ExistIdException();
+        } else if (returnTypeApiFuture.get()==ReturnType.NotExistCalendarException) {
+            throw new NotExistCalendarException();
         } else {
-            return memCollection.document(member.getMemberId()).get().get().toObject(MemberEntity.class);
+            returnTypeApiFuture.get();
         }
     }
 
     //캘린더 ID null일 때, 회원가입
     @Override
-    public MemberEntity signUp(MemberDto member) throws ExecutionException, InterruptedException {
-
-        logger.info("signUp Repo called!");
+    public void signUp(MemberDto member) throws ExecutionException, InterruptedException {
 
         // memberId인 document 를 가져옴(없으면 생성)
         final DocumentReference memDocRef = memCollection.document(member.getMemberId());
         // calendar document 를 생성 (docId 는 랜덤값)
         final DocumentReference calDocRef = calCollection.document();
-        logger.info("memDocRef " + memDocRef.getId());
-        logger.info("calDocRef " + calDocRef.getId());
 
         boolean EmailCheck;
         List<QueryDocumentSnapshot> documents = memCollection.get().get().getDocuments();
         EmailCheck = documents.stream().anyMatch(docs -> (docs.toObject(MemberEntity.class).getEmail()).equals(member.getEmail()));
 
         // run an asynchronous transaction
-        ApiFuture<String> stringApiFuture = db.runTransaction(transaction -> {
+        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
 
             // memberId 인 document 를 가져옴
             DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
 
             if (EmailCheck) {
-                return "ExistEmailException";
+                return ReturnType.ExistEmailException;
             } else {
                 if (memSnapshot.exists()) {
-                    return "ExistIdException";
+                    return ReturnType.ExistIdException;
                 } else {
                     // memberEntity 를 db 에 추가 함
                     member.setCalendarId(calDocRef.getId());
                     transaction.create(memDocRef, new MemberEntity(member));
                     // calendarEntity(memberId 를 갖는)를 db에 추가 함
                     transaction.create(calDocRef, new CalendarEntity(member.getMemberId()));
-                    return "success";
+                    return ReturnType.SUCCESS;
                 }
             }
         });
         // 트랜잭션 실행 결과를 반환
-        if ((stringApiFuture.get()).equals("ExistEmailException")) {
-            throw new ExistEmailException("이미 회원가입된 이메일입니다!");
-        } else if ((stringApiFuture.get()).equals("ExistIdException")) {
-            throw new ExistIdException("이미 존재하는 아이디입니다!");
+        if (returnTypeApiFuture.get()==ReturnType.ExistEmailException) {
+            throw new ExistEmailException();
+        } else if (returnTypeApiFuture.get()==ReturnType.ExistIdException) {
+            throw new ExistIdException();
         } else {
-            return memCollection.document(member.getMemberId()).get().get().toObject(MemberEntity.class);
+            returnTypeApiFuture.get();
         }
     }
 
     @Override
-    public MemberEntity signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
+    public MemberDto signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
 
         final DocumentReference memDocRef = memCollection.document(memberId);
-        // run an asynchronous transaction
-        ApiFuture<String> stringApiFuture = db.runTransaction(transaction -> {
+
+        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
 
             DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
             MemberEntity memberEntity = transaction.get(memDocRef).get().toObject(MemberEntity.class);
 
             if (!memSnapshot.exists()) { // 멤버ID가 없을 경우
-                return "IdWriteException";
+                return ReturnType.IdWriteException;
+            } else if (memSnapshot.toObject(MemberEntity.class).isBlock()) { //차단된 계정
+                return ReturnType.BlockMember;
             } else if (memSnapshot.exists() && memberEntity.getPwd().equals(pwd)) { //해당 멤버ID가 있고, pwd가 같다면 로그인 성공
-                logger.info("success");
-                return "success";
+                return ReturnType.SUCCESS;
             } else { //비밀번호가 다르다면
-                logger.info("디비에 비밀번호 {}, 입력한 비밀번호 {} ", memberEntity.getPwd(), pwd);
-                return "PwdWriteException";
+                return ReturnType.PwdWriteException;
             }
         });
-
         // 트랜잭션 실행 결과를 반환
-        if ((stringApiFuture.get()).equals("IdWriteException")) {
-            throw new IdWriteException("존재하지 않는 아이디입니다!");
-        } else if ((stringApiFuture.get()).equals("PwdWriteException")) {
-            throw new PwdWriteException("비밀번호가 일치하지 않습니다!");
+        if (returnTypeApiFuture.get()==ReturnType.IdWriteException) {
+            throw new IdWriteException();
+        } else if (returnTypeApiFuture.get()==ReturnType.BlockMember) {
+            throw new BlockMember();
+        } else if (returnTypeApiFuture.get()==ReturnType.PwdWriteException) {
+            throw new PwdWriteException();
         } else {
-            return memCollection.document(memberId).get().get().toObject(MemberEntity.class);
+            return memCollection.document(memberId).get().get().toObject(MemberDto.class);
         }
     }
 
     @Override
-    public MemberEntity findId(String email) throws ExecutionException, InterruptedException {
-        logger.info("findId called!");
-
-        // asynchronously retrieve the document
-        List<MemberEntity> memberEntity = memCollection.whereEqualTo("email", email).get().get().toObjects(MemberEntity.class);
-
-        if (memberEntity.size() > 0) {
-            System.out.println(memberEntity.get(0));
-            System.out.println(memberEntity);
-            return memberEntity.get(0);
-        } else {
-            // Exception ??
-            logger.info("NotExistEmailException");
-            throw new NotExistEmailException("존재하지 않는 회원입니다!");
+    public String findId(String email) throws ExecutionException, InterruptedException {
+        List<QueryDocumentSnapshot> memDocs = memCollection.get().get().getDocuments();
+        for (QueryDocumentSnapshot docs : memDocs) {
+            if (docs.toObject(MemberEntity.class).getEmail().equals(email)) {
+                return docs.getId();
+            }
         }
+        throw new NotExistEmailException();
     }
 
     @Override
     public void findPwd(String randomPassword, String memberId) throws ExecutionException, InterruptedException {
-        logger.debug("findPwd called!!!");
 
-        boolean memberIdCheck;
-        List<QueryDocumentSnapshot> documents = memCollection.get().get().getDocuments();
-        memberIdCheck = documents.stream().anyMatch(docs -> (docs.getId()).equals(memberId));
-
-        if (memberIdCheck) {
+        boolean exists = memCollection.document(memberId).get().get().exists();
+        if (exists) {
             MemberEntity memberEntity = memCollection.document(memberId).get().get().toObject(MemberEntity.class);
             memberEntity.setPwd(randomPassword);
             memCollection.document(memberId).set(memberEntity);
         } else {
-            throw new NotExistMember("존재하지 않는 회원입니다!");
+            throw new NotExistMember();
         }
 
     }
 
     @Override
-    public MemberEntity modifyPwd(String memberId, String pwd) throws ExecutionException, InterruptedException {
-        logger.info("modifyPwd called!");
+    public void modifyPwd(String memberId, String pwd) throws ExecutionException, InterruptedException {
 
         // run an asynchronous transaction
         final DocumentReference memDocRef = memCollection.document(memberId);
 
-        ApiFuture<String> stringApiFuture = db.runTransaction(transaction -> {
+        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
 
             MemberEntity memberEntity = transaction.get(memDocRef).get().toObject(MemberEntity.class);
 
             if (memDocRef.get().get().exists()) {
                 transaction.update(memDocRef, "pwd", pwd);
-                return "success";
+                return ReturnType.SUCCESS;
             } else {
-                return "NotExistMember";
+                return ReturnType.NotExistMember;
             }
         });
-        if ((stringApiFuture.get()).equals("success")) {
-            return memCollection.document(memberId).get().get().toObject(MemberEntity.class);
+        if (returnTypeApiFuture.get()==ReturnType.SUCCESS) {
+            returnTypeApiFuture.get();
         } else {
-            throw new NotExistMember("존재하지 않는 회원입니다!");
+            throw new NotExistMember();
         }
     }
 
     @Override
-    public MemberEntity getMember(String memberId) throws ExecutionException, InterruptedException {
-        logger.info("getMember called!");
-
+    public MemberDto getMember(String memberId) throws ExecutionException, InterruptedException {
         // asynchronously retrieve multiple documents
-        boolean memberIdCheck;
-        List<QueryDocumentSnapshot> documents = memCollection.get().get().getDocuments();
-        memberIdCheck = documents.stream().anyMatch(docs -> (docs.getId()).equals(memberId));
-        if (memberIdCheck) {
-            return memCollection.document(memberId).get().get().toObject(MemberEntity.class);
+        boolean exists = memCollection.document(memberId).get().get().exists();
+        if (exists) {
+            return memCollection.document(memberId).get().get().toObject(MemberDto.class);
         } else {
-            throw new NotExistMember("존재하지 않는 회원입니다!");
+            throw new NotExistMember();
         }
     }
 
     @Override
-    public MemberEntity modifyMember(MemberDto member) throws ExecutionException, InterruptedException {
-        logger.info("modifyMember called!");
+    public void modifyMember(String memberId, String nickName) throws ExecutionException, InterruptedException {
 
-        final DocumentReference memDocRef = memCollection.document(member.getMemberId());
-        // asynchronously modify a document
-        // run an asynchronous transaction
-        ApiFuture<?> memberEntityApiFuture = db.runTransaction(transaction -> {
+        final DocumentReference memDocRef = memCollection.document(memberId);
 
+        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
             if (transaction.get(memDocRef).get().exists()) {
-                MemberEntity memberEntity = new MemberEntity(member);
-                memberEntity.setCalendarId(member.getCalendarId());
-                transaction.set(memDocRef, memberEntity);
-                System.out.println("modifyMember Transaction호출!!>>>");
-                System.out.println("Transaction내부 >>> " + memCollection.document(member.getMemberId()).get().get().toObject(MemberEntity.class));
-                return "success";
+                transaction.update(memDocRef, "nickName", nickName);
+                return ReturnType.SUCCESS;
             } else {
-                return "fail";
+                return ReturnType.NotExistMember;
             }
         });
-
-        if (memberEntityApiFuture.get().equals("success")) {
-            return memCollection.document(member.getMemberId()).get().get().toObject(MemberEntity.class);
+        if (returnTypeApiFuture.get()==ReturnType.SUCCESS) {
+            returnTypeApiFuture.get();
         } else {
-            throw new RuntimeException("서버 오류");
+            throw new NotExistMember();
         }
     }
 
     @Override
-    public MemberEntity deleteMember(String memberId) throws ExecutionException, InterruptedException {
-        logger.info("deleteMember called!");
+    public void deleteMember(String memberId) throws ExecutionException, InterruptedException {
 
-        MemberEntity member = getMember(memberId);
-        // asynchronously delete a document
+        MemberDto member = getMember(memberId);
         List<String> calMember = calCollection.document(member.getCalendarId()).get().get().toObject(CalendarEntity.class).getMemberId();
         calMember.remove(memberId);
 
-        if (calMember.size()==0) {
+        if (calMember.size() == 0) {
+            // 펫, 일정 삭제
+            List<String> petIdList = calCollection.document(member.getCalendarId()).get().get().toObject(CalendarEntity.class).getPetId();
+            for (String petId : petIdList) {
+                List<String> scheduleList = petCollection.document(petId).get().get().toObject(PetEntity.class).getSchedule();
+                for (String schedule : scheduleList) {
+                    scheduleCollection.document(schedule).delete();
+                }
+                petCollection.document(petId).delete();
+            }
+            // 사진 삭제
+            List<QueryDocumentSnapshot> photoDocList = photoCollection.get().get().getDocuments();
+            for (QueryDocumentSnapshot photoList : photoDocList) {
+                if (photoList.toObject(PhotoEntity.class).getCalendarId().equals(member.getCalendarId())) {
+                    photoCollection.document(photoList.getId()).delete();
+                }
+            }
             calCollection.document(member.getCalendarId()).delete();
         } else {
             calCollection.document(member.getCalendarId()).update("memberId", calMember);
         }
-        System.out.println("호출");
 
-        List<QueryDocumentSnapshot> documents = memCollection.get().get().getDocuments();
-        for (QueryDocumentSnapshot docs : documents) {
+        List<QueryDocumentSnapshot> memDocList = memCollection.get().get().getDocuments();
+        for (QueryDocumentSnapshot docs : memDocList) {
             if (!(docs.getId()).equals(memberId)) {
-                System.out.println(docs.getId());
-                List<String> warnMemberList = docs.toObject(MemberEntity.class).getWarnMemberList();
-                warnMemberList.remove(memberId);
-                memCollection.document(docs.getId()).update("warnMemberList", warnMemberList);
-                List<String> blockMemberList = docs.toObject(MemberEntity.class).getBlockMemberList();
-                blockMemberList.remove(memberId);
-                memCollection.document(docs.getId()).update("blockMemberList", blockMemberList);
+                List<String> reportList = docs.toObject(MemberEntity.class).getReportList();
+                reportList.remove(memberId);
+                memCollection.document(docs.getId()).update("reportList", reportList);
             }
         }
-
-        ApiFuture<WriteResult> writeResult = memCollection.document(memberId).delete();
-        // ...
-        logger.info("Update time : " + writeResult.get().getUpdateTime());
-
-        return member;
+        memCollection.document(memberId).delete();
     }
 
     @Override
-    public MemberEntity logout(String memberId) throws ExecutionException, InterruptedException  {
-        logger.info("logout called!");
-        return null;
+    public void logout(String memberId) throws ExecutionException, InterruptedException  {
+
     }
 
     @Override
-    public MemberEntity warnMember(String memberId) throws ExecutionException, InterruptedException {
-        logger.info("warnMember called!");
-        MemberEntity memberEntity = memCollection.document(memberId).get().get().toObject(MemberEntity.class);
-        List<String> warnMemberList = memberEntity.getWarnMemberList();
-        System.out.println(warnMemberList);
-        return memberEntity;
-    }
+    public void modifyCalendarId(String memberId, String calendarId) throws ExecutionException, InterruptedException {
+        DocumentReference memDocRef = memCollection.document(memberId);
+        DocumentReference calDocRef = calCollection.document(calendarId); // 변경할 캘린더
+        MemberDto member = getMember(memberId);
+        String beforeCalendarId = member.getCalendarId(); // 변경 전 캘린더
+        DocumentReference beforeCalDocRef = calCollection.document(beforeCalendarId);
 
-    @Override
-    public MemberEntity blockMember(String memberId) throws ExecutionException, InterruptedException {
-        logger.info("blockMember called!");
-        MemberEntity memberEntity = memCollection.document(memberId).get().get().toObject(MemberEntity.class);
-        List<String> blockMemberList = memberEntity.getBlockMemberList();
-        System.out.println(blockMemberList);
-        return memberEntity;
-    }
+        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
+            DocumentSnapshot calSnapshot = transaction.get(calDocRef).get();
+            DocumentSnapshot beforeCalSnapshot = transaction.get(beforeCalDocRef).get();
 
-    @Override
-    public MemberEntity addWarnMember(String memberId, String warnMemberId) throws ExecutionException, InterruptedException {
+            if (calSnapshot.exists() && beforeCalSnapshot.exists()) {
+                // 새로운 달력에 멤버 추가
+                List<String> afterMemberIdList = calDocRef.get().get().toObject(CalendarEntity.class).getMemberId();
+                afterMemberIdList.add(memberId);
+                transaction.update(calDocRef, "memberId", afterMemberIdList);
 
-        final DocumentReference memDocRef = memCollection.document(memberId);
-        final DocumentReference warnMemDocRef = memCollection.document(warnMemberId);
+                // 이전 달력에서 멤버 삭제
+                List<String> beforeMemberIdList = beforeCalDocRef.get().get().toObject(CalendarEntity.class).getMemberId();
+                beforeMemberIdList.remove(memberId);
+                transaction.update(beforeCalDocRef, "memberId", beforeMemberIdList);
+                transaction.update(memDocRef, "calendarId", calendarId);
 
-        db.runTransaction(transaction -> {
+                if (beforeMemberIdList.size()==0) {
+                    // 펫, 일정 삭제
+                    List<String> petIdList = calCollection.document(beforeCalendarId).get().get().toObject(CalendarEntity.class).getPetId();
+                    for (String petId : petIdList) {
+                        List<String> scheduleList = petCollection.document(petId).get().get().toObject(PetEntity.class).getSchedule();
+                        for (String schedule : scheduleList) {
+                            scheduleCollection.document(schedule).delete();
+                        }
+                        petCollection.document(petId).delete();
+                    }
 
-            DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
-            DocumentSnapshot warnMemSnapShot = transaction.get(warnMemDocRef).get();
-            if (memSnapshot.exists() && warnMemSnapShot.exists()) {
-                List<String> warnMemberList = memDocRef.get().get().toObject(MemberEntity.class).getWarnMemberList();
-                if (!(warnMemberList.contains(warnMemberId))) {
-                    warnMemberList.add(warnMemberId);
-                    transaction.update(memDocRef, "warnMemberList", warnMemberList);
-                    return memSnapshot.toObject(MemberEntity.class);
-                } else {
-                    logger.info("이미 신고한 회원입니다!");
-                    return "fail";
+                    // 사진 삭제
+                    List<QueryDocumentSnapshot> photoDocList = photoCollection.get().get().getDocuments();
+                    for (QueryDocumentSnapshot photoList : photoDocList) {
+                        if (photoList.toObject(PhotoEntity.class).getCalendarId().equals(beforeCalendarId)) {
+                            photoCollection.document(photoList.getId()).delete();
+                        }
+                    }
+
+                    calCollection.document(beforeCalendarId).delete();
                 }
+
+                return ReturnType.SUCCESS;
             } else {
-                logger.info("존재하지 않는 회원입니다!");
-                return "fail";
+                return ReturnType.NotExistCalendarException;
             }
         });
-        return memDocRef.get().get().toObject(MemberEntity.class);
-    }
-
-    @Override
-    public MemberEntity addBlockMember(String memberId, String blockMemberId) throws ExecutionException, InterruptedException {
-
-        final DocumentReference memDocRef = memCollection.document(memberId);
-        final DocumentReference blockMemDocRef = memCollection.document(blockMemberId);
-
-        db.runTransaction(transaction -> {
-            DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
-            DocumentSnapshot blockMemSnapShot = transaction.get(blockMemDocRef).get();
-            if (memSnapshot.exists() && blockMemSnapShot.exists()) {
-                List<String> blockMemberList = memDocRef.get().get().toObject(MemberEntity.class).getBlockMemberList();
-                if (!(blockMemberList.contains(blockMemberId))) {
-                    blockMemberList.add(blockMemberId);
-                    transaction.update(memDocRef, "blockMemberList", blockMemberList);
-                    return "success";
-                } else {
-                    logger.info("이미 차단한 회원입니다!");
-                    return "fail";
-                }
-            } else {
-                logger.info("존재하지 않는 회원입니다!");
-                return "fail";
-            }
-        });
-        return memDocRef.get().get().toObject(MemberEntity.class);
+        if (returnTypeApiFuture.get()==ReturnType.SUCCESS) {
+            returnTypeApiFuture.get();
+        } else {
+            throw new NotExistCalendarException();
+        }
     }
 
     @Override

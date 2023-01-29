@@ -12,97 +12,35 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
-    private final MemberRepository memberRepository;
+    private final MemberRepository memberRepo;
     private final JavaMailSender javaMailSender;
 
     @Override
-    public MemberEntity signUp(MemberDto member) throws ExecutionException, InterruptedException {
-        //비밀번호 값 암호화
-//        member.setPwd(OpenCrypt.getSHA256(member.getPwd(),"salt").toString());
-
-        if (member.getCalendarId() == null) {
-            return memberRepository.signUp(member);
+    public void signUp(MemberDto member) throws ExecutionException, InterruptedException {
+        if (member.getCalendarId()==null) {
+            memberRepo.signUp(member);
         } else {
-            return memberRepository.signUpWithCalendar(member);
+            memberRepo.signUpWithCalendar(member);
         }
     }
 
     @Override
-    public MemberEntity signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
-        //입력받은 비밀번호 값도 암호화
-//        pwd = OpenCrypt.getSHA256(pwd,"salt").toString();
-        return memberRepository.signIn(memberId, pwd);
+    public MemberDto signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
+        return memberRepo.signIn(memberId, pwd);
     }
 
     @Override
-    public MemberEntity findId(String email) throws ExecutionException, InterruptedException {
-        return memberRepository.findId(email);
+    public String findId(String email) throws ExecutionException, InterruptedException {
+        return memberRepo.findId(email);
     }
-
-    @Override
-    public MemberEntity modifyPwd(String memberId, String pwd) throws ExecutionException, InterruptedException {
-
-        //비밀번호 값 암호화
-        String pwdEncode = OpenCrypt.getSHA256(pwd,"salt").toString();
-        return memberRepository.modifyPwd(memberId, pwd);
-    }
-
-    @Override
-    public MemberEntity getMember(String memberId) throws ExecutionException, InterruptedException {
-        return memberRepository.getMember(memberId);
-    }
-
-    @Override
-    public MemberEntity modifyMember(MemberDto member) throws ExecutionException, InterruptedException {
-        return memberRepository.modifyMember(member);
-    }
-
-    @Override
-    public MemberEntity deleteMember(String memberId) throws ExecutionException, InterruptedException {
-        return memberRepository.deleteMember(memberId);
-    }
-
-    @Override
-    public MemberEntity logout(String memberId) throws ExecutionException, InterruptedException {
-        return memberRepository.logout(memberId);
-    }
-//
-//    @Override
-//    public String createAccessToken(String memberId, String pwd) {
-//        Long expireMs = 1000 * 60 * 60*3L;//유지 시간을 3시간(임의)으로 설정
-//        return createJwt(memberId,"Access", pwd,expireMs);
-//    }
-//    @Override
-//    public String createRefreshToken(String memberId, String pwd) {
-//        Long expireMs = 1000 * 60 * 60*24*365L;//1년간 유지(임의)
-//        return createJwt(memberId,"Refresh", pwd,expireMs);
-//    }
-
-
-
-//    @Override
-//    public void saveRefreshToken(String memberId, String refreshToken) {
-//       // memberRepo.signUpWithCalendar(member); 일단 킵해두고 member에 RT 컬럼을 추가하는걸로
-//    }
-
-    @Override
-    public MemberEntity warnMember(String memberId) throws ExecutionException, InterruptedException {
-        return memberRepository.warnMember(memberId);
-    }
-
-    @Override
-    public MemberEntity blockMember(String memberId) throws ExecutionException, InterruptedException {
-        return memberRepository.blockMember(memberId);
-    }
-
     @Override
     public void findPwd(String memberId, String email) throws ExecutionException, InterruptedException, MessagingException {
-        System.out.println("service호출!");
         /**
          * 링크 사용시 사용
          */
@@ -116,7 +54,7 @@ public class MemberServiceImpl implements MemberService {
             randomPassword += word[idx];
         }
 
-        memberRepository.findPwd(randomPassword, memberId);
+        memberRepo.findPwd(randomPassword, memberId);
 
         MimeMessage message = javaMailSender.createMimeMessage();
         message.setFrom("qwas15788@gmail.com");
@@ -128,33 +66,43 @@ public class MemberServiceImpl implements MemberService {
         message.addRecipient(Message.RecipientType.TO,
                 new InternetAddress(email));
 
-        System.out.println(">>>!!" + message);
         javaMailSender.send(message);
-        System.out.println("success");
     }
 
     @Override
-    public MemberEntity addWarnMember(String memberId, String warnMemberId) throws ExecutionException, InterruptedException {
-        return memberRepository.addWarnMember(memberId, warnMemberId);
+    public void modifyPwd(String memberId, String pwd) throws ExecutionException, InterruptedException {
+        memberRepo.modifyPwd(memberId, pwd);
     }
 
     @Override
-    public MemberEntity addBlockMember(String memberId, String blockMemberId) throws ExecutionException, InterruptedException {
-        return null;
+    public MemberDto getMember(String memberId) throws ExecutionException, InterruptedException {
+        return memberRepo.getMember(memberId);
     }
 
     @Override
-    public void saveRefreshToken(String memberId, String refreshToken) throws Exception {
-        memberRepository.saveRefreshToken(memberId, refreshToken);
+    public void modifyMember(String memberId, String nickName) throws ExecutionException, InterruptedException {
+        memberRepo.modifyMember(memberId, nickName);
     }
 
     @Override
-    public String getRefreshToken(String memberId) throws Exception {
-        return memberRepository.getRefreshToken(memberId);
+    public void deleteMember(String memberId) throws ExecutionException, InterruptedException {
+        memberRepo.deleteMember(memberId);
     }
 
     @Override
-    public void deleteRefreshToken(String memberId) throws Exception {
-        memberRepository.deleteRefreshToken(memberId);
+    public void logout(String memberId) throws ExecutionException, InterruptedException {
+        memberRepo.logout(memberId);
     }
+
+    @Override
+    public void modifyCalendarId(String memberId, String calendarId) throws ExecutionException, InterruptedException {
+        memberRepo.modifyCalendarId(memberId, calendarId);
+    }
+
+    @Override
+    public String createJwt(String memberId, String pwd) {
+        Long expireMs = 1000 * 60 * 60L;
+        return JwtUtil.createJwt(memberId,expireMs);
+    }
+
 }

@@ -1,23 +1,20 @@
 package com.wepat.gcp;
 
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.storage.*;
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.Bucket;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 import net.bytebuddy.utility.RandomString;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.activation.FileTypeMap;
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Component
@@ -54,17 +51,20 @@ public class DataBucketUtil {
     public FileDto uploadFile(MultipartFile multipartFile, String fileName, String contentType) {
 
         try{
-            LOGGER.info("Start file uploading process on GCS");
+
+            LOGGER.debug("Start file uploading process on GCS");
             byte[] fileData = FileUtils.readFileToByteArray(convertFile(multipartFile));
 
-            Bucket bucket = getBucket();
+            InputStream inputStream = new ClassPathResource(gcpConfigFile).getInputStream();
+
+            StorageOptions options = StorageOptions.newBuilder().setProjectId(gcpProjectId)
+                    .setCredentials(GoogleCredentials.fromStream(inputStream)).build();
+
+            Storage storage = options.getService();
+            Bucket bucket = storage.get(gcpBucketId,Storage.BucketGetOption.fields());
 
             RandomString id = new RandomString(6, ThreadLocalRandom.current());
-            LOGGER.info("Get RandomString");
-
-            LOGGER.info("/" + fileName + "-" + id.nextString());
-            Blob blob = bucket.create("/" + fileName + "-" + id.nextString() + checkFileExtension(fileName), fileData, contentType);
-            LOGGER.info("Get Blob");
+            Blob blob = bucket.create(gcpDirectoryName + "/" + fileName + "-" + id.nextString() + checkFileExtension(fileName), fileData, contentType);
 
             if(blob != null){
                 LOGGER.info("File successfully uploaded to GCS");

@@ -26,14 +26,14 @@ public class MemberController {
     private final JwtUtil jwtUtil;
     @PostMapping("/signup")
     @ApiOperation(value = "회원가입", notes = "정보를 받아 회원가입 시도한다.", response = MemberDto.class)
-    public MemberEntity signUp(MemberDto member) {
-        logger.info("signUp called!");
+    public ResponseEntity<?> signUp(MemberDto member) {
         try {
-            return memberService.signUp(member);
+            memberService.signUp(member);
+            return new ResponseEntity<>("회원가입 성공", HttpStatus.OK);
         } catch (ExistEmailException e) {
             throw new ExistEmailException(e.getMessage());
         } catch (ExistIdException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new ExistIdException(e.getMessage());
         } catch (NotExistCalendarException e) {
             throw new NotExistCalendarException(e.getMessage());
         } catch (Exception e) {
@@ -44,37 +44,38 @@ public class MemberController {
     @ApiOperation(value = "로그인 시도",  notes = "로그인 요청을 한다.",response = MemberDto.class)
     public ResponseEntity<?> signIn(String memberId, String pwd) {
         try {
-            MemberEntity memberResult = memberService.signIn(memberId, pwd);//유저가 로그인 가능한 유저인지 확인
+            MemberDto memberResult = memberService.signIn(memberId, pwd);//유저가 로그인 가능한 유저인지 확인
             String accessToken = null;
             String refreshToken = null;//유저가 로그인 되면 토큰을 생성하여 저장할 String
-            if(memberResult != null){//로그인에서 객체를 받아왔다.
+            if(memberResult!=null){//로그인에서 객체를 받아왔다.
+                String memberToken = memberService.createJwt(memberId, pwd);
                 accessToken = jwtUtil.createAccessToken(memberId, pwd);
                 refreshToken = jwtUtil.createRefreshToken(memberId, pwd);
                 memberService.saveRefreshToken(memberId , refreshToken);//
-                return new ResponseEntity<>(accessToken, HttpStatus.OK);
+                return new ResponseEntity<String>(memberToken, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-//            return memberService.signIn(memberId, pwd);
         } catch (IdWriteException e) {
-            logger.info(e.getMessage());
             throw new IdWriteException(e.getMessage());
+        } catch (BlockMember e) {
+            throw new BlockMember(e.getMessage());
         } catch (PwdWriteException e) {
-            logger.info(e.getMessage());
-            System.out.println(e.getMessage());
             throw new PwdWriteException(e.getMessage());
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException();
         }
-        return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
     }
+
     @PostMapping("/findid")
     @ApiOperation(value = "아이디 찾기", notes = "이메일을 확인하여 해당 아이디 제공", response = String.class)
-    public MemberEntity findId(String email) {
+    public ResponseEntity<?> findId(String email) {
         try {
-            return memberService.findId(email);
+            return new ResponseEntity<>(memberService.findId(email), HttpStatus.OK);
         } catch (NotExistEmailException e) {
             throw new NotExistEmailException(e.getMessage());
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException();
         }
     }
     @PostMapping("/findpwd")
@@ -92,9 +93,10 @@ public class MemberController {
     }
     @PutMapping("modifypwd")
     @ApiOperation(value = "비밀번호 변경", response = HttpResponse.class)
-    public MemberEntity modifyPwd(String memberId, String pwd) {
+    public ResponseEntity<?> modifyPwd(String memberId, String pwd) {
         try {
-            return memberService.modifyPwd(memberId, pwd);
+            memberService.modifyPwd(memberId, pwd);
+            return new ResponseEntity<>("비밀번호 변경 성공", HttpStatus.OK);
         } catch (NotExistMember e) {
             throw new NotExistMember(e.getMessage());
         } catch (Exception e) {
@@ -103,9 +105,9 @@ public class MemberController {
     }
     @GetMapping("/{memberid}")
     @ApiOperation(value = "마이페이지", notes = "현재 로그인되어있는 회원의 정보 조회", response = MemberDto.class)
-    public MemberEntity getMember(@PathVariable("memberid") String memberId) {
+    public ResponseEntity<?> getMember(@PathVariable("memberid") String memberId) {
         try {
-            return memberService.getMember(memberId);
+            return new ResponseEntity<>(memberService.getMember(memberId), HttpStatus.OK);
         } catch (NotExistMember e) {
             throw new NotExistMember(e.getMessage());
         } catch (Exception e) {
@@ -114,111 +116,48 @@ public class MemberController {
     }
     @PutMapping("/modify")
     @ApiOperation(value = "회원 정보 수정", notes = "현재 회원의 정보를 수정한다.", response = MemberDto.class)
-    public ResponseEntity<?> modifyMember(MemberDto member) {
-        MemberEntity memberResult = null;
+    public ResponseEntity<?> modifyMember(String memberId, String nickName) {
         try {
-            memberResult = memberService.modifyMember(member);
-            System.out.println("modifyMember controller>>> " + memberResult);
-            return new ResponseEntity<MemberEntity>(memberResult, HttpStatus.OK);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            memberService.modifyMember(memberId, nickName);
+            return new ResponseEntity<>("회원 정보 수정 완료", HttpStatus.OK);
+        } catch (NotExistMember e) {
+            throw new NotExistMember(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException();
         }
     }
     @DeleteMapping("/{memberid}")
     @ApiOperation(value = "사용자의 정보를 삭제한다.", response = HttpResponse.class)
     public ResponseEntity<?> deleteMember(@PathVariable("memberid") String memberId) {
-        MemberEntity memberResult = null;
         try {
-            memberResult = memberService.deleteMember(memberId);
-            return new ResponseEntity<MemberEntity>(memberResult, HttpStatus.OK);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            memberService.deleteMember(memberId);
+            return new ResponseEntity<>("회원 탈퇴 성공", HttpStatus.OK);
+        } catch (Exception e) {
+            throw new RuntimeException();
         }
     }
     @GetMapping("/logout/{memberid}")
     @ApiOperation(value = "로그아웃", notes = "현재 로그인되어있는 사용자 로그아웃", response = HttpResponse.class)
     public ResponseEntity<?> logout(@PathVariable("memberid") String memberId) {
-        MemberEntity memberResult = null;
         try {
-            memberResult = memberService.logout(memberId);
-            return new ResponseEntity<MemberEntity>(memberResult, HttpStatus.OK);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-    @GetMapping("/warn/{memberid}")
-    @ApiOperation(value = "신고한 회원 목록 조회")
-    public ResponseEntity<?> warnMember(@PathVariable("memberid") String memberId) {
-        MemberEntity memberResult = null;
-        try {
-            memberResult = memberService.warnMember(memberId);
-            return new ResponseEntity<MemberEntity>(memberResult, HttpStatus.OK);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            memberService.logout(memberId);
+            return new ResponseEntity<>("로그아웃 성공", HttpStatus.OK);
+        } catch (Exception e) {
+            throw new RuntimeException();
         }
     }
 
-    @PutMapping("/warn/{memberid}")
-    @ApiOperation(value = "회원 신고 추가")
-    public ResponseEntity<?> addWarnMember(@PathVariable("memberid") String memberId, String warnMemberId) {
-        MemberEntity memberResult = null;
+    @PutMapping("/modify/calendar")
+    @ApiOperation(value = "캘린더 변경")
+    public ResponseEntity<?> modifyCalendarId(String memberId, String calendarId) {
         try {
-            memberResult = memberService.addWarnMember(memberId, warnMemberId);
-            System.out.println(memberResult);
-            return new ResponseEntity<MemberEntity>(memberResult, HttpStatus.OK);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            memberService.modifyCalendarId(memberId, calendarId);
+            return new ResponseEntity<>("캘린더 변경 완료", HttpStatus.OK);
+        } catch (NotExistCalendarException e) {
+            throw new NotExistCalendarException();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
-    @GetMapping("/block/{memberid}")
-    @ApiOperation(value = "차단한 회원 목록 조회")
-    public ResponseEntity<?> blockMember(@PathVariable("memberid") String memberId) {
-        MemberEntity memberResult = null;
-        try {
-            memberResult = memberService.blockMember(memberId);
-            return new ResponseEntity<MemberEntity>(memberResult, HttpStatus.OK);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-
-    @PutMapping("/block/{memberid}")
-    @ApiOperation(value = "회원 차단 추가")
-    public ResponseEntity<?> addBlockMember(@PathVariable("memberid") String memberId, String blockMemberId) {
-        MemberEntity memberResult = null;
-        try {
-            memberResult = memberService.addBlockMember(memberId, blockMemberId);
-            return new ResponseEntity<>(memberResult, HttpStatus.OK);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
 }

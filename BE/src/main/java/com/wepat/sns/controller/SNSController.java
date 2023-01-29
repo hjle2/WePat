@@ -13,31 +13,84 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/sns")
+@RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class SNSController {
     private final static Logger logger = LoggerFactory.getLogger(PetController.class);
 
+    private final SNSService snsService;
+
     @GetMapping("/")
-    @ApiOperation(value = "SNS 메인 페이지", notes = "전체 SNS 사진 가져오기", response = List.class)
+    @ApiOperation(value = "SNS 전체 사진 조회", response = List.class)
     public ResponseEntity<?> getSNS() {
-        return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(snsService.getSNS(), HttpStatus.OK);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @GetMapping("/{photoid}")
     @ApiOperation(value = "이미지 선택", response = PhotoDto.class)
     public ResponseEntity<?> getSNSByPhotoId(@PathVariable("photoid") String photoId) {
-        return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(snsService.getSNSByPhotoId(photoId), HttpStatus.OK);
+        } catch (NotExistImage e) {
+            throw new NotExistImage();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    @PutMapping("/{photoid}")
+    @PutMapping("/like/{photoid}")
     @ApiOperation(value = "좋아요 클릭", response = PhotoDto.class)
     public ResponseEntity<?> updateSNSLike(@PathVariable("photoid") String photoId) {
-        return new ResponseEntity<>(HttpStatus.OK);
+
+        try {
+            snsService.updateSNSLike(photoId);
+            return new ResponseEntity<>("좋아요 클릭", HttpStatus.OK);
+        } catch (NotExistImage e) {
+            throw new NotExistImage();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    @PutMapping("/{photoid}/{memberid}")
+    @PutMapping("/report/{photoid}/{memberid}")
     @ApiOperation(value = "신고 클릭")
     public ResponseEntity<?> reportSNS(@PathVariable("photoid") String photoId, @PathVariable("memberid") String memberId) {
-        return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            snsService.reportSNS(photoId, memberId);
+            return new ResponseEntity<>("신고 성공", HttpStatus.OK);
+        } catch (AlreadyReportImage e) {
+            throw new AlreadyReportImage();
+        } catch (NotExistImage e) {
+            throw new NotExistImage();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @GetMapping("/report")
+    @ApiOperation(value = "3번 이상 신고 당한 게시물")
+    public ResponseEntity<?> reportList() {
+        try {
+            return new ResponseEntity<>(snsService.reportList(), HttpStatus.OK);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PutMapping("/block/{photoid}")
+    @ApiOperation(value = "게시물 차단")
+    public ResponseEntity<?> blockSNSByPhoto(@PathVariable("photoid") String photoId) {
+        try {
+            snsService.blockSNSByPhoto(photoId);
+            return new ResponseEntity<>("게시물 차단 성공", HttpStatus.OK);
+        } catch (NotExistImage e) {
+            throw new NotExistImage();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
