@@ -60,6 +60,11 @@ public class MemberExceptionHandler {
         ErrorDto errorDto = new ErrorDto("NotExistCalendarException", "존재하지 않는 코드입니다.");
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(AlreadyAloneCalendar.class)
+    public ResponseEntity<?> AlreadyAloneCalendar(AlreadyAloneCalendar e) {
+        ErrorDto errorDto = new ErrorDto("AlreadyAloneCalendar", "이미 혼자 사용중인 캘린더입니다.");
+        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
+    }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)

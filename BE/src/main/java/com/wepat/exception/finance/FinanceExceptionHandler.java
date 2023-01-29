@@ -12,33 +12,22 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice(assignableTypes = {FinanceController.class})
 public class FinanceExceptionHandler {
-    @ExceptionHandler(NotExistFinance.class)
-    public ResponseEntity<?> NotExistFinance(NotExistFinance e) {
-        ErrorDto errorDto = new ErrorDto("NotExistFinance", e.getMessage());
-        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
-    }
+
     @ExceptionHandler(OverMoney.class)
     public ResponseEntity<?> OverMoney(OverMoney e) {
         ErrorDto errorDto = new ErrorDto("OverMoney", e.getMessage());
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(NotExistCalendarException.class)
-    public ResponseEntity<?> NotExistCalendarException(NotExistCalendarException e) {
-        ErrorDto errorDto = new ErrorDto("NotExistCalendarException", e.getMessage());
-        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(NotExistPet.class)
-    public ResponseEntity<?> NotExistPet(NotExistPet e) {
-        ErrorDto errorDto = new ErrorDto("NotExistPet", e.getMessage());
+    @ExceptionHandler(AlreadyDeleteFinance.class)
+    public ResponseEntity<?> AlreadyDeleteFinance(AlreadyDeleteFinance e) {
+        ErrorDto errorDto = new ErrorDto("AlreadyDeleteFinance", "삭제된 가계부 내용입니다.");
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ErrorDto exHandler(Exception e) {
-        System.out.println("익셉션 핸들러 호출!!!!!!!!!!!!");
-        return new ErrorDto("Exception", "서버에 오류가 발생했습니다. 죄송합니다.");
+        return new ErrorDto("Exception", "서버에 오류가 발생했습니다.");
     }
 }

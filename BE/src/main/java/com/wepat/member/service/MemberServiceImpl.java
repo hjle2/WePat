@@ -113,4 +113,9 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.saveRefreshToken(memberId, refreshToken);
     }
 
+    @Override
+    public void modifyCalendarIdAlone(String memberId) throws ExecutionException, InterruptedException {
+        memberRepository.modifyCalendarIdAlone(memberId);
+    }
+
 }

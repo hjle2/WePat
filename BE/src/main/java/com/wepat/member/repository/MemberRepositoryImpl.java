@@ -21,7 +21,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     public enum ReturnType {
         SUCCESS, ExistEmailException, ExistIdException, NotExistCalendarException, IdWriteException, BlockMember,
-        PwdWriteException, NotExistMember
+        PwdWriteException, NotExistMember, AlreadyAloneCalendar
     }
     private static Logger logger = LoggerFactory.getLogger(MemberRepository.class);
     private static final String CALENDAR_COLLECTION = "calendar";
@@ -388,6 +388,31 @@ public class MemberRepositoryImpl implements MemberRepository {
 
         if (!(boolean) future.get()) {
             throw new Exception();
+        }
+    }
+
+    @Override
+    public void modifyCalendarIdAlone(String memberId) throws ExecutionException, InterruptedException {
+        String calendarId = getMemberById(memberId).getCalendarId();
+        DocumentReference memDocRef = memCollection.document(memberId);
+        DocumentReference calDocRef = calCollection.document(calendarId);
+        DocumentReference randomCal = calCollection.document();
+        ApiFuture<?> returnTypeApiFuture = db.runTransaction(transaction -> {
+            if (calDocRef.get().get().toObject(CalendarEntity.class).getMemberId().size() == 1) {
+                return ReturnType.AlreadyAloneCalendar;
+            } else {
+                CalendarEntity calendarEntity = new CalendarEntity(memberId);
+                transaction.create(randomCal, calendarEntity);
+                transaction.update(memDocRef, "calendarId", randomCal.getId());
+
+                List<String> memberIdList = calDocRef.get().get().toObject(CalendarEntity.class).getMemberId();
+                memberIdList.remove(memberId);
+                transaction.update(calDocRef, "memberId", memberIdList);
+                return ReturnType.SUCCESS;
+            }
+        });
+        if (returnTypeApiFuture.get() == ReturnType.AlreadyAloneCalendar) {
+            throw new AlreadyAloneCalendar();
         }
     }
 }
