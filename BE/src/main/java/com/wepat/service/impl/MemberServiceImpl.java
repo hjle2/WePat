@@ -106,26 +106,4 @@ public class MemberServiceImpl implements MemberService {
         return JwtUtil.createJwt(memberId,expireMs);
     }
 
-//    @Override
-//    public ResponseEntity<?> addWarnMember(String memberId, String warnMemberId) throws ExecutionException, InterruptedException {
-//        return memberRepo.addWarnMember(memberId, warnMemberId);
-//    }
-//
-//    @Override
-//    public List<String> warnMember() throws ExecutionException, InterruptedException {
-//        return memberRepo.warnMember();
-//    }
-//
-//    @Override
-//    public ResponseEntity<?> addBlockMember(String blockMemberId) throws ExecutionException, InterruptedException {
-//        return memberRepo.addBlockMember(blockMemberId);
-//    }
-
-//    @Override
-//    public MemberEntity blockMember(String memberId) throws ExecutionException, InterruptedException {
-//        return memberRepo.blockMember(memberId);
-//    }
-//
-
-
 }

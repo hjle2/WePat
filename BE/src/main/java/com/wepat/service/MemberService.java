@@ -20,13 +20,4 @@ public interface MemberService {
     void modifyCalendarId(String memberId, String calendarId) throws ExecutionException, InterruptedException;
     String createJwt(String memberId, String pwd);
 
-
-
-//    ResponseEntity<?> addWarnMember(String memberId, String warnMemberId) throws ExecutionException, InterruptedException;
-//     관리자 기능
-//    List<String> warnMember() throws ExecutionException, InterruptedException;
-//
-//    ResponseEntity<?> addBlockMember(String blockMemberId) throws ExecutionException, InterruptedException;
-//        MemberEntity blockMember(String memberId) throws ExecutionException, InterruptedException;
-
 }

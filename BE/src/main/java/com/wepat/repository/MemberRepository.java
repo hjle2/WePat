@@ -20,12 +20,5 @@ public interface MemberRepository {
     void logout(String memberId) throws ExecutionException, InterruptedException;
     void modifyCalendarId(String memberId, String calendarId) throws ExecutionException, InterruptedException;
 
-
-//    ResponseEntity<?> addWarnMember(String memberId, String warnMemberId) throws ExecutionException, InterruptedException;
-//     관리자 기능
-//    List<String> warnMember() throws ExecutionException, InterruptedException;
-//    ResponseEntity<?> addBlockMember(String blockMemberId) throws ExecutionException, InterruptedException;
-//    MemberEntity blockMember(String memberId) throws ExecutionException, InterruptedException;
-
 }
 
