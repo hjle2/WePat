@@ -1,21 +1,27 @@
 package com.wepat.pet.service;
 
 import com.wepat.pet.PetDto;
+import com.wepat.pet.PetEntity;
+import com.wepat.pet.WeightDto;
 import com.wepat.pet.repository.PetRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Service
+@RequiredArgsConstructor
 public class PetServiceImpl implements PetService {
     private final PetRepository petRepo;
 
     @Override
     @Transactional
-    public PetDto addPet(PetDto pet) throws ExecutionException, InterruptedException {
-        return petRepo.addPet(pet);
+    public void addPet(PetDto pet) throws ExecutionException, InterruptedException {
+        petRepo.addPet(pet);
     }
 
     @Override
@@ -29,18 +35,18 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public PetDto modifyPet(String petId, PetDto pet) throws ExecutionException, InterruptedException {
-        return petRepo.modifyPet(petId, pet);
+    public void modifyPet(String petId, PetDto pet) throws ExecutionException, InterruptedException {
+        petRepo.modifyPet(petId, pet);
     }
 
     @Override
-    public PetEntity addPetWeight(String petId, WeightDto weightDto) throws ExecutionException, InterruptedException {
-        return petRepo.addPetWeight(petId, weightDto);
+    public void addPetWeight(String petId, WeightDto weightDto) throws ExecutionException, InterruptedException {
+        petRepo.addPetWeight(petId, weightDto);
     }
 
     @Override
-    public ResponseEntity<?> deletePet(String CalendarId, String petId) throws ExecutionException, InterruptedException {
-        return petRepo.deletePet(CalendarId, petId);
+    public void deletePet(String CalendarId, String petId) throws ExecutionException, InterruptedException {
+        petRepo.deletePet(CalendarId, petId);
     }
 
 }

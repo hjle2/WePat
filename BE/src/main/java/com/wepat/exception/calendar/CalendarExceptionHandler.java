@@ -1,6 +1,6 @@
 package com.wepat.exception.calendar;
 
-import com.wepat.controller.CalendarController;
+import com.wepat.calendar.controller.CalendarController;
 import com.wepat.exception.ErrorDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -33,7 +33,6 @@ public class CalendarExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ErrorDto exHandler(Exception e) {
-        System.out.println("익셉션 핸들러 호출!!!!!!!!!!!!");
         return new ErrorDto("Exception", "서버에 오류가 발생했습니다. 죄송합니다.");
     }
 }

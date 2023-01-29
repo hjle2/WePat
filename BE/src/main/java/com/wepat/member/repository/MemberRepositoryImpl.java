@@ -6,7 +6,8 @@ import com.google.firebase.cloud.FirestoreClient;
 import com.wepat.calendar.CalendarEntity;
 import com.wepat.member.MemberDto;
 import com.wepat.member.MemberEntity;
-import com.wepat.security.OpenCrypt;
+import com.wepat.pet.PetEntity;
+import com.wepat.photo.PhotoEntity;
 import com.wepat.exception.member.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,9 @@ public class MemberRepositoryImpl implements MemberRepository {
     private static Logger logger = LoggerFactory.getLogger(MemberRepository.class);
     private static final String CALENDAR_COLLECTION = "calendar";
     private static final String MEMBER_COLLECTION = "member";
+    private static final String PET_COLLECTION = "pet";
+    private static final String SCHEDULE_COLLECTION = "schedule";
+    private static final String PHOTO_COLLECTION = "photo";
     private final Firestore db = FirestoreClient.getFirestore();
     private final CollectionReference calCollection = db.collection(CALENDAR_COLLECTION);
     private final CollectionReference memCollection = db.collection(MEMBER_COLLECTION);
@@ -138,12 +142,16 @@ public class MemberRepositoryImpl implements MemberRepository {
 
             if (!memSnapshot.exists()) { // 멤버ID가 없을 경우
                 return ReturnType.IdWriteException;
+
             } else if (memSnapshot.toObject(MemberEntity.class).isBlock()) { //차단된 계정
                 return ReturnType.BlockMember;
+
             } else if (memSnapshot.exists() && memberEntity.getPwd().equals(pwd)) { //해당 멤버ID가 있고, pwd가 같다면 로그인 성공
                 return ReturnType.SUCCESS;
+
             } else { //비밀번호가 다르다면
                 return ReturnType.PwdWriteException;
+
             }
         });
         // 트랜잭션 실행 결과를 반환
@@ -170,7 +178,7 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public void findPwd(String randomPassword, String memberId) throws ExecutionException, InterruptedException {
+    public void changePwdToRandom(String randomPassword, String memberId) throws ExecutionException, InterruptedException {
 
         boolean exists = memCollection.document(memberId).get().get().exists();
         if (exists) {
@@ -186,7 +194,6 @@ public class MemberRepositoryImpl implements MemberRepository {
     @Override
     public void modifyPwd(String memberId, String pwd) throws ExecutionException, InterruptedException {
 
-        // run an asynchronous transaction
         final DocumentReference memDocRef = memCollection.document(memberId);
 
         ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
@@ -200,7 +207,7 @@ public class MemberRepositoryImpl implements MemberRepository {
                 return ReturnType.NotExistMember;
             }
         });
-        if (returnTypeApiFuture.get()==ReturnType.SUCCESS) {
+        if (returnTypeApiFuture.get() == ReturnType.SUCCESS) {
             returnTypeApiFuture.get();
         } else {
             throw new NotExistMember();
@@ -208,11 +215,13 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public MemberDto getMember(String memberId) throws ExecutionException, InterruptedException {
-        // asynchronously retrieve multiple documents
-        boolean exists = memCollection.document(memberId).get().get().exists();
-        if (exists) {
-            return memCollection.document(memberId).get().get().toObject(MemberDto.class);
+    public MemberDto getMemberById(String memberId) throws ExecutionException, InterruptedException {
+        DocumentReference memDocRef = memCollection.document(memberId);
+
+        MemberDto memberdto = memDocRef.get().get().toObject(MemberDto.class);
+        if (memberdto != null) {
+            memberdto.setMemberId(memberId);
+            return memberdto;
         } else {
             throw new NotExistMember();
         }
@@ -220,10 +229,9 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public void modifyMember(String memberId, String nickName) throws ExecutionException, InterruptedException {
-
         final DocumentReference memDocRef = memCollection.document(memberId);
 
-        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
+        ApiFuture<ReturnType> future = db.runTransaction(transaction -> {
             if (transaction.get(memDocRef).get().exists()) {
                 transaction.update(memDocRef, "nickName", nickName);
                 return ReturnType.SUCCESS;
@@ -231,8 +239,7 @@ public class MemberRepositoryImpl implements MemberRepository {
                 return ReturnType.NotExistMember;
             }
         });
-        if (returnTypeApiFuture.get()==ReturnType.SUCCESS) {
-            returnTypeApiFuture.get();
+        if (future.get()==ReturnType.SUCCESS) {
         } else {
             throw new NotExistMember();
         }
@@ -241,32 +248,39 @@ public class MemberRepositoryImpl implements MemberRepository {
     @Override
     public void deleteMember(String memberId) throws ExecutionException, InterruptedException {
 
-        MemberDto member = getMember(memberId);
-        List<String> calMember = calCollection.document(member.getCalendarId()).get().get().toObject(CalendarEntity.class).getMemberId();
-        calMember.remove(memberId);
+        String calendarId = getMemberById(memberId).getCalendarId();
+        DocumentReference calendarDocRef = calCollection.document(calendarId);
 
-        if (calMember.size() == 0) {
+        CalendarEntity calendar = calendarDocRef.get().get().toObject(CalendarEntity.class);
+        calendar.getMemberId().remove(memberId);
+
+        // calendar에 member가 없는 경우 데이터 삭제
+        if (calendar.getMemberId().size() == 0) {
             // 펫, 일정 삭제
-            List<String> petIdList = calCollection.document(member.getCalendarId()).get().get().toObject(CalendarEntity.class).getPetId();
+            List<String> petIdList = calendar.getPetId();
             for (String petId : petIdList) {
                 List<String> scheduleList = petCollection.document(petId).get().get().toObject(PetEntity.class).getSchedule();
                 for (String schedule : scheduleList) {
+                    // calendar에 연결된 펫의 일정 삭제
                     scheduleCollection.document(schedule).delete();
                 }
+                // calendar에 연결된 펫 정보 삭제
                 petCollection.document(petId).delete();
             }
             // 사진 삭제
             List<QueryDocumentSnapshot> photoDocList = photoCollection.get().get().getDocuments();
             for (QueryDocumentSnapshot photoList : photoDocList) {
-                if (photoList.toObject(PhotoEntity.class).getCalendarId().equals(member.getCalendarId())) {
+                if (photoList.toObject(PhotoEntity.class).getCalendarId().equals(calendarId)) {
                     photoCollection.document(photoList.getId()).delete();
                 }
             }
-            calCollection.document(member.getCalendarId()).delete();
+            // calendar삭제
+            calCollection.document(calendarId).delete();
         } else {
-            calCollection.document(member.getCalendarId()).update("memberId", calMember);
+            calCollection.document(calendarId).update("memberId", calendar.getMemberId());
         }
 
+        // 탈퇴한 회원이 신고한 계정들 신고 기록 무효화
         List<QueryDocumentSnapshot> memDocList = memCollection.get().get().getDocuments();
         for (QueryDocumentSnapshot docs : memDocList) {
             if (!(docs.getId()).equals(memberId)) {
@@ -279,19 +293,15 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public void logout(String memberId) throws ExecutionException, InterruptedException  {
-
-    }
-
-    @Override
     public void modifyCalendarId(String memberId, String calendarId) throws ExecutionException, InterruptedException {
         DocumentReference memDocRef = memCollection.document(memberId);
         DocumentReference calDocRef = calCollection.document(calendarId); // 변경할 캘린더
-        MemberDto member = getMember(memberId);
+
+        MemberDto member = getMemberById(memberId);
         String beforeCalendarId = member.getCalendarId(); // 변경 전 캘린더
         DocumentReference beforeCalDocRef = calCollection.document(beforeCalendarId);
 
-        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
+        ApiFuture<ReturnType> future = db.runTransaction(transaction -> {
             DocumentSnapshot calSnapshot = transaction.get(calDocRef).get();
             DocumentSnapshot beforeCalSnapshot = transaction.get(beforeCalDocRef).get();
 
@@ -307,9 +317,9 @@ public class MemberRepositoryImpl implements MemberRepository {
                 transaction.update(beforeCalDocRef, "memberId", beforeMemberIdList);
                 transaction.update(memDocRef, "calendarId", calendarId);
 
-                if (beforeMemberIdList.size()==0) {
+                if (beforeMemberIdList.size() == 0) {
                     // 펫, 일정 삭제
-                    List<String> petIdList = calCollection.document(beforeCalendarId).get().get().toObject(CalendarEntity.class).getPetId();
+                    List<String> petIdList = beforeCalDocRef.get().get().toObject(CalendarEntity.class).getPetId();
                     for (String petId : petIdList) {
                         List<String> scheduleList = petCollection.document(petId).get().get().toObject(PetEntity.class).getSchedule();
                         for (String schedule : scheduleList) {
@@ -326,7 +336,7 @@ public class MemberRepositoryImpl implements MemberRepository {
                         }
                     }
 
-                    calCollection.document(beforeCalendarId).delete();
+                    beforeCalDocRef.delete();
                 }
 
                 return ReturnType.SUCCESS;
@@ -334,11 +344,18 @@ public class MemberRepositoryImpl implements MemberRepository {
                 return ReturnType.NotExistCalendarException;
             }
         });
-        if (returnTypeApiFuture.get()==ReturnType.SUCCESS) {
-            returnTypeApiFuture.get();
+        if (future.get() == ReturnType.SUCCESS) {
         } else {
             throw new NotExistCalendarException();
         }
+    }
+
+    @Override
+    public void addWarnMember(String memberId, String warnMemberId) throws ExecutionException, InterruptedException {
+    }
+
+    @Override
+    public void addBlockMember(String memberId, String blockMemberId) throws ExecutionException, InterruptedException {
     }
 
     @Override
@@ -355,15 +372,6 @@ public class MemberRepositoryImpl implements MemberRepository {
         if (!(boolean) future.get()) {
             throw new Exception();
         }
-    }
-
-    @Override
-    public String getRefreshToken(String memberId) throws Exception {
-        MemberEntity memDocRef = memCollection.document(memberId).get().get().toObject(MemberEntity.class);
-        if (memDocRef == null) {
-            throw new Exception();
-        }
-        return memDocRef.getToken();
     }
 
     @Override

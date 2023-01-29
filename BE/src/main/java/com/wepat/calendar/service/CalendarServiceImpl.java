@@ -40,12 +40,16 @@ public class CalendarServiceImpl implements CalendarService{
         int size = scheduleDto.getUnitSize();
 
         // startdate < enddate 인 경우
-        while (startdate.compareTo(enddate) <= 0) {
-            scheduleDto.setDate(DateUtil.getStringDate(startdate));
-            calendarRepository.addSchedule(scheduleDto);
+        if (scheduleDto.isRepeat()) {
+            while (startdate.compareTo(enddate) < 0) {
+                scheduleDto.setDate(DateUtil.getStringDate(startdate));
+                calendarRepository.addSchedule(scheduleDto);
 
-            // 반봅 주기만큼 더하기
-            startdate = DateUtil.addDays(startdate, unit, size);
+                // 반봅 주기만큼 더하기
+                startdate = DateUtil.addDays(startdate, unit, size);
+            }
+        } else {
+            calendarRepository.addSchedule(scheduleDto);
         }
     }
 

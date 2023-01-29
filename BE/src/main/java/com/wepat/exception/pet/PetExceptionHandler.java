@@ -1,7 +1,7 @@
 package com.wepat.exception.pet;
 
-import com.wepat.controller.PetController;
 import com.wepat.exception.ErrorDto;
+import com.wepat.pet.controller.PetController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

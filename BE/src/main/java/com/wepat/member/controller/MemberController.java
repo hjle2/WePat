@@ -2,7 +2,6 @@ package com.wepat.member.controller;
 
 import com.wepat.exception.member.*;
 import com.wepat.member.MemberDto;
-import com.wepat.member.MemberEntity;
 import com.wepat.member.service.MemberService;
 import com.wepat.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -29,7 +30,7 @@ public class MemberController {
     public ResponseEntity<?> signUp(MemberDto member) {
         try {
             memberService.signUp(member);
-            return new ResponseEntity<>("회원가입 성공", HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } catch (ExistEmailException e) {
             throw new ExistEmailException(e.getMessage());
         } catch (ExistIdException e) {
@@ -44,17 +45,20 @@ public class MemberController {
     @ApiOperation(value = "로그인 시도",  notes = "로그인 요청을 한다.",response = MemberDto.class)
     public ResponseEntity<?> signIn(String memberId, String pwd) {
         try {
+            Map<String, String> resultMap = new HashMap<>();
             MemberDto memberResult = memberService.signIn(memberId, pwd);//유저가 로그인 가능한 유저인지 확인
             String accessToken = null;
             String refreshToken = null;//유저가 로그인 되면 토큰을 생성하여 저장할 String
-            if(memberResult!=null){//로그인에서 객체를 받아왔다.
-                String memberToken = memberService.createJwt(memberId, pwd);
+            if(memberResult != null){//로그인에서 객체를 받아왔다.
                 accessToken = jwtUtil.createAccessToken(memberId, pwd);
                 refreshToken = jwtUtil.createRefreshToken(memberId, pwd);
-                memberService.saveRefreshToken(memberId , refreshToken);//
-                return new ResponseEntity<String>(memberToken, HttpStatus.OK);
+                memberService.saveRefreshToken(memberId, refreshToken);
+
+                resultMap.put("access-token", accessToken);
+                resultMap.put("refresh-token", refreshToken);
+                return new ResponseEntity<>(resultMap, HttpStatus.ACCEPTED);
             } else {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             }
         } catch (IdWriteException e) {
             throw new IdWriteException(e.getMessage());
@@ -96,7 +100,7 @@ public class MemberController {
     public ResponseEntity<?> modifyPwd(String memberId, String pwd) {
         try {
             memberService.modifyPwd(memberId, pwd);
-            return new ResponseEntity<>("비밀번호 변경 성공", HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } catch (NotExistMember e) {
             throw new NotExistMember(e.getMessage());
         } catch (Exception e) {
@@ -107,7 +111,7 @@ public class MemberController {
     @ApiOperation(value = "마이페이지", notes = "현재 로그인되어있는 회원의 정보 조회", response = MemberDto.class)
     public ResponseEntity<?> getMember(@PathVariable("memberid") String memberId) {
         try {
-            return new ResponseEntity<>(memberService.getMember(memberId), HttpStatus.OK);
+            return new ResponseEntity<>(memberService.getMemberDetail(memberId), HttpStatus.OK);
         } catch (NotExistMember e) {
             throw new NotExistMember(e.getMessage());
         } catch (Exception e) {
@@ -118,8 +122,8 @@ public class MemberController {
     @ApiOperation(value = "회원 정보 수정", notes = "현재 회원의 정보를 수정한다.", response = MemberDto.class)
     public ResponseEntity<?> modifyMember(String memberId, String nickName) {
         try {
-            memberService.modifyMember(memberId, nickName);
-            return new ResponseEntity<>("회원 정보 수정 완료", HttpStatus.OK);
+            memberService.modifyMemberDetail(memberId, nickName);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } catch (NotExistMember e) {
             throw new NotExistMember(e.getMessage());
         } catch (Exception e) {
@@ -131,7 +135,7 @@ public class MemberController {
     public ResponseEntity<?> deleteMember(@PathVariable("memberid") String memberId) {
         try {
             memberService.deleteMember(memberId);
-            return new ResponseEntity<>("회원 탈퇴 성공", HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } catch (Exception e) {
             throw new RuntimeException();
         }
@@ -141,7 +145,7 @@ public class MemberController {
     public ResponseEntity<?> logout(@PathVariable("memberid") String memberId) {
         try {
             memberService.logout(memberId);
-            return new ResponseEntity<>("로그아웃 성공", HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } catch (Exception e) {
             throw new RuntimeException();
         }

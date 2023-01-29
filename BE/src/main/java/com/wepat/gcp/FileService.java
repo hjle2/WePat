@@ -1,5 +1,7 @@
 package com.wepat.gcp;
 
+import com.wepat.exception.BadRequestException;
+import com.wepat.exception.DataBucketUtil;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

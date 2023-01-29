@@ -1,4 +1,4 @@
-package com.wepat.gcp;
+package com.wepat.exception;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

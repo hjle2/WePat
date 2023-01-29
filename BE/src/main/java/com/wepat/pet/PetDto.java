@@ -1,14 +1,10 @@
 package com.wepat.pet;
 
-import com.google.cloud.Timestamp;
-import com.wepat.entity.PetEntity;
 import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -25,6 +21,7 @@ public class PetDto {
         this.color = pet.getColor();
         this.birthday = pet.getBirthday();
         this.adaptday = pet.getAdaptday();
+        this.weightList = pet.getWeightList();
     }
     @ApiParam(value = "반려동물 데이터가 표시되는 달력")
     private String calendarId;
@@ -44,4 +41,6 @@ public class PetDto {
     private String birthday;
     @ApiParam(value = "반려동물 입양일")
     private String adaptday;
+    @ApiParam(value = "몸무게 정보(Dto) 리스트", hidden = true)
+    private List<WeightDto> weightList;
 }

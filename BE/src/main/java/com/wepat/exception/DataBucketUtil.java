@@ -1,19 +1,24 @@
-package com.wepat.gcp;
+package com.wepat.exception;
 
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.storage.Blob;
-import com.google.cloud.storage.Bucket;
-import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageOptions;
+import com.google.cloud.storage.*;
+import com.wepat.gcp.FileDto;
+import com.wepat.gcp.FileWriteException;
+import com.wepat.gcp.GCPFileUploadException;
+import com.wepat.gcp.InvalidFileTypeException;
 import net.bytebuddy.utility.RandomString;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.activation.FileTypeMap;
 import java.io.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -92,7 +97,7 @@ public class DataBucketUtil {
 
             if(blob != null){
                 LOGGER.info("File successfully downloaded from GCS");
-                return new ResponseEntity<FileDto>(new FileDto(blob.getName(), blob.getMediaLink()),HttpStatus.NOT_ACCEPTABLE);
+                return new ResponseEntity<FileDto>(new FileDto(blob.getName(), blob.getMediaLink()), HttpStatus.NOT_ACCEPTABLE);
             }
 
             return (ResponseEntity<?>) ResponseEntity.ok().contentType(MediaType.valueOf(FileTypeMap.getDefaultFileTypeMap().getContentType(fileName)));

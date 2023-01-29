@@ -13,7 +13,6 @@ public interface ScheduleRepository {
     List<ScheduleDto> getScheduleListByDate(String calendarId, String date) throws ExecutionException, InterruptedException;
     // 일정 추가
     void addSchedule(ScheduleDto scheduleDto);
-    ScheduleDto getScheduleByDate(String calendarId, String date);
     // 일정 변경
     void modifySchedule(String calendarId, ScheduleDto scheduleDto, String date);
     // 일정 삭제

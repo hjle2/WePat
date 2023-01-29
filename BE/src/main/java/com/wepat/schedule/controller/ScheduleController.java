@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.concurrent.ExecutionException;
+
 @RestController
 @RequestMapping("/schedule")
 @RequiredArgsConstructor
@@ -37,9 +39,8 @@ public class ScheduleController {
     @GetMapping("/list/{calendarid}/{date}")
     @ApiOperation(value = "일정 확인", response = ScheduleDto.class)
     public ResponseEntity<?> getScheduleByDate(@PathVariable("calendarid") String calendarId,
-                                               @PathVariable("date") String writtenDate) {
-        scheduleService.getScheduleByDate(calendarId, writtenDate);
-        return new ResponseEntity<>(HttpStatus.OK);
+                                               @PathVariable("date") String writtenDate) throws ExecutionException, InterruptedException {
+        return new ResponseEntity<>(scheduleService.getScheduleListByDate(calendarId, writtenDate), HttpStatus.OK);
     }
 
     @GetMapping("/detail/{calendarid}/{date}")

@@ -36,19 +36,18 @@ public class ScheduleServiceImpl implements ScheduleService {
         int unit = scheduleDto.getUnit();
         int size = scheduleDto.getUnitSize();
 
-        // startdate < enddate 인 경우
-        while (startdate.compareTo(enddate) <= 0) {
-            scheduleDto.setDate(DateUtil.getStringDate(startdate));
+        if (scheduleDto.isRepeat()) {
+            // startdate < enddate 인 경우
+            while (startdate.compareTo(enddate) <= 0) {
+                scheduleDto.setDate(DateUtil.getStringDate(startdate));
+                scheduleRepository.addSchedule(scheduleDto);
+
+                // 반봅 주기만큼 더하기
+                startdate = DateUtil.addDays(startdate, unit, size);
+            }
+        } else {
             scheduleRepository.addSchedule(scheduleDto);
-
-            // 반봅 주기만큼 더하기
-            startdate = DateUtil.addDays(startdate, unit, size);
         }
-    }
-
-    @Override
-    public ScheduleDto getScheduleByDate(String calendarId, String date) {
-        return null;
     }
 
     @Override

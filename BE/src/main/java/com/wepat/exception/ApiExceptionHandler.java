@@ -1,5 +1,8 @@
-package com.wepat.gcp;
+package com.wepat.exception;
 
+import com.wepat.gcp.FileWriteException;
+import com.wepat.gcp.GCPFileUploadException;
+import com.wepat.gcp.InvalidFileTypeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -46,6 +49,15 @@ public class ApiExceptionHandler {
         ApiException exception = new ApiException();
         exception.setErrorMessage(e.getMessage());
         exception.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        exception.setZonedDateTime(ZonedDateTime.now());
+        return exception;
+    }
+    @ExceptionHandler(UnAuthorizedException.class)
+    @ResponseBody
+    public ApiException handleUnAuthorizedException(UnAuthorizedException e){
+        ApiException exception = new ApiException();
+        exception.setErrorMessage(e.getMessage());
+        exception.setStatusCode(HttpStatus.UNAUTHORIZED.value());
         exception.setZonedDateTime(ZonedDateTime.now());
         return exception;
     }

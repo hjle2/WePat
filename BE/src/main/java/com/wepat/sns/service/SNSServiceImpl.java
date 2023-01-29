@@ -1,8 +1,7 @@
-package com.wepat.service.impl;
+package com.wepat.sns.service;
 
-import com.wepat.dto.PhotoDto;
-import com.wepat.repository.SNSRepository;
-import com.wepat.service.SNSService;
+import com.wepat.photo.PhotoDto;
+import com.wepat.sns.repository.SNSRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

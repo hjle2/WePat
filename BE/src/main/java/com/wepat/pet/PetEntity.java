@@ -15,7 +15,6 @@ import java.util.List;
 @AllArgsConstructor
 public class PetEntity {
     public PetEntity(PetDto pet) {
-        this.calendarId = pet.getCalendarId();
         this.petId = pet.getPetId();
         this.name = pet.getName();
         this.animalType = pet.getAnimalType();
@@ -27,10 +26,10 @@ public class PetEntity {
         this.schedule = new ArrayList<>();
         this.weightList = new ArrayList<>();
     }
-    @ApiParam(value = "캘린더 ID")
-    private String calendarId;
     @ApiParam(value = "반려동물 ID")
     private String petId;
+    @ApiParam(value = "calendar ID")
+    private String calendarId;
     @ApiParam(value = "반려동물 이름")
     private String name;
     @ApiParam(value = "동물 종류")

@@ -1,6 +1,7 @@
-package com.wepat.repository;
+package com.wepat.sns.repository;
 
-import com.wepat.dto.PhotoDto;
+
+import com.wepat.photo.PhotoDto;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;

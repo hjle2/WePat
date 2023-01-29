@@ -1,7 +1,7 @@
 package com.wepat.exception.sns;
 
-import com.wepat.controller.SNSController;
 import com.wepat.exception.ErrorDto;
+import com.wepat.sns.controller.SNSController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

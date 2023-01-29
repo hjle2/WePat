@@ -1,43 +1,41 @@
 package com.wepat.member.service;
 
 import com.wepat.member.MemberDto;
-import com.wepat.member.MemberEntity;
 import com.wepat.member.repository.MemberRepository;
-import com.wepat.security.OpenCrypt;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
-    private final MemberRepository memberRepo;
+    private final MemberRepository memberRepository;
     private final JavaMailSender javaMailSender;
 
     @Override
     public void signUp(MemberDto member) throws ExecutionException, InterruptedException {
         if (member.getCalendarId()==null) {
-            memberRepo.signUp(member);
+            memberRepository.signUp(member);
         } else {
-            memberRepo.signUpWithCalendar(member);
+            memberRepository.signUpWithCalendar(member);
         }
     }
 
     @Override
     public MemberDto signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
-        return memberRepo.signIn(memberId, pwd);
+        return memberRepository.signIn(memberId, pwd);
     }
 
     @Override
     public String findId(String email) throws ExecutionException, InterruptedException {
-        return memberRepo.findId(email);
+        return memberRepository.findId(email);
     }
     @Override
     public void findPwd(String memberId, String email) throws ExecutionException, InterruptedException, MessagingException {
@@ -54,7 +52,7 @@ public class MemberServiceImpl implements MemberService {
             randomPassword += word[idx];
         }
 
-        memberRepo.findPwd(randomPassword, memberId);
+        memberRepository.changePwdToRandom(randomPassword, memberId);
 
         MimeMessage message = javaMailSender.createMimeMessage();
         message.setFrom("qwas15788@gmail.com");
@@ -71,38 +69,48 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void modifyPwd(String memberId, String pwd) throws ExecutionException, InterruptedException {
-        memberRepo.modifyPwd(memberId, pwd);
+        memberRepository.modifyPwd(memberId, pwd);
     }
 
     @Override
-    public MemberDto getMember(String memberId) throws ExecutionException, InterruptedException {
-        return memberRepo.getMember(memberId);
+    public MemberDto getMemberDetail(String memberId) throws ExecutionException, InterruptedException {
+        return memberRepository.getMemberById(memberId);
     }
 
     @Override
-    public void modifyMember(String memberId, String nickName) throws ExecutionException, InterruptedException {
-        memberRepo.modifyMember(memberId, nickName);
+    public void modifyMemberDetail(String memberId, String nickName) throws ExecutionException, InterruptedException {
+        memberRepository.modifyMember(memberId, nickName);
     }
 
     @Override
     public void deleteMember(String memberId) throws ExecutionException, InterruptedException {
-        memberRepo.deleteMember(memberId);
+        memberRepository.deleteMember(memberId);
     }
 
+    @Transactional
     @Override
-    public void logout(String memberId) throws ExecutionException, InterruptedException {
-        memberRepo.logout(memberId);
+    public void logout(String memberId) throws Exception {
+        memberRepository.deleteRefreshToken(memberId);
     }
 
     @Override
     public void modifyCalendarId(String memberId, String calendarId) throws ExecutionException, InterruptedException {
-        memberRepo.modifyCalendarId(memberId, calendarId);
+        memberRepository.modifyCalendarId(memberId, calendarId);
     }
 
     @Override
-    public String createJwt(String memberId, String pwd) {
-        Long expireMs = 1000 * 60 * 60L;
-        return JwtUtil.createJwt(memberId,expireMs);
+    public void addWarnMember(String memberId, String warnMemberId) throws ExecutionException, InterruptedException {
+        memberRepository.addWarnMember(memberId, warnMemberId);
+    }
+
+    @Override
+    public void addBlockMember(String memberId, String blockMemberId) throws ExecutionException, InterruptedException {
+        memberRepository.addBlockMember(memberId, blockMemberId);
+    }
+
+    @Override
+    public void saveRefreshToken(String memberId, String refreshToken) throws Exception {
+        memberRepository.saveRefreshToken(memberId, refreshToken);
     }
 
 }

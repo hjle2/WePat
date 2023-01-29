@@ -1,6 +1,7 @@
 package com.wepat.schedule.repository;
 
 import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.firebase.cloud.FirestoreClient;
@@ -62,11 +63,8 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 
     @Override
     public void addSchedule(ScheduleDto scheduleDto) {
-    }
-
-    @Override
-    public ScheduleDto getScheduleByDate(String calendarId, String date) {
-        return null;
+        DocumentReference docRef = scheduleCollection.document();
+        docRef.set(scheduleDto);
     }
 
     @Override

@@ -1,14 +1,13 @@
-package com.wepat.repository.impl;
+package com.wepat.sns.repository;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
-import com.wepat.dto.PhotoDto;
-import com.wepat.entity.PhotoEntity;
 import com.wepat.exception.sns.AlreadyReportImage;
 import com.wepat.exception.sns.NotExistImage;
-import com.wepat.repository.MemberRepository;
-import com.wepat.repository.SNSRepository;
+import com.wepat.member.repository.MemberRepository;
+import com.wepat.photo.PhotoDto;
+import com.wepat.photo.PhotoEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -33,29 +32,32 @@ public class SNSRepositoryImpl implements SNSRepository {
 
     @Override
     public List<PhotoDto> getSNS() throws ExecutionException, InterruptedException {
-        List<QueryDocumentSnapshot> photoDocSnapshotList = photoCollection.get().get().getDocuments();
-        List<PhotoDto> photoList = new ArrayList<>();
-        for (QueryDocumentSnapshot snapshot : photoDocSnapshotList) {
-            if (snapshot.toObject(PhotoEntity.class).isSns() && !snapshot.toObject(PhotoEntity.class).isBlock()) {
-                photoList.add(snapshot.toObject(PhotoDto.class));
-            }
-        }
-        Collections.sort(photoList, new Comparator<PhotoDto>() {
-            @Override
-            public int compare(PhotoDto o1, PhotoDto o2) {
-                if(o2.getLike() - o1.getLike() == 0) {
-                    if (Integer.parseInt(o2.getDate().substring(0, 4)) == Integer.parseInt(o1.getDate().substring(0, 4))) {
-                        if (Integer.parseInt(o2.getDate().substring(4, 6)) == Integer.parseInt(o1.getDate().substring(4, 6))) {
-                            return Integer.parseInt(o2.getDate().substring(6, 8)) - Integer.parseInt(o1.getDate().substring(6, 8));
-                        }
-                        return Integer.parseInt(o2.getDate().substring(4, 6)) - Integer.parseInt(o1.getDate().substring(4, 6));
-                    }
-                    return Integer.parseInt(o2.getDate().substring(0, 4)) - Integer.parseInt(o1.getDate().substring(0, 4));
-                }
-                return o2.getLike()-o1.getLike();
-            }
-        });
-        return photoList;
+        return photoCollection.whereEqualTo("sns", true)
+                .whereEqualTo("block", false).get().get().toObjects(PhotoDto.class);
+//
+//        List<QueryDocumentSnapshot> photoDocSnapshotList = photoCollection.get().get().getDocuments();
+//        List<PhotoDto> photoList = new ArrayList<>();
+//        for (QueryDocumentSnapshot snapshot : photoDocSnapshotList) {
+//            if (snapshot.toObject(PhotoEntity.class).isSns() && !snapshot.toObject(PhotoEntity.class).isBlock()) {
+//                photoList.add(snapshot.toObject(PhotoDto.class));
+//            }
+//        }
+//        Collections.sort(photoList, new Comparator<PhotoDto>() {
+//            @Override
+//            public int compare(PhotoDto o1, PhotoDto o2) {
+//                if(o2.getLike() - o1.getLike() == 0) {
+//                    if (Integer.parseInt(o2.getDate().substring(0, 4)) == Integer.parseInt(o1.getDate().substring(0, 4))) {
+//                        if (Integer.parseInt(o2.getDate().substring(4, 6)) == Integer.parseInt(o1.getDate().substring(4, 6))) {
+//                            return Integer.parseInt(o2.getDate().substring(6, 8)) - Integer.parseInt(o1.getDate().substring(6, 8));
+//                        }
+//                        return Integer.parseInt(o2.getDate().substring(4, 6)) - Integer.parseInt(o1.getDate().substring(4, 6));
+//                    }
+//                    return Integer.parseInt(o2.getDate().substring(0, 4)) - Integer.parseInt(o1.getDate().substring(0, 4));
+//                }
+//                return o2.getLike()-o1.getLike();
+//            }
+//        });
+//        return photoList;
     }
 
     @Override
@@ -91,7 +93,7 @@ public class SNSRepositoryImpl implements SNSRepository {
     @Override
     public void reportSNS(String photoId, String memberId) throws ExecutionException, InterruptedException {
         DocumentReference photoDocRef = photoCollection.document(photoId);
-        System.out.println("ghcnf!");
+
         ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
             DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
             if (photoSnapshot.exists()) {

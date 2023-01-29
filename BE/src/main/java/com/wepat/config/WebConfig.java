@@ -7,14 +7,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-    private String[] INTERCEPTOR_WRITE_LIST = {
-            "/member/signup/**",
-            "/member/signin/**",
-            "/swagger-ui/index.html",
-            "/swagger-ui/index.html#/**",
-            "/swagger-resource/**",
-            "/v2/api-docs/**"
-    };
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -22,6 +14,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new JwtIntercepptor())
                 .addPathPatterns("/member/**")
                 .addPathPatterns("/schedule/**")
+                .addPathPatterns("/calendar/**")
                 .addPathPatterns("/pet/**")
                 .addPathPatterns("/sns/**")
                 .addPathPatterns("/photo/**")

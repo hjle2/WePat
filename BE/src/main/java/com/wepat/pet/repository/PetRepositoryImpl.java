@@ -3,13 +3,18 @@ package com.wepat.pet.repository;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
+import com.wepat.calendar.CalendarEntity;
+import com.wepat.exception.pet.NotExistCalendarException;
+import com.wepat.exception.pet.NotExistPet;
 import com.wepat.member.repository.MemberRepository;
 import com.wepat.pet.PetDto;
 import com.wepat.pet.PetEntity;
+import com.wepat.pet.WeightDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -23,8 +28,7 @@ public class PetRepositoryImpl implements PetRepository {
     private final CollectionReference calCollection = db.collection(CALENDAR_COLLECTION);
 
     @Override
-    public PetDto addPet(PetDto pet) throws ExecutionException, InterruptedException {
-        System.out.println(">>>>>>>>>> 레포 호출!!!");
+    public void addPet(PetDto pet) throws ExecutionException, InterruptedException {
 
         final DocumentReference petDocRef = petCollection.document(); //pet 랜덤 doc생성
         final DocumentReference calDocRef = calCollection.document(pet.getCalendarId()); //받아온 캘린더 pk
@@ -45,7 +49,6 @@ public class PetRepositoryImpl implements PetRepository {
             }
         });
         if ((stringApiFuture.get()).equals("success")) {
-            return petCollection.document(petDocRef.getId()).get().get().toObject(PetDto.class);
         } else {
             throw new NotExistCalendarException("캘린더 코드 오류!");
         }
@@ -90,24 +93,18 @@ public class PetRepositoryImpl implements PetRepository {
         } else {
             return stringApiFuture.get();
         }
-        ApiFuture<WriteResult> future = docRef.set(new PetEntity(pet));
-
-        return pet;
     }
 
     @Override
-    public PetDto modifyPet(String petId, PetDto pet) throws ExecutionException, InterruptedException {
-        ApiFuture<WriteResult> future = collection.document(petId).set(pet);
-        return pet;
+    public void modifyPet(String petId, PetDto pet) throws ExecutionException, InterruptedException {
+        ApiFuture<WriteResult> future = petCollection.document(petId).set(pet);
     }
 
     @Override
-    public PetDto addPetWeight(String petId, double weight) throws ExecutionException, InterruptedException {
-        return null;
+    public void addPetWeight(String petId, WeightDto weight) throws ExecutionException, InterruptedException {
     }
 
     @Override
-    public PetDto deletePet(String CalendarId, String petId) throws ExecutionException, InterruptedException {
-        return null;
+    public void deletePet(String CalendarId, String petId) throws ExecutionException, InterruptedException {
     }
 }

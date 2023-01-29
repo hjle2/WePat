@@ -1,8 +1,12 @@
 package com.wepat.sns.controller;
 
+import com.wepat.exception.photo.NotExistImage;
+import com.wepat.exception.sns.AlreadyReportImage;
 import com.wepat.photo.PhotoDto;
 import com.wepat.pet.controller.PetController;
+import com.wepat.sns.service.SNSService;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -48,7 +52,7 @@ public class SNSController {
 
         try {
             snsService.updateSNSLike(photoId);
-            return new ResponseEntity<>("좋아요 클릭", HttpStatus.OK);
+            return new ResponseEntity<>("좋아요 클릭", HttpStatus.ACCEPTED);
         } catch (NotExistImage e) {
             throw new NotExistImage();
         } catch (Exception e) {
@@ -61,7 +65,7 @@ public class SNSController {
     public ResponseEntity<?> reportSNS(@PathVariable("photoid") String photoId, @PathVariable("memberid") String memberId) {
         try {
             snsService.reportSNS(photoId, memberId);
-            return new ResponseEntity<>("신고 성공", HttpStatus.OK);
+            return new ResponseEntity<>("신고 성공", HttpStatus.ACCEPTED);
         } catch (AlreadyReportImage e) {
             throw new AlreadyReportImage();
         } catch (NotExistImage e) {
@@ -73,7 +77,7 @@ public class SNSController {
 
     @GetMapping("/report")
     @ApiOperation(value = "3번 이상 신고 당한 게시물")
-    public ResponseEntity<?> reportList() {
+    public ResponseEntity<?> getReportedList() {
         try {
             return new ResponseEntity<>(snsService.reportList(), HttpStatus.OK);
         } catch (Exception e) {
@@ -86,7 +90,7 @@ public class SNSController {
     public ResponseEntity<?> blockSNSByPhoto(@PathVariable("photoid") String photoId) {
         try {
             snsService.blockSNSByPhoto(photoId);
-            return new ResponseEntity<>("게시물 차단 성공", HttpStatus.OK);
+            return new ResponseEntity<>("게시물 차단 성공", HttpStatus.ACCEPTED);
         } catch (NotExistImage e) {
             throw new NotExistImage();
         } catch (Exception e) {

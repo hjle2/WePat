@@ -16,7 +16,7 @@ public class LogAspect {
 
     private Logger logger = LoggerFactory.getLogger(LogAspect.class);
 
-    @Before(value = "execution(* com.wepat..*.*(..))") //어떤 메서드에 적용할지를 표현식에 서술
+    @Before(value = "execution(* com.wepat..*.*Controller(..))") //어떤 메서드에 적용할지를 표현식에 서술
     public void beforeMethod(JoinPoint joinPoint) {
         logger.info("----> Call  : {}", joinPoint.getSignature().getName());
         logger.info("----> Param : {}", Arrays.toString(joinPoint.getArgs()));

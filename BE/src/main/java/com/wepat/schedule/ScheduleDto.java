@@ -14,15 +14,15 @@ import java.util.List;
 public class ScheduleDto {
     @ApiParam(value = "스케쥴 이름")
     private String title;
+    @ApiParam(value = "달력에 표시 여부")
+    private boolean show = false;
     @ApiParam(value = "펫ID(PK)", required = true)
     private String petId;
     @ApiParam(value = "반복여부")
     private boolean repeat;
     @ApiParam(value = "일정 시작일")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private String date;
     @ApiParam(value = "일정 종료일")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private String endDate;
     @ApiParam(value = "반복 주기")
     private int unit;

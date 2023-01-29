@@ -1,7 +1,7 @@
 package com.wepat.exception.photo;
 
-import com.wepat.controller.PhotoController;
 import com.wepat.exception.ErrorDto;
+import com.wepat.photo.controller.PhotoController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

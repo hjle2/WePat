@@ -1,7 +1,7 @@
 package com.wepat.exception.finance;
 
-import com.wepat.controller.FinanceController;
 import com.wepat.exception.ErrorDto;
+import com.wepat.finance.controller.FinanceController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

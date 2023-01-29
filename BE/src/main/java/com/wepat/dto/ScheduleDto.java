@@ -1,5 +1,6 @@
 package com.wepat.dto;
 
+import com.wepat.photo.CommentDto;
 import io.swagger.annotations.ApiParam;
 import lombok.Data;
 import lombok.NoArgsConstructor;
