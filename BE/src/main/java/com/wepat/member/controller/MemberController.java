@@ -50,8 +50,8 @@ public class MemberController {
             String accessToken = null;
             String refreshToken = null;//유저가 로그인 되면 토큰을 생성하여 저장할 String
             if(memberResult != null){//로그인에서 객체를 받아왔다.
-                accessToken = jwtUtil.createAccessToken(memberId, pwd);
-                refreshToken = jwtUtil.createRefreshToken(memberId, pwd);
+                accessToken = jwtUtil.createAccessToken("memberId", memberId);
+                refreshToken = jwtUtil.createRefreshToken("memberId", memberId);
                 memberService.saveRefreshToken(memberId, refreshToken);
 
                 resultMap.put("access-token", accessToken);
@@ -71,6 +71,35 @@ public class MemberController {
         }
     }
 
+    @PostMapping("/socialsignin")
+    @ApiOperation(value = "로그인 시도",  notes = "로그인 요청을 한다.",response = MemberDto.class)
+    public ResponseEntity<?> snsSignIn(String memberId, String pwd) {
+        try {
+            Map<String, String> resultMap = new HashMap<>();
+            MemberDto memberResult = memberService.signIn(memberId, pwd);//유저가 로그인 가능한 유저인지 확인
+            String accessToken = null;
+            String refreshToken = null;//유저가 로그인 되면 토큰을 생성하여 저장할 String
+            if(memberResult != null){//로그인에서 객체를 받아왔다.
+                accessToken = jwtUtil.createAccessToken("memberId", memberId);
+                refreshToken = jwtUtil.createRefreshToken("memberId", memberId);
+                memberService.saveRefreshToken(memberId, refreshToken);
+
+                resultMap.put("access-token", accessToken);
+                resultMap.put("refresh-token", refreshToken);
+                return new ResponseEntity<>(resultMap, HttpStatus.ACCEPTED);
+            } else {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+        } catch (IdWriteException e) {
+            throw new IdWriteException(e.getMessage());
+        } catch (BlockMember e) {
+            throw new BlockMember(e.getMessage());
+        } catch (PwdWriteException e) {
+            throw new PwdWriteException(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
+    }
     @PostMapping("/findid")
     @ApiOperation(value = "아이디 찾기", notes = "이메일을 확인하여 해당 아이디 제공", response = String.class)
     public ResponseEntity<?> findId(String email) {
@@ -162,6 +191,12 @@ public class MemberController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @PostMapping("/gettoken")
+    public ResponseEntity<?> getAccessToken(String memberId, String refreshToken) {
+        String accessToken = jwtUtil.createAccessToken("memberId", memberId);
+        return new ResponseEntity<>(accessToken, HttpStatus.OK);
     }
 
 }

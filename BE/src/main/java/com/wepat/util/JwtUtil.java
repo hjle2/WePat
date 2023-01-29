@@ -1,11 +1,8 @@
 package com.wepat.util;
 
+import com.wepat.exception.TokenExpiredException;
 import com.wepat.exception.UnAuthorizedException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -22,14 +19,14 @@ import java.util.Map;
 public class JwtUtil {
     public static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
     private static final String SALT = "wepatsecretkeythisissecretsecretkeybyhj";
-    private static final int ACCESS_TOKEN_EXPIRE_MINUTES = 1; // 분단위
-    private static final int REFRESH_TOKEN_EXPIRE_MINUTES = 2; // 주단위
+    private static final long ACCESS_TOKEN_EXPIRE_MINUTES = 1000L * 60 * 60; // 시간 단위
+    private static final long REFRESH_TOKEN_EXPIRE_MINUTES = 1000L * 60 * 60 * 24 * 7; // 주단위
     public <T> String createAccessToken(String key, T data) {
-        return create(key, data, "access-token", 10000 * 10 * ACCESS_TOKEN_EXPIRE_MINUTES);
+        return create(key, data, "access-token", ACCESS_TOKEN_EXPIRE_MINUTES);
     }
 
     public <T> String createRefreshToken(String key, T data) {
-        return create(key, data, "refresh-token", 10000 * 30 * ACCESS_TOKEN_EXPIRE_MINUTES);
+        return create(key, data, "refresh-token", REFRESH_TOKEN_EXPIRE_MINUTES);
     }
 
     //Token 발급
@@ -108,20 +105,12 @@ public class JwtUtil {
 //			setSigningKey : JWS 서명 검증을 위한  secret key 세팅
 //			parseClaimsJws : 파싱하여 원본 jws 만들기
             Claims claims = Jwts.parser().setSigningKey(SALT.getBytes()).parseClaimsJws(jwt).getBody();
-            logger.debug("claims: {}", claims);
-            if (!claims.getExpiration().before(new Date()))
-                return true;
-            else
-                return false;
+            return true;
+        } catch (ExpiredJwtException e) {
+            throw new TokenExpiredException();
         } catch (Exception e) {
-//			if (logger.isInfoEnabled()) {
-//				e.printStackTrace();
-//			} else {
-            logger.error(e.getMessage());
-//			}
-//			throw new UnauthorizedException();
-//			개발환경
-            return false;
+            e.printStackTrace();
         }
+        return true;
     }
 }
