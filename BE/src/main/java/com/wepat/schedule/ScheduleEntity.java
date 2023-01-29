@@ -14,10 +14,12 @@ public class ScheduleEntity {
     private String title;
     @ApiParam(value = "카테고리")
     private String category;
+    @ApiParam(value = "달력에 표시 여부")
+    private boolean show;
     @ApiParam(value = "펫ID(PK)", required = true)
     private String petId;
     @ApiParam(value = "반복여부")
-    private boolean isRepeated;
+    private boolean repeat;
     @ApiParam(value = "일정 시작일")
     private String startDate;
     @ApiParam(value = "일정 종료일")
@@ -27,9 +29,9 @@ public class ScheduleEntity {
     @ApiParam(value = "일정 수행 여부")
     private boolean isCompleted = false;
     @ApiParam(value = "반복 주기")
-    private int period;
-    @ApiParam(value = "반복 횟수")
-    private int nPeriod;
+    private int unit;
+    @ApiParam(value = "일 or 달")
+    private int unitSize;
     @ApiParam(value = "몸무게")
     private double weight;
     @ApiParam(value = "일정에 관한 메모")

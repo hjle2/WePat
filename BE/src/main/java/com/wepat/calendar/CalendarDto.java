@@ -3,6 +3,7 @@ package com.wepat.calendar;
 import com.wepat.member.MemberDto;
 import com.wepat.finance.FinanceDto;
 import io.swagger.annotations.ApiParam;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class CalendarDto {
     @ApiParam(value = "펫ID")
     private List<String> petId;

@@ -2,6 +2,7 @@ package com.wepat.calendar;
 
 import com.wepat.finance.FinanceDto;
 import io.swagger.annotations.ApiParam;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class CalendarEntity {
     public CalendarEntity(String memberId) {
         this.memberId = new ArrayList<>();
