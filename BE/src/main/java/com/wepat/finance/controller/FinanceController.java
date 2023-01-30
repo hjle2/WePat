@@ -23,7 +23,6 @@ public class FinanceController {
     private static final Logger logger = LoggerFactory.getLogger(FinanceController.class);
     private final FinanceService financeService;
 
-    private static final Logger logger = LoggerFactory.getLogger(FinanceController.class);
     @GetMapping("/{calendarid}")
     @ApiOperation(value = "가계부 모든 내용", notes = "반환 값 : 모든 가계부 내용 List")
     public ResponseEntity<?> getAllFinance(@PathVariable("calendarid") String calendarId) {

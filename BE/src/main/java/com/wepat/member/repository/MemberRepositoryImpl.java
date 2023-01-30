@@ -22,7 +22,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     public enum ReturnType {
         SUCCESS, ExistEmailException, ExistIdException, NotExistCalendarException, IdWriteException, BlockMember,
-        PwdWriteException, NotExistMemberException, AloneCalendarException
+        PwdWriteException, NotExistMemberException, AloneCalendarException, NotExistMember
     }
     private static Logger logger = LoggerFactory.getLogger(MemberRepository.class);
     private static final String CALENDAR_COLLECTION = "calendar";

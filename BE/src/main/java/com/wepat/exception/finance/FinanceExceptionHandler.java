@@ -13,12 +13,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice(assignableTypes = {FinanceController.class})
 public class FinanceExceptionHandler {
 
-    @ExceptionHandler(OverMoney.class)
-    public ResponseEntity<?> OverMoney(OverMoney e) {
-        ErrorDto errorDto = new ErrorDto("OverMoney", e.getMessage());
-        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
-    }
-
     @ExceptionHandler(AlreadyDeleteFinance.class)
     public ResponseEntity<?> AlreadyDeleteFinance(AlreadyDeleteFinance e) {
         ErrorDto errorDto = new ErrorDto("AlreadyDeleteFinance", "삭제된 가계부 내용입니다.");
