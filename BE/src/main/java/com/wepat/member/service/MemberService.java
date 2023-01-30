@@ -21,5 +21,7 @@ public interface MemberService {
     void addWarnMember(String memberId, String warnMemberId) throws ExecutionException, InterruptedException;
     void addBlockMember(String memberId, String blockMemberId) throws ExecutionException, InterruptedException;
 
-    public void saveRefreshToken(String memberId, String refreshToken) throws Exception;
+    void saveRefreshToken(String memberId, String refreshToken) throws Exception;
+
+    void modifyCalendarIdAlone(String memberId) throws ExecutionException, InterruptedException;
 }

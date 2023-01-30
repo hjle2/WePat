@@ -207,7 +207,7 @@ public class MemberRepositoryImpl implements MemberRepository {
                 transaction.update(memDocRef, "pwd", pwd);
                 return ReturnType.SUCCESS;
             } else {
-                return ReturnType.NotExistMemberException;
+                return ReturnType.NotExistMember;
             }
         });
         if (returnTypeApiFuture.get() == ReturnType.SUCCESS) {

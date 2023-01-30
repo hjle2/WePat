@@ -142,6 +142,19 @@ public class    MemberController {
         }
     }
 
+    @PutMapping("/modify/calendar/alone")
+    @ApiOperation(value = "자신만의 캘린더 생성")
+    public ResponseEntity<?> modifyCalendarIdAlone(String memberId) {
+        try {
+            memberService.modifyCalendarIdAlone(memberId);
+            return new ResponseEntity<>("생성 성공", HttpStatus.OK);
+        } catch (AlreadyAloneCalendar e) {
+            throw new AlreadyAloneCalendar();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @PostMapping("/gettoken")
     public ResponseEntity<?> getAccessToken(HttpServletRequest request, String refreshToken) {
         String memberId = request.getSession().getAttribute("memberId").toString();
