@@ -132,6 +132,66 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
+    public void socialsignup(MemberDto member) throws ExecutionException, InterruptedException {
+
+        // memberId인 document 를 가져옴(없으면 생성)
+        final DocumentReference memDocRef = memCollection.document(member.getMemberId());
+        // calendar document 를 생성 (docId 는 랜덤값)
+        final DocumentReference calDocRef = calCollection.document();
+
+        // run an asynchronous transaction
+        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
+
+            // memberId 인 document 를 가져옴
+            DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
+            // memberEntity 를 db 에 추가 함
+            member.setCalendarId(calDocRef.getId());
+            transaction.create(memDocRef, new MemberEntity(member));
+            // calendarEntity(memberId 를 갖는)를 db에 추가 함
+            transaction.create(calDocRef, new CalendarEntity(member.getMemberId()));
+
+            return ReturnType.SUCCESS;
+
+        });
+        // 트랜잭션 실행 결과를 반환
+
+        returnTypeApiFuture.get();
+    }
+
+    @Override
+    public void socialsignupWithCalendar(MemberDto member) throws ExecutionException, InterruptedException {
+
+        final DocumentReference memDocRef = memCollection.document(member.getMemberId());
+        final DocumentReference calDocRef = calCollection.document(member.getCalendarId());
+
+        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
+            DocumentSnapshot memSnapshot = transaction.get(memDocRef).get(); //입력한ID 값을 갖는 snapshot
+            DocumentSnapshot calSnapshot = transaction.get(calDocRef).get(); //입력한 캘린더ID 값을 갖는 snapshot
+
+                    if (calSnapshot.exists()) {
+                        member.setCalendarId(calDocRef.getId());
+                        transaction.create(memDocRef, new MemberEntity(member));
+
+                        //트랜잭션을 통해 얻은 calSnapshot의 member배열에 접근
+                        List<String> memberId = calSnapshot.toObject(CalendarEntity.class).getMemberId();
+                        //회원가입한 member의 Id를 포함하여 업데이트
+                        memberId.add(member.getMemberId());
+                        transaction.update(calDocRef, "memberId", memberId);
+
+                        return ReturnType.SUCCESS;
+                    } else {
+                        return ReturnType.NotExistCalendarException;//잘못된 달력 아이디를 가져올 경우
+                    }
+        });
+        // 트랜잭션 실행 결과를 반환
+        if (returnTypeApiFuture.get()==ReturnType.NotExistCalendarException) {
+            throw new NotExistCalendarException();
+        } else {
+            returnTypeApiFuture.get();
+        }
+    }
+
+    @Override
     public MemberDto signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
 
         final DocumentReference memDocRef = memCollection.document(memberId);
@@ -170,7 +230,7 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public MemberDto snsSignIn(String email, String id, String sns) throws ExecutionException, InterruptedException {
+    public MemberDto snsSignIn(String email, String id, String SNS) throws ExecutionException, InterruptedException {
         final DocumentReference memDocRef = memCollection.document(id);
 
         ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
@@ -184,9 +244,9 @@ public class MemberRepositoryImpl implements MemberRepository {
             } else if (memSnapshot.toObject(MemberEntity.class).isBlock()) { //차단된 계정
                 return ReturnType.BlockMember;
             }
-//             else if ( !(memberEntity.getsocial().equals(SNS))) { //해당 SNS로 가입된 아이디아니면
-//                return ReturnType.NotExistMember;//존재안하는 아이디로 판단
-//           }
+             else if (memberEntity.getSocial().equals(SNS)) { //해당 SNS로 가입된 아이디아니면
+               return ReturnType.NotExistMember;//존재안하는 아이디로 판단
+           }
              else { //다 통과
                 return ReturnType.SUCCESS;
 

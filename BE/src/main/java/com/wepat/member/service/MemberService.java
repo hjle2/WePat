@@ -26,4 +26,6 @@ public interface MemberService {
 
     void modifyCalendarIdAlone(String memberId) throws ExecutionException, InterruptedException;
 
+    void socialsignup(MemberDto member)throws ExecutionException, InterruptedException;
+
 }

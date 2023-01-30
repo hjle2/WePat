@@ -58,7 +58,7 @@ public class    MemberController {
     }
     @PostMapping("/socialsignin")
     @ApiOperation(value = "로그인 시도",  notes = "로그인 요청을 한다.",response = MemberDto.class)
-    public ResponseEntity<?> snsSignIn(String email,String id, String SNS) {
+    public ResponseEntity<?> socialsignin(String email,String id, String SNS) {
         try {
             Map<String, String> resultMap = new HashMap<>();
             MemberDto memberResult = memberService.snsSignIn(email,id,SNS);//유저가 로그인 가능한 유저인지 확인
@@ -90,6 +90,26 @@ public class    MemberController {
     public ResponseEntity<?> signUp(MemberDto member) {
         try {
             memberService.signUp(member);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        } catch (ExistEmailException e) {
+            throw new ExistEmailException(e.getMessage());
+        } catch (ExistIdException e) {
+            throw new ExistIdException(e.getMessage());
+        } catch (NotExistCalendarException e) {
+            throw new NotExistCalendarException(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+    @PostMapping("/socialsignup")
+    @ApiOperation(value = "SNS회원가입", notes = "SNS에서 정보를 받아 회원가입 시도한다.", response = MemberDto.class)
+    public ResponseEntity<?> socialsignup(MemberDto member) {
+        System.out.println(member);
+        System.out.println(member.toString());
+
+
+        try {
+            memberService.socialsignup(member);
             return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } catch (ExistEmailException e) {
             throw new ExistEmailException(e.getMessage());

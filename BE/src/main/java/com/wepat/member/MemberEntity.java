@@ -19,6 +19,7 @@ public class MemberEntity {
         this.calendarId = member.getCalendarId();
         this.reportList = new ArrayList<>();
         this.block = new Boolean(false);
+        this.social=member.getSocial();
     }
     @ApiParam(value = "사용자 비밀번호", required = true)
     private String pwd;
@@ -33,5 +34,5 @@ public class MemberEntity {
     @ApiParam(value = "차단당한 계정 여부")
     private boolean block;
     @ApiParam(value = "social", hidden = true)
-    private int social;
+    private String social;
 }
