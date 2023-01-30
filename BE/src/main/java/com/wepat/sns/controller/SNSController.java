@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -60,10 +61,11 @@ public class SNSController {
         }
     }
 
-    @PutMapping("/report/{photoid}/{memberid}")
+    @PutMapping("/report/{photoid}")
     @ApiOperation(value = "신고 클릭")
-    public ResponseEntity<?> reportSNS(@PathVariable("photoid") String photoId, @PathVariable("memberid") String memberId) {
+    public ResponseEntity<?> reportSNS(HttpServletRequest request, @PathVariable("photoid") String photoId) {
         try {
+            String memberId = request.getSession().getAttribute("memberId").toString();
             snsService.reportSNS(photoId, memberId);
             return new ResponseEntity<>("신고 성공", HttpStatus.ACCEPTED);
         } catch (AlreadyReportImage e) {
