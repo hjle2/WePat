@@ -20,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class SNSController {
-    private final static Logger logger = LoggerFactory.getLogger(PetController.class);
+    private static final Logger logger = LoggerFactory.getLogger(PetController.class);
 
     private final SNSService snsService;
 

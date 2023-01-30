@@ -33,5 +33,5 @@ public class MemberEntity {
     @ApiParam(value = "차단당한 계정 여부")
     private boolean block;
     @ApiParam(value = "social", hidden = true)
-    private boolean social;
+    private int social;
 }

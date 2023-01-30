@@ -108,7 +108,9 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
     }
 
     @Override
-    public ScheduleDto getScheduleDetailByDate(String calendarId, String date) {
-        return null;
+    public ScheduleDto getScheduleDetailByDate(String calendarId, String scheduleId) throws ExecutionException, InterruptedException {
+        return scheduleCollection.whereEqualTo("calendarId", calendarId)
+                .whereEqualTo("calendarId", calendarId)
+                .get().get().toObjects(ScheduleDto.class).get(0);
     }
 }

@@ -156,14 +156,16 @@ public class MemberRepositoryImpl implements MemberRepository {
             }
         });
         // 트랜잭션 실행 결과를 반환
-        if (returnTypeApiFuture.get()==ReturnType.IdWriteException) {
+        if (returnTypeApiFuture.get() == ReturnType.IdWriteException) {
             throw new IdWriteException();
-        } else if (returnTypeApiFuture.get()==ReturnType.BlockMember) {
+        } else if (returnTypeApiFuture.get() == ReturnType.BlockMember) {
             throw new BlockMember();
-        } else if (returnTypeApiFuture.get()==ReturnType.PwdWriteException) {
+        } else if (returnTypeApiFuture.get() == ReturnType.PwdWriteException) {
             throw new PwdWriteException();
         } else {
-            return memCollection.document(memberId).get().get().toObject(MemberDto.class);
+            MemberDto memberDto = memCollection.document(memberId).get().get().toObject(MemberDto.class);
+            logger.info(memberDto.toString());
+            return memberDto;
         }
     }
 

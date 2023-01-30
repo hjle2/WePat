@@ -17,8 +17,8 @@ import java.util.concurrent.ExecutionException;
 
 @Repository
 public class CalendarRepositoryImpl implements CalendarRepository {
-    private final static Logger logger = LoggerFactory.getLogger(CalendarRepositoryImpl.class);
-    private final static String SCHEDULE_COLLECTION = "schedule";
+    private static final Logger logger = LoggerFactory.getLogger(CalendarRepositoryImpl.class);
+    private static final String SCHEDULE_COLLECTION = "schedule";
     private final CollectionReference scheduleCollection = null;//FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
 
     @Override

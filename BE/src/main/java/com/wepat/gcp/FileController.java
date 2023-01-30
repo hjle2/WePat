@@ -14,7 +14,7 @@ import java.util.List;
 @RequestMapping("/api/v1/files")
 @RequiredArgsConstructor
 public class FileController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FileController.class);
+    private static final Logger logger = LoggerFactory.getLogger(FileController.class);
     private final FileService fileService;
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})

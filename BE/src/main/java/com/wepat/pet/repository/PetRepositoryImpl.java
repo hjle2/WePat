@@ -25,10 +25,10 @@ public class PetRepositoryImpl implements PetRepository {
     public enum ReturnType {
         SUCCESS, NotExistCalendarException, NotExistPet, AlreadyDeletePet
     }
-    private final static Logger logger = LoggerFactory.getLogger(MemberRepository.class);
-    private final static String PET_COLLECTION = "pet";
-    private final static String CALENDAR_COLLECTION = "calendar";
-    private final static String SCHEDULE_COLLECTION = "schedule";
+    private static final Logger logger = LoggerFactory.getLogger(MemberRepository.class);
+    private static final String PET_COLLECTION = "pet";
+    private static final String CALENDAR_COLLECTION = "calendar";
+    private static final String SCHEDULE_COLLECTION = "schedule";
     private final Firestore db = FirestoreClient.getFirestore();
     private final CollectionReference petCollection = db.collection(PET_COLLECTION);
     private final CollectionReference calCollection = db.collection(CALENDAR_COLLECTION);

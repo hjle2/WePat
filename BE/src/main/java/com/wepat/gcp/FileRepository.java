@@ -14,10 +14,10 @@ import java.util.List;
 @Repository
 public class FileRepository {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(FileRepository.class);
+    private static final Logger logger = LoggerFactory.getLogger(FileRepository.class);
     public void saveAll(List<InputFile> inputFiles) {
         for (InputFile file : inputFiles) {
-            LOGGER.info("file name: {}, fileURL: {}, fileId: {}",  file.getFileName(), file.getFileUrl(), file.getId());
+            logger.info("file name: {}, fileURL: {}, fileId: {}",  file.getFileName(), file.getFileUrl(), file.getId());
         }
     }
 }

@@ -25,8 +25,8 @@ public class SNSRepositoryImpl implements SNSRepository {
         SUCCESS, AlreadyReportImage, NotExistImage
     }
 
-    private final static Logger logger = LoggerFactory.getLogger(MemberRepository.class);
-    private final static String PHOTO_COLLECTION = "photo";
+    private static final Logger logger = LoggerFactory.getLogger(MemberRepository.class);
+    private static final String PHOTO_COLLECTION = "photo";
     private final Firestore db = FirestoreClient.getFirestore();
     private final CollectionReference photoCollection = db.collection(PHOTO_COLLECTION);
     private final int warnCount = 3;

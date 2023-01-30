@@ -19,4 +19,4 @@ public interface ScheduleService {
     // 일정 삭제
     void deleteSchedule(String calendarId, String date);
     // 일정 상세 정보 읽기
-    ScheduleDto getScheduleDetailByDate(String calendarId, String date);}
+    ScheduleDto getScheduleDetailByDate(String calendarId, String scheduleId);}

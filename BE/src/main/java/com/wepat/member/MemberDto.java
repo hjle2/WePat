@@ -19,4 +19,13 @@ public class MemberDto {
     private String email;
     @ApiParam(value = "CalendarId")
     private String calendarId;
+    @ApiParam(value = "Social SNS")
+    private int social = SOCIAL_ACCOUNT.NONE.ordinal();
+}
+enum SOCIAL_ACCOUNT {
+    NONE,
+    GOOGLE,
+    FACEBOOK,
+    TWITTER,
+    GITHUB,
 }

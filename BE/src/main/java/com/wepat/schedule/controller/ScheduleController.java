@@ -36,18 +36,18 @@ public class ScheduleController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/list/{calendarid}/{date}")
+    @GetMapping("/list/{calendarid}/{scheduleid}")
     @ApiOperation(value = "일정 확인", response = ScheduleDto.class)
     public ResponseEntity<?> getScheduleByDate(@PathVariable("calendarid") String calendarId,
-                                               @PathVariable("date") String writtenDate) throws ExecutionException, InterruptedException {
-        return new ResponseEntity<>(scheduleService.getScheduleListByDate(calendarId, writtenDate), HttpStatus.OK);
+                                               @PathVariable("scheduleid") String scheduleId) throws ExecutionException, InterruptedException {
+        return new ResponseEntity<>(scheduleService.getScheduleListByDate(calendarId, scheduleId), HttpStatus.OK);
     }
 
-    @GetMapping("/detail/{calendarid}/{date}")
+    @GetMapping("/detail/{calendarid}/{scheduleid}")
     @ApiOperation(value = "세부 일정 확인", response = ScheduleDto.class)
     public ResponseEntity<?> getDetailScheduleByDate(@PathVariable("calendarid") String calendarId,
-                                                     @PathVariable("date") String writtenDate) {
-        scheduleService.getScheduleDetailByDate(calendarId, writtenDate);
+                                                     @PathVariable("scheduleid") String scheduleId) {
+        scheduleService.getScheduleDetailByDate(calendarId, scheduleId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @PostMapping("/modify/{calendarid}/{date}")

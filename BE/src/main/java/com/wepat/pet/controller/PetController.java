@@ -22,7 +22,7 @@ import java.util.concurrent.ExecutionException;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class PetController {
-    private final static Logger logger = LoggerFactory.getLogger(PetController.class);
+    private static final Logger logger = LoggerFactory.getLogger(PetController.class);
     private final PetService petService;
 
     @PostMapping("/add")

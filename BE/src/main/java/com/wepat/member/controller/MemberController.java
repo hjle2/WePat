@@ -1,5 +1,6 @@
 package com.wepat.member.controller;
 
+import com.google.gson.Gson;
 import com.wepat.exception.member.*;
 import com.wepat.member.MemberDto;
 import com.wepat.member.service.MemberService;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -22,7 +24,7 @@ import java.util.concurrent.ExecutionException;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class    MemberController {
-    private final static Logger logger = LoggerFactory.getLogger(MemberController.class);
+    private static final Logger logger = LoggerFactory.getLogger(MemberController.class);
     private final MemberService memberService;
     private final JwtUtil jwtUtil;
     @PostMapping("/signup")
@@ -46,16 +48,17 @@ public class    MemberController {
     public ResponseEntity<?> signIn(String memberId, String pwd) {
         try {
             Map<String, String> resultMap = new HashMap<>();
-            MemberDto memberResult = memberService.signIn(memberId, pwd);//유저가 로그인 가능한 유저인지 확인
+            MemberDto memberDto = memberService.signIn(memberId, pwd);//유저가 로그인 가능한 유저인지 확인
             String accessToken = null;
-            String refreshToken = null;//유저가 로그인 되면 토큰을 생성하여 저장할 String
-            if(memberResult != null){//로그인에서 객체를 받아왔다.
+            String refreshToken = null; //유저가 로그인 되면 토큰을 생성하여 저장할 String
+            if(memberDto != null) { //로그인에서 객체를 받아왔다.
                 accessToken = jwtUtil.createAccessToken("memberId", memberId);
                 refreshToken = jwtUtil.createRefreshToken("memberId", memberId);
                 memberService.saveRefreshToken(memberId, refreshToken);
 
                 resultMap.put("access-token", accessToken);
                 resultMap.put("refresh-token", refreshToken);
+
                 return new ResponseEntity<>(resultMap, HttpStatus.ACCEPTED);
             } else {
                 return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -136,10 +139,11 @@ public class    MemberController {
             throw new RuntimeException(e.getMessage());
         }
     }
-    @GetMapping("/{memberid}")
+    @GetMapping("/")
     @ApiOperation(value = "마이페이지", notes = "현재 로그인되어있는 회원의 정보 조회", response = MemberDto.class)
-    public ResponseEntity<?> getMember(@PathVariable("memberid") String memberId) {
+    public ResponseEntity<?> getMember(HttpServletRequest request) {
         try {
+            String memberId = request.getSession().getAttribute("memberId").toString();
             return new ResponseEntity<>(memberService.getMemberDetail(memberId), HttpStatus.OK);
         } catch (NotExistMember e) {
             throw new NotExistMember(e.getMessage());
@@ -149,8 +153,9 @@ public class    MemberController {
     }
     @PutMapping("/modify")
     @ApiOperation(value = "회원 정보 수정", notes = "현재 회원의 정보를 수정한다.", response = MemberDto.class)
-    public ResponseEntity<?> modifyMember(String memberId, String nickName) {
+    public ResponseEntity<?> modifyMember(HttpServletRequest request, String nickName) {
         try {
+            String memberId = request.getSession().getAttribute("memberId").toString();
             memberService.modifyMemberDetail(memberId, nickName);
             return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } catch (NotExistMember e) {
@@ -159,20 +164,22 @@ public class    MemberController {
             throw new RuntimeException();
         }
     }
-    @DeleteMapping("/{memberid}")
+    @DeleteMapping("/")
     @ApiOperation(value = "사용자의 정보를 삭제한다.", response = HttpResponse.class)
-    public ResponseEntity<?> deleteMember(@PathVariable("memberid") String memberId) {
+    public ResponseEntity<?> deleteMember(HttpServletRequest request, String nickName) {
         try {
+            String memberId = request.getSession().getAttribute("memberId").toString();
             memberService.deleteMember(memberId);
             return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } catch (Exception e) {
             throw new RuntimeException();
         }
     }
-    @GetMapping("/logout/{memberid}")
+    @GetMapping("/logout")
     @ApiOperation(value = "로그아웃", notes = "현재 로그인되어있는 사용자 로그아웃", response = HttpResponse.class)
-    public ResponseEntity<?> logout(@PathVariable("memberid") String memberId) {
+    public ResponseEntity<?> logout(HttpServletRequest request) {
         try {
+            String memberId = request.getSession().getAttribute("memberId").toString();
             memberService.logout(memberId);
             return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } catch (Exception e) {
@@ -182,8 +189,9 @@ public class    MemberController {
 
     @PutMapping("/modify/calendar")
     @ApiOperation(value = "캘린더 변경")
-    public ResponseEntity<?> modifyCalendarId(String memberId, String calendarId) {
+    public ResponseEntity<?> modifyCalendarId(HttpServletRequest request, String calendarId) {
         try {
+            String memberId = request.getSession().getAttribute("memberId").toString();
             memberService.modifyCalendarId(memberId, calendarId);
             return new ResponseEntity<>("캘린더 변경 완료", HttpStatus.OK);
         } catch (NotExistCalendarException e) {
@@ -194,7 +202,8 @@ public class    MemberController {
     }
 
     @PostMapping("/gettoken")
-    public ResponseEntity<?> getAccessToken(String memberId, String refreshToken) {
+    public ResponseEntity<?> getAccessToken(HttpServletRequest request, String refreshToken) {
+        String memberId = request.getSession().getAttribute("memberId").toString();
         String accessToken = jwtUtil.createAccessToken("memberId", memberId);
         return new ResponseEntity<>(accessToken, HttpStatus.OK);
     }

@@ -24,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class PhotoController {
-    private final static Logger logger = LoggerFactory.getLogger(PhotoController.class);
+    private static final Logger logger = LoggerFactory.getLogger(PhotoController.class);
     private final PhotoService photoService;
     @GetMapping("/{calendarid}")
     @ApiOperation(value = "가족 전체 앨범 이미지 조회", notes = "calendar의 전체 이미지 조회", response = List.class)

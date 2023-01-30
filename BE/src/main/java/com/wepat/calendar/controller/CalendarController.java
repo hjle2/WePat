@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class CalendarController {
-    private final static Logger logger = LoggerFactory.getLogger(CalendarController.class);
+    private static final Logger logger = LoggerFactory.getLogger(CalendarController.class);
     private final CalendarService calService;
 
     @GetMapping("/{calendarid}/{date}")
