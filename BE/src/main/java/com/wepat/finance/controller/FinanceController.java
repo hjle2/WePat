@@ -1,7 +1,6 @@
 package com.wepat.finance.controller;
 
 
-import com.wepat.exception.finance.AlreadyDeleteFinance;
 import com.wepat.finance.FinanceDto;
 import com.wepat.finance.service.FinanceService;
 import io.swagger.annotations.ApiOperation;
@@ -12,8 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/finance")
