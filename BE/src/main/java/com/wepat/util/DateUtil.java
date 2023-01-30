@@ -30,8 +30,10 @@ public class DateUtil {
         calendar.setTime(date);
 
         calendar.add(CALENDAR_UNIT, unit);
+
         return calendar.getTime();
     }
+
     public static String getFirstDayOfMonth(String ymd) {
         Date date = getDate(ymd);
         date.setDate(1);

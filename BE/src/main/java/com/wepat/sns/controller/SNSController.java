@@ -26,9 +26,9 @@ public class SNSController {
 
     @GetMapping("/")
     @ApiOperation(value = "SNS 전체 사진 조회", response = List.class)
-    public ResponseEntity<?> getSNS() {
+    public ResponseEntity<?> getSNS(@RequestParam int before) {
         try {
-            return new ResponseEntity<>(snsService.getSNS(), HttpStatus.OK);
+            return new ResponseEntity<>(snsService.getSNS(before), HttpStatus.OK);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

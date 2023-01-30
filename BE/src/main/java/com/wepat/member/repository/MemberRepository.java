@@ -21,5 +21,6 @@ public interface MemberRepository {
     void addBlockMember(String memberId, String blockMemberId) throws ExecutionException, InterruptedException;
     void saveRefreshToken(String memberId, String refreshToken) throws Exception;
     void deleteRefreshToken(String memberId) throws Exception;
+    void modifyCalendarIdAlone(String memberId) throws ExecutionException, InterruptedException;
 }
 

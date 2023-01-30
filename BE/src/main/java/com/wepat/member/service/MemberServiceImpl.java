@@ -74,7 +74,9 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberDto getMemberDetail(String memberId) throws ExecutionException, InterruptedException {
-        return memberRepository.getMemberById(memberId);
+        MemberDto memberDto = memberRepository.getMemberById(memberId);
+        memberDto.setPwd(null);
+        return memberDto;
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import com.wepat.calendar.CalendarEntity;
+import com.wepat.exception.calendar.AloneScheduleException;
 import com.wepat.member.MemberDto;
 import com.wepat.member.MemberEntity;
 import com.wepat.pet.PetEntity;
@@ -21,7 +22,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     public enum ReturnType {
         SUCCESS, ExistEmailException, ExistIdException, NotExistCalendarException, IdWriteException, BlockMember,
-        PwdWriteException, NotExistMember
+        PwdWriteException, NotExistMemberException, AloneCalendarException
     }
     private static Logger logger = LoggerFactory.getLogger(MemberRepository.class);
     private static final String CALENDAR_COLLECTION = "calendar";
@@ -204,7 +205,7 @@ public class MemberRepositoryImpl implements MemberRepository {
                 transaction.update(memDocRef, "pwd", pwd);
                 return ReturnType.SUCCESS;
             } else {
-                return ReturnType.NotExistMember;
+                return ReturnType.NotExistMemberException;
             }
         });
         if (returnTypeApiFuture.get() == ReturnType.SUCCESS) {
@@ -236,7 +237,7 @@ public class MemberRepositoryImpl implements MemberRepository {
                 transaction.update(memDocRef, "nickName", nickName);
                 return ReturnType.SUCCESS;
             } else {
-                return ReturnType.NotExistMember;
+                return ReturnType.NotExistMemberException;
             }
         });
         if (future.get()==ReturnType.SUCCESS) {
@@ -388,6 +389,31 @@ public class MemberRepositoryImpl implements MemberRepository {
 
         if (!(boolean) future.get()) {
             throw new Exception();
+        }
+    }
+
+    @Override
+    public void modifyCalendarIdAlone(String memberId) throws ExecutionException, InterruptedException {
+        String calendarId = getMemberById(memberId).getCalendarId();
+        DocumentReference memDocRef = memCollection.document(memberId);
+        DocumentReference calDocRef = calCollection.document(calendarId);
+        DocumentReference randomCal = calCollection.document();
+        ApiFuture<?> returnTypeApiFuture = db.runTransaction(transaction -> {
+            if (calDocRef.get().get().toObject(CalendarEntity.class).getMemberId().size() == 1) {
+                return ReturnType.AloneCalendarException;
+            } else {
+                CalendarEntity calendarEntity = new CalendarEntity(memberId);
+                transaction.create(randomCal, calendarEntity);
+                transaction.update(memDocRef, "calendarId", randomCal.getId());
+
+                List<String> memberIdList = calDocRef.get().get().toObject(CalendarEntity.class).getMemberId();
+                memberIdList.remove(memberId);
+                transaction.update(calDocRef, "memberId", memberIdList);
+                return ReturnType.SUCCESS;
+            }
+        });
+        if (returnTypeApiFuture.get() == ReturnType.AloneCalendarException) {
+            throw new AloneScheduleException();
         }
     }
 }

@@ -32,10 +32,24 @@ public class SNSRepositoryImpl implements SNSRepository {
     private final int warnCount = 3;
 
     @Override
-    public List<PhotoDto> getSNS() throws ExecutionException, InterruptedException {
-        return photoCollection.whereEqualTo("sns", true)
-                .whereEqualTo("block", false).get().get().toObjects(PhotoDto.class);
-//
+    public List<PhotoDto> getSNS(String date) throws ExecutionException, InterruptedException {
+//        return photoCollection.whereEqualTo("sns", true)
+//                .whereEqualTo("block", false).get().get().toObjects(PhotoDto.class);
+
+        logger.info(date);
+        List<PhotoDto> photoDtoList = photoCollection
+                .whereEqualTo("block", false)
+                .whereEqualTo("sns", true)
+                .orderBy("date", Query.Direction.DESCENDING)
+                .whereGreaterThan("date", date)
+                .orderBy("like", Query.Direction.DESCENDING).get().get().toObjects(PhotoDto.class);
+
+        for (PhotoDto dto : photoDtoList) {
+            logger.info(dto.toString());
+        }
+
+        return photoDtoList;
+
 //        List<QueryDocumentSnapshot> photoDocSnapshotList = photoCollection.get().get().getDocuments();
 //        List<PhotoDto> photoList = new ArrayList<>();
 //        for (QueryDocumentSnapshot snapshot : photoDocSnapshotList) {

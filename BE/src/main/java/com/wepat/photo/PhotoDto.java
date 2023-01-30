@@ -31,5 +31,5 @@ public class PhotoDto {
 //    @ApiParam(value = "신고자 명단")
 //    private List<String> reportIdList;
     @ApiParam(value = "등록일", required = true)
-    private String date;
+    private String date;;
 }

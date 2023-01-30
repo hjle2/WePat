@@ -34,7 +34,7 @@ public class PhotoRepositoryImpl implements PhotoRepository {
     @Override
     public List<PhotoDto> getAllPhotoById(String calendarId) throws ExecutionException, InterruptedException {
 
-        return photoCollection.whereEqualTo("calendarId", calendarId).get().get().toObjects(PhotoDto.class);
+        return photoCollection.whereEqualTo("calendarId", calendarId).orderBy("date", Query.Direction.DESCENDING).get().get().toObjects(PhotoDto.class);
     }
     
     // 특정 이미지

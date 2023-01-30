@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public interface SNSService {
-    List<PhotoDto> getSNS() throws ExecutionException, InterruptedException;
+    List<PhotoDto> getSNS(int before) throws ExecutionException, InterruptedException;
 
     PhotoDto getSNSByPhotoId(String photoId) throws ExecutionException, InterruptedException;
 

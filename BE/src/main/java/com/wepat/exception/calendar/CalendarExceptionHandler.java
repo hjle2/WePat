@@ -12,11 +12,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice(assignableTypes = {CalendarController.class})
 public class CalendarExceptionHandler {
-    @ExceptionHandler(AlreadyFinishSchedule.class)
-    public ResponseEntity<?> AlreadyFinishSchedule(AlreadyFinishSchedule e) {
-        ErrorDto errorDto = new ErrorDto("AlreadyFinishSchedule", e.getMessage());
-        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
-    }
 
     @ExceptionHandler(NotExistCalendarException.class)
     public ResponseEntity<?> NotExistCalendarException(NotExistCalendarException e) {

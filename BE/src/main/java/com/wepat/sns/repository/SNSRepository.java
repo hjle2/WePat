@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public interface SNSRepository {
-    List<PhotoDto> getSNS() throws ExecutionException, InterruptedException;
+    List<PhotoDto> getSNS(String date) throws ExecutionException, InterruptedException;
 
     PhotoDto getSNSByPhotoId(String photoId) throws ExecutionException, InterruptedException;
 
