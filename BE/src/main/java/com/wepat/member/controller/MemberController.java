@@ -129,8 +129,9 @@ public class    MemberController {
     }
     @PutMapping("modifypwd")
     @ApiOperation(value = "비밀번호 변경", response = HttpResponse.class)
-    public ResponseEntity<?> modifyPwd(String memberId, String pwd) {
+    public ResponseEntity<?> modifyPwd(HttpServletRequest request, String pwd) {
         try {
+            String memberId = request.getSession().getAttribute("memberId").toString();
             memberService.modifyPwd(memberId, pwd);
             return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } catch (NotExistMember e) {

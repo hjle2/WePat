@@ -1,11 +1,14 @@
 package com.wepat.aop.interceptor;
 
+import com.wepat.exception.TokenExpiredException;
 import com.wepat.exception.UnAuthorizedException;
 import com.wepat.util.JwtUtil;
+import org.apache.el.parser.Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,12 +22,18 @@ public class JwtIntercepptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         final String token = request.getHeader(HEADER_AUTH);
-        if (token != null && jwtUtil.validateToken(token)) {
+         if (token == null)
+            throw new UnAuthorizedException();
+
+        final String memberId = jwtUtil.getUserId(token);
+        request.getSession().setAttribute("memberId", memberId);
+
+        if (jwtUtil.validateToken(token)) {
             logger.info("verified Token : {}", token);
             return true;
         } else {
             logger.info("not verified token : {}", token);
-            throw new UnAuthorizedException();
+            throw new TokenExpiredException();
         }
     }
 }

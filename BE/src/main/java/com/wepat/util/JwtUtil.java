@@ -1,5 +1,6 @@
 package com.wepat.util;
 
+import com.google.gson.Gson;
 import com.wepat.exception.TokenExpiredException;
 import com.wepat.exception.UnAuthorizedException;
 import io.jsonwebtoken.*;
@@ -11,7 +12,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
-import java.security.Key;
 import java.util.Date;
 import java.util.Map;
 
@@ -79,8 +79,12 @@ public class JwtUtil {
         return value;
     }
 
-    public String getUserId() {
-        return (String) this.get("user").get("userid");
+    public String getUserId(String token) {
+        Claims jws = Jwts.parser()
+                .setSigningKey(SALT.getBytes())
+                .parseClaimsJws(token).getBody();
+
+        return jws.get("memberId").toString();
     }
     // Signature 설정에 들어갈 key 생성.
     private byte[] generateKey() {
