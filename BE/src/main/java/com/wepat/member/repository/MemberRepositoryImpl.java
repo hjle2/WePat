@@ -170,6 +170,43 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
+    public MemberDto snsSignIn(String email, String id, String sns) throws ExecutionException, InterruptedException {
+        final DocumentReference memDocRef = memCollection.document(id);
+
+        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
+
+            DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
+            MemberEntity memberEntity = transaction.get(memDocRef).get().toObject(MemberEntity.class);
+
+            if (!memSnapshot.exists()) { // 멤버ID가 없을 경우
+                return ReturnType.IdWriteException;
+
+            } else if (memSnapshot.toObject(MemberEntity.class).isBlock()) { //차단된 계정
+                return ReturnType.BlockMember;
+            }
+//             else if ( !(memberEntity.getsocial().equals(SNS))) { //해당 SNS로 가입된 아이디아니면
+//                return ReturnType.NotExistMember;//존재안하는 아이디로 판단
+//           }
+             else { //다 통과
+                return ReturnType.SUCCESS;
+
+            }
+        });
+        // 트랜잭션 실행 결과를 반환
+        if (returnTypeApiFuture.get() == ReturnType.IdWriteException) {
+            throw new IdWriteException();
+        } else if (returnTypeApiFuture.get() == ReturnType.BlockMember) {
+            throw new BlockMember();
+        } else if (returnTypeApiFuture.get() == ReturnType.PwdWriteException) {
+            throw new PwdWriteException();
+        } else {
+            MemberDto memberDto = memCollection.document(id).get().get().toObject(MemberDto.class);
+            logger.info(memberDto.toString());
+            return memberDto;
+        }
+    }
+
+    @Override
     public String findId(String email) throws ExecutionException, InterruptedException {
         List<QueryDocumentSnapshot> memDocs = memCollection.get().get().getDocuments();
         for (QueryDocumentSnapshot docs : memDocs) {

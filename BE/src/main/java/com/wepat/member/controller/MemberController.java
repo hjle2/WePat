@@ -56,7 +56,35 @@ public class    MemberController {
             throw new RuntimeException();
         }
     }
+    @PostMapping("/socialsignin")
+    @ApiOperation(value = "로그인 시도",  notes = "로그인 요청을 한다.",response = MemberDto.class)
+    public ResponseEntity<?> snsSignIn(String email,String id, String SNS) {
+        try {
+            Map<String, String> resultMap = new HashMap<>();
+            MemberDto memberResult = memberService.snsSignIn(email,id,SNS);//유저가 로그인 가능한 유저인지 확인
+            String accessToken = null;
+            String refreshToken = null;//유저가 로그인 되면 토큰을 생성하여 저장할 String
+            if(memberResult != null){//로그인에서 객체를 받아왔다.
+                accessToken = jwtUtil.createAccessToken("memberId", id);
+                refreshToken = jwtUtil.createRefreshToken("memberId", id);
+                memberService.saveRefreshToken(id, refreshToken);
 
+                resultMap.put("access-token", accessToken);
+                resultMap.put("refresh-token", refreshToken);
+                return new ResponseEntity<>(resultMap, HttpStatus.ACCEPTED);
+            } else {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+        } catch (IdWriteException e) {
+            throw new IdWriteException(e.getMessage());
+        } catch (BlockMember e) {
+            throw new BlockMember(e.getMessage());
+        } catch (PwdWriteException e) {
+            throw new PwdWriteException(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
+    }
     @PostMapping("/signup")
     @ApiOperation(value = "회원가입", notes = "정보를 받아 회원가입 시도한다.", response = MemberDto.class)
     public ResponseEntity<?> signUp(MemberDto member) {
@@ -84,6 +112,7 @@ public class    MemberController {
             throw new RuntimeException();
         }
     }
+
     @PostMapping("/findpwd")
     @ApiOperation(value = "비밀번호 찾기", notes = "아이디, 이메일 인증 성공 시," +
             "해당 이메일로 임시 비밀번호 제공 및 임시 비밀번호로 정보 변경", response = HttpResponse.class)

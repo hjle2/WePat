@@ -34,6 +34,11 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public MemberDto snsSignIn(String email,String id, String SNS) throws ExecutionException, InterruptedException {
+        return memberRepository.snsSignIn(email, id, SNS);
+    }
+
+    @Override
     public String findId(String email) throws ExecutionException, InterruptedException {
         return memberRepository.findId(email);
     }

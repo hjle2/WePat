@@ -9,6 +9,8 @@ public interface MemberRepository {
     void signUpWithCalendar(MemberDto member) throws ExecutionException, InterruptedException;
     void signUp(MemberDto member) throws ExecutionException, InterruptedException;
     MemberDto signIn(String memberId, String pwd) throws ExecutionException, InterruptedException;
+    MemberDto snsSignIn(String email, String id, String sns)throws ExecutionException, InterruptedException;
+
     String findId(String email) throws ExecutionException, InterruptedException;
     void changePwdToRandom(String randomPassword, String memberId) throws ExecutionException, InterruptedException;
     void modifyPwd(String memberId, String pwd) throws ExecutionException, InterruptedException ;
@@ -23,5 +25,7 @@ public interface MemberRepository {
     void deleteRefreshToken(String memberId) throws Exception;
 
     void modifyCalendarIdAlone(String memberId) throws ExecutionException, InterruptedException;
+
+
 }
 
