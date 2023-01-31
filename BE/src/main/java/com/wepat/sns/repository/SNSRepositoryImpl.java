@@ -36,18 +36,12 @@ public class SNSRepositoryImpl implements SNSRepository {
 //        return photoCollection.whereEqualTo("sns", true)
 //                .whereEqualTo("block", false).get().get().toObjects(PhotoDto.class);
 
-        logger.info(date);
         List<PhotoDto> photoDtoList = photoCollection
                 .whereEqualTo("block", false)
                 .whereEqualTo("sns", true)
                 .orderBy("date", Query.Direction.DESCENDING)
-                .whereGreaterThan("date", date)
-                .orderBy("like", Query.Direction.DESCENDING).get().get().toObjects(PhotoDto.class);
-
-        for (PhotoDto dto : photoDtoList) {
-            logger.info(dto.toString());
-        }
-
+                .whereGreaterThan("date", date).get().get().toObjects(PhotoDto.class);
+        // front 에서 LIKE 순서로 SORT 해서 보여주기
         return photoDtoList;
 
 //        List<QueryDocumentSnapshot> photoDocSnapshotList = photoCollection.get().get().getDocuments();
