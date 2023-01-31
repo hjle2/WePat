@@ -19,11 +19,9 @@ public class FinanceDto {
     @ApiParam(value = "사용처")
     private String category;
     @ApiParam(value = "입금 or 출금", required = true)
-    private boolean isIncome;
+    private boolean income;
     @ApiParam(value = "입금 or 출금 날짜")
     private String date;
-//    @ApiParam(value = "가계부 작성 날짜(PK)", required = true)
-//    private LocalDate writtenDate;
     @ApiParam(value = "가계부 내용")
     private String memo;
 }

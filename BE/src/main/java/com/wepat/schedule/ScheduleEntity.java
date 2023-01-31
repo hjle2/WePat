@@ -27,7 +27,7 @@ public class ScheduleEntity {
     @ApiParam(value = "일정 작성일")
     private String date;
     @ApiParam(value = "일정 수행 여부")
-    private boolean isCompleted = false;
+    private boolean completed = false;
     @ApiParam(value = "반복 주기")
     private int unit;
     @ApiParam(value = "일 or 달")

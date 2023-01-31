@@ -44,15 +44,14 @@ public class MemberRepositoryImpl implements MemberRepository {
         final DocumentReference memDocRef = memCollection.document(member.getMemberId());
         final DocumentReference calDocRef = calCollection.document(member.getCalendarId());
 
-        boolean EmailCheck;
         List<QueryDocumentSnapshot> documents = memCollection.get().get().getDocuments();
-        EmailCheck = documents.stream().anyMatch(docs -> (docs.toObject(MemberEntity.class).getEmail()).equals(member.getEmail()));
+        boolean email = documents.stream().anyMatch(docs -> (docs.toObject(MemberEntity.class).getEmail()).equals(member.getEmail()));
 
-        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
+        ApiFuture<?> future = db.runTransaction(transaction -> {
             DocumentSnapshot memSnapshot = transaction.get(memDocRef).get(); //입력한ID 값을 갖는 snapshot
             DocumentSnapshot calSnapshot = transaction.get(calDocRef).get(); //입력한 캘린더ID 값을 갖는 snapshot
 
-            if (EmailCheck) {
+            if (email) {
                 return ReturnType.ExistEmailException;
             } else {
                 if (memSnapshot.exists()) {
@@ -76,14 +75,13 @@ public class MemberRepositoryImpl implements MemberRepository {
             }
         });
         // 트랜잭션 실행 결과를 반환
-        if (returnTypeApiFuture.get()==ReturnType.ExistEmailException) {
+        if (future.get() == ReturnType.ExistEmailException) {
             throw new ExistEmailException();
-        } else if (returnTypeApiFuture.get()==ReturnType.ExistIdException) {
+        } else if (future.get() == ReturnType.ExistIdException) {
             throw new ExistIdException();
-        } else if (returnTypeApiFuture.get()==ReturnType.NotExistCalendarException) {
+        } else if (future.get() == ReturnType.NotExistCalendarException) {
             throw new NotExistCalendarException();
         } else {
-            returnTypeApiFuture.get();
         }
     }
 
@@ -96,17 +94,16 @@ public class MemberRepositoryImpl implements MemberRepository {
         // calendar document 를 생성 (docId 는 랜덤값)
         final DocumentReference calDocRef = calCollection.document();
 
-        boolean EmailCheck;
         List<QueryDocumentSnapshot> documents = memCollection.get().get().getDocuments();
-        EmailCheck = documents.stream().anyMatch(docs -> (docs.toObject(MemberEntity.class).getEmail()).equals(member.getEmail()));
+        boolean email = documents.stream().anyMatch(docs -> (docs.toObject(MemberEntity.class).getEmail()).equals(member.getEmail()));
 
         // run an asynchronous transaction
-        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
+        ApiFuture<?> future = db.runTransaction(transaction -> {
 
             // memberId 인 document 를 가져옴
             DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
 
-            if (EmailCheck) {
+            if (email) {
                 return ReturnType.ExistEmailException;
             } else {
                 if (memSnapshot.exists()) {
@@ -122,13 +119,54 @@ public class MemberRepositoryImpl implements MemberRepository {
             }
         });
         // 트랜잭션 실행 결과를 반환
-        if (returnTypeApiFuture.get() == ReturnType.ExistEmailException) {
+        if (future.get() == ReturnType.ExistEmailException) {
             throw new ExistEmailException();
-        } else if (returnTypeApiFuture.get() == ReturnType.ExistIdException) {
+        } else if (future.get() == ReturnType.ExistIdException) {
             throw new ExistIdException();
         } else {
-            returnTypeApiFuture.get();
         }
+    }
+
+    @Override
+    public void socialSignUp(MemberDto member, int social) throws ExecutionException, InterruptedException {
+
+        // memberId인 document 를 가져옴(없으면 생성)
+        final DocumentReference memDocRef = memCollection.document(member.getMemberId());
+        // calendar document 를 생성 (docId 는 랜덤값)
+        final DocumentReference calDocRef = calCollection.document();
+
+        List<QueryDocumentSnapshot> documents = memCollection.get().get().getDocuments();
+        boolean email = documents.stream().anyMatch(docs -> (docs.toObject(MemberEntity.class).getEmail()).equals(member.getEmail()));
+
+        // run an asynchronous transaction
+        ApiFuture<?> future = db.runTransaction(transaction -> {
+
+            // memberId 인 document 를 가져옴
+            DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
+
+            if (email) {
+                return ReturnType.ExistEmailException;
+            } else {
+                if (memSnapshot.exists()) {
+                    return ReturnType.ExistIdException;
+                } else {
+                    // memberEntity 를 db 에 추가 함
+                    member.setCalendarId(calDocRef.getId());
+                    transaction.create(memDocRef, new MemberEntity(member));
+                    // calendarEntity(memberId 를 갖는)를 db에 추가 함
+                    transaction.create(calDocRef, new CalendarEntity(member.getMemberId()));
+                    return ReturnType.SUCCESS;
+                }
+            }
+        });
+        // 트랜잭션 실행 결과를 반환
+        if (future.get() == ReturnType.ExistEmailException) {
+            throw new ExistEmailException();
+        } else if (future.get() == ReturnType.ExistIdException) {
+            throw new ExistIdException();
+        } else {
+        }
+
     }
 
     @Override
@@ -136,10 +174,10 @@ public class MemberRepositoryImpl implements MemberRepository {
 
         final DocumentReference memDocRef = memCollection.document(memberId);
 
-        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
+        ApiFuture<?> future = db.runTransaction(transaction -> {
 
             DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
-            MemberEntity memberEntity = transaction.get(memDocRef).get().toObject(MemberEntity.class);
+            MemberDto memberCto = transaction.get(memDocRef).get().toObject(MemberDto.class);
 
             if (!memSnapshot.exists()) { // 멤버ID가 없을 경우
                 return ReturnType.IdWriteException;
@@ -147,8 +185,8 @@ public class MemberRepositoryImpl implements MemberRepository {
             } else if (memSnapshot.toObject(MemberEntity.class).isBlock()) { //차단된 계정
                 return ReturnType.BlockMember;
 
-            } else if (memSnapshot.exists() && memberEntity.getPwd().equals(pwd)) { //해당 멤버ID가 있고, pwd가 같다면 로그인 성공
-                return ReturnType.SUCCESS;
+            } else if (memSnapshot.exists() && memberCto.getPwd().equals(pwd)) { //해당 멤버ID가 있고, pwd가 같다면 로그인 성공
+                return memberCto;
 
             } else { //비밀번호가 다르다면
                 return ReturnType.PwdWriteException;
@@ -156,17 +194,20 @@ public class MemberRepositoryImpl implements MemberRepository {
             }
         });
         // 트랜잭션 실행 결과를 반환
-        if (returnTypeApiFuture.get() == ReturnType.IdWriteException) {
+        if (future.get() == ReturnType.IdWriteException) {
             throw new IdWriteException();
-        } else if (returnTypeApiFuture.get() == ReturnType.BlockMember) {
+        } else if (future.get() == ReturnType.BlockMember) {
             throw new BlockMember();
-        } else if (returnTypeApiFuture.get() == ReturnType.PwdWriteException) {
+        } else if (future.get() == ReturnType.PwdWriteException) {
             throw new PwdWriteException();
         } else {
-            MemberDto memberDto = memCollection.document(memberId).get().get().toObject(MemberDto.class);
-            logger.info(memberDto.toString());
-            return memberDto;
+            return (MemberDto) future.get();
         }
+    }
+
+    @Override
+    public MemberDto socialSignIn(String memberId, String pwd, int social) throws ExecutionException, InterruptedException {
+        return null;
     }
 
     @Override
@@ -199,7 +240,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
         final DocumentReference memDocRef = memCollection.document(memberId);
 
-        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
+        ApiFuture<?> future = db.runTransaction(transaction -> {
 
             MemberEntity memberEntity = transaction.get(memDocRef).get().toObject(MemberEntity.class);
 
@@ -210,8 +251,7 @@ public class MemberRepositoryImpl implements MemberRepository {
                 return ReturnType.NotExistMember;
             }
         });
-        if (returnTypeApiFuture.get() == ReturnType.SUCCESS) {
-            returnTypeApiFuture.get();
+        if (future.get() == ReturnType.SUCCESS) {
         } else {
             throw new NotExistMember();
         }
@@ -234,7 +274,7 @@ public class MemberRepositoryImpl implements MemberRepository {
     public void modifyMember(String memberId, String nickName) throws ExecutionException, InterruptedException {
         final DocumentReference memDocRef = memCollection.document(memberId);
 
-        ApiFuture<ReturnType> future = db.runTransaction(transaction -> {
+        ApiFuture<?> future = db.runTransaction(transaction -> {
             if (transaction.get(memDocRef).get().exists()) {
                 transaction.update(memDocRef, "nickName", nickName);
                 return ReturnType.SUCCESS;
@@ -304,7 +344,7 @@ public class MemberRepositoryImpl implements MemberRepository {
         String beforeCalendarId = member.getCalendarId(); // 변경 전 캘린더
         DocumentReference beforeCalDocRef = calCollection.document(beforeCalendarId);
 
-        ApiFuture<ReturnType> future = db.runTransaction(transaction -> {
+        ApiFuture<?> future = db.runTransaction(transaction -> {
             DocumentSnapshot calSnapshot = transaction.get(calDocRef).get();
             DocumentSnapshot beforeCalSnapshot = transaction.get(beforeCalDocRef).get();
 
@@ -400,7 +440,7 @@ public class MemberRepositoryImpl implements MemberRepository {
         DocumentReference memDocRef = memCollection.document(memberId);
         DocumentReference calDocRef = calCollection.document(calendarId);
         DocumentReference randomCal = calCollection.document();
-        ApiFuture<?> returnTypeApiFuture = db.runTransaction(transaction -> {
+        ApiFuture<?> future = db.runTransaction(transaction -> {
             if (calDocRef.get().get().toObject(CalendarEntity.class).getMemberId().size() == 1) {
                 return ReturnType.AloneCalendarException;
             } else {
@@ -414,7 +454,7 @@ public class MemberRepositoryImpl implements MemberRepository {
                 return ReturnType.SUCCESS;
             }
         });
-        if (returnTypeApiFuture.get() == ReturnType.AloneCalendarException) {
+        if (future.get() == ReturnType.AloneCalendarException) {
             throw new AloneScheduleException();
         }
     }
