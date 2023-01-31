@@ -23,7 +23,7 @@ import java.util.concurrent.ExecutionException;
 @RequestMapping("/member")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
-public class    MemberController {
+public class MemberController {
     private static final Logger logger = LoggerFactory.getLogger(MemberController.class);
     private final MemberService memberService;
     private final JwtUtil jwtUtil;
@@ -110,7 +110,7 @@ public class    MemberController {
             throw new RuntimeException(e.getMessage());
         }
     }
-    @GetMapping("/")
+    @GetMapping
     @ApiOperation(value = "마이페이지", notes = "현재 로그인되어있는 회원의 정보 조회", response = MemberDto.class)
     public ResponseEntity<?> getMember(HttpServletRequest request) {
         try {
