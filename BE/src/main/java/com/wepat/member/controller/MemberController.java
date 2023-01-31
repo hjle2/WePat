@@ -23,7 +23,7 @@ import java.util.concurrent.ExecutionException;
 @RequestMapping("/member")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
-public class    MemberController {
+public class MemberController {
     private static final Logger logger = LoggerFactory.getLogger(MemberController.class);
     private final MemberService memberService;
     private final JwtUtil jwtUtil;
