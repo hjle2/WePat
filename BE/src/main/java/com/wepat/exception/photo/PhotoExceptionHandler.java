@@ -15,7 +15,6 @@ public class PhotoExceptionHandler {
 
     @ExceptionHandler(NotExistImage.class)
     public ResponseEntity<?> NotExistImage(NotExistImage e) {
-        System.out.println("notExis호출!!!");
         ErrorDto errorDto = new ErrorDto("NotExistImage", "존재하지 않는 이미지입니다.");
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
@@ -24,12 +23,6 @@ public class PhotoExceptionHandler {
     public ResponseEntity<?> AlreadyDeleteImage(AlreadyDeleteImage e) {
         ErrorDto errorDto = new ErrorDto("AlreadyDeleteImage", "이미 삭제된 이미지입니다.");
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(UpdateSNSCancel.class)
-    public ResponseEntity<?> UpdateSNSCancel(UpdateSNSCancel e) {
-        ErrorDto errorDto = new ErrorDto("UpdateSNSCancel", "업로드 취소");
-        return new ResponseEntity<>(errorDto, HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

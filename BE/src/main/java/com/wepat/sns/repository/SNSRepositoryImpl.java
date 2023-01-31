@@ -13,8 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -46,18 +44,13 @@ public class SNSRepositoryImpl implements SNSRepository {
 
     @Override
     public PhotoDto getSNSByPhotoId(String photoId) throws ExecutionException, InterruptedException {
-        DocumentSnapshot photoSnapshot = photoCollection.document(photoId).get().get();
-        if (photoSnapshot.exists()) {
-            return photoSnapshot.toObject(PhotoDto.class);
-        } else {
-            throw new NotExistImage();
-        }
+        return photoCollection.document(photoId).get().get().toObject(PhotoDto.class);
     }
 
     @Override
-    public void updateSNSLike(String photoId) throws ExecutionException, InterruptedException {
+    public void updateSNSLikeByPhotoId(String photoId) throws ExecutionException, InterruptedException {
         DocumentReference photoDocRef = photoCollection.document(photoId);
-        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
+        ApiFuture<ReturnType> future = db.runTransaction(transaction -> {
             DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
             if (photoSnapshot.exists()) {
                 int like = photoSnapshot.toObject(PhotoEntity.class).getLike();
@@ -67,18 +60,16 @@ public class SNSRepositoryImpl implements SNSRepository {
                 return ReturnType.NotExistImage;
             }
         });
-        if (returnTypeApiFuture.get()==ReturnType.SUCCESS) {
-            returnTypeApiFuture.get();
-        } else {
+        if (future.get() == ReturnType.NotExistImage) {
             throw new NotExistImage();
         }
     }
 
     @Override
-    public void reportSNS(String photoId, String memberId) throws ExecutionException, InterruptedException {
+    public void reportSNSByPhotoId(String photoId, String memberId) throws ExecutionException, InterruptedException {
         DocumentReference photoDocRef = photoCollection.document(photoId);
 
-        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
+        ApiFuture<ReturnType> future = db.runTransaction(transaction -> {
             DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
             if (photoSnapshot.exists()) {
                 List<String> reportIdList = photoSnapshot.toObject(PhotoEntity.class).getReportIdList();
@@ -93,17 +84,15 @@ public class SNSRepositoryImpl implements SNSRepository {
                 return ReturnType.NotExistImage;
             }
         });
-        if (returnTypeApiFuture.get() == ReturnType.AlreadyReportImage) {
+        if (future.get() == ReturnType.AlreadyReportImage) {
             throw new AlreadyReportImage();
-        } else if (returnTypeApiFuture.get() == ReturnType.NotExistImage) {
+        } else if (future.get() == ReturnType.NotExistImage) {
             throw new NotExistImage();
-        } else {
-            returnTypeApiFuture.get();
         }
     }
 
     @Override
-    public List<PhotoDto> reportList() throws ExecutionException, InterruptedException {
+    public List<PhotoDto> getReportedList() throws ExecutionException, InterruptedException {
         List<QueryDocumentSnapshot> documentsList = photoCollection.get().get().getDocuments();
         List<PhotoDto> photoDtoList = new ArrayList<>();
         for (QueryDocumentSnapshot snapshot : documentsList) {
@@ -115,9 +104,9 @@ public class SNSRepositoryImpl implements SNSRepository {
     }
 
     @Override
-    public void blockSNSByPhoto(String photoId) throws ExecutionException, InterruptedException {
+    public void blockSNSByPhotoId(String photoId) throws ExecutionException, InterruptedException {
         DocumentReference photoDocRef = photoCollection.document(photoId);
-        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
+        ApiFuture<ReturnType> future = db.runTransaction(transaction -> {
             DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
             if (photoSnapshot.exists()) {
                 transaction.update(photoDocRef, "block", true);
@@ -126,9 +115,7 @@ public class SNSRepositoryImpl implements SNSRepository {
                 return ReturnType.NotExistImage;
             }
         });
-        if (returnTypeApiFuture.get()==ReturnType.SUCCESS) {
-            returnTypeApiFuture.get();
-        } else {
+        if (future.get() == ReturnType.NotExistImage) {
             throw new NotExistImage();
         }
     }
