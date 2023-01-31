@@ -44,15 +44,14 @@ public class MemberRepositoryImpl implements MemberRepository {
         final DocumentReference memDocRef = memCollection.document(member.getMemberId());
         final DocumentReference calDocRef = calCollection.document(member.getCalendarId());
 
-        boolean EmailCheck;
         List<QueryDocumentSnapshot> documents = memCollection.get().get().getDocuments();
-        EmailCheck = documents.stream().anyMatch(docs -> (docs.toObject(MemberEntity.class).getEmail()).equals(member.getEmail()));
+        boolean email = documents.stream().anyMatch(docs -> (docs.toObject(MemberEntity.class).getEmail()).equals(member.getEmail()));
 
         ApiFuture<?> future = db.runTransaction(transaction -> {
             DocumentSnapshot memSnapshot = transaction.get(memDocRef).get(); //입력한ID 값을 갖는 snapshot
             DocumentSnapshot calSnapshot = transaction.get(calDocRef).get(); //입력한 캘린더ID 값을 갖는 snapshot
 
-            if (EmailCheck) {
+            if (email) {
                 return ReturnType.ExistEmailException;
             } else {
                 if (memSnapshot.exists()) {
@@ -95,9 +94,8 @@ public class MemberRepositoryImpl implements MemberRepository {
         // calendar document 를 생성 (docId 는 랜덤값)
         final DocumentReference calDocRef = calCollection.document();
 
-        boolean EmailCheck;
         List<QueryDocumentSnapshot> documents = memCollection.get().get().getDocuments();
-        EmailCheck = documents.stream().anyMatch(docs -> (docs.toObject(MemberEntity.class).getEmail()).equals(member.getEmail()));
+        boolean email = documents.stream().anyMatch(docs -> (docs.toObject(MemberEntity.class).getEmail()).equals(member.getEmail()));
 
         // run an asynchronous transaction
         ApiFuture<?> future = db.runTransaction(transaction -> {
@@ -105,7 +103,7 @@ public class MemberRepositoryImpl implements MemberRepository {
             // memberId 인 document 를 가져옴
             DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
 
-            if (EmailCheck) {
+            if (email) {
                 return ReturnType.ExistEmailException;
             } else {
                 if (memSnapshot.exists()) {
@@ -127,6 +125,48 @@ public class MemberRepositoryImpl implements MemberRepository {
             throw new ExistIdException();
         } else {
         }
+    }
+
+    @Override
+    public void socialSignUp(MemberDto member, int social) throws ExecutionException, InterruptedException {
+
+        // memberId인 document 를 가져옴(없으면 생성)
+        final DocumentReference memDocRef = memCollection.document(member.getMemberId());
+        // calendar document 를 생성 (docId 는 랜덤값)
+        final DocumentReference calDocRef = calCollection.document();
+
+        List<QueryDocumentSnapshot> documents = memCollection.get().get().getDocuments();
+        boolean email = documents.stream().anyMatch(docs -> (docs.toObject(MemberEntity.class).getEmail()).equals(member.getEmail()));
+
+        // run an asynchronous transaction
+        ApiFuture<?> future = db.runTransaction(transaction -> {
+
+            // memberId 인 document 를 가져옴
+            DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
+
+            if (email) {
+                return ReturnType.ExistEmailException;
+            } else {
+                if (memSnapshot.exists()) {
+                    return ReturnType.ExistIdException;
+                } else {
+                    // memberEntity 를 db 에 추가 함
+                    member.setCalendarId(calDocRef.getId());
+                    transaction.create(memDocRef, new MemberEntity(member));
+                    // calendarEntity(memberId 를 갖는)를 db에 추가 함
+                    transaction.create(calDocRef, new CalendarEntity(member.getMemberId()));
+                    return ReturnType.SUCCESS;
+                }
+            }
+        });
+        // 트랜잭션 실행 결과를 반환
+        if (future.get() == ReturnType.ExistEmailException) {
+            throw new ExistEmailException();
+        } else if (future.get() == ReturnType.ExistIdException) {
+            throw new ExistIdException();
+        } else {
+        }
+
     }
 
     @Override
@@ -163,6 +203,11 @@ public class MemberRepositoryImpl implements MemberRepository {
         } else {
             return (MemberDto) future.get();
         }
+    }
+
+    @Override
+    public MemberDto socialSignIn(String memberId, String pwd, int social) throws ExecutionException, InterruptedException {
+        return null;
     }
 
     @Override

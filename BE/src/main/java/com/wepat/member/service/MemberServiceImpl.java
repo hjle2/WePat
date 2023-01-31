@@ -30,8 +30,18 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public void socialSignUp(MemberDto member, int social) throws ExecutionException, InterruptedException {
+        memberRepository.socialSignUp(member, social);
+    }
+
+    @Override
     public MemberDto signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
         return memberRepository.signIn(memberId, pwd);
+    }
+
+    @Override
+    public MemberDto socialSignIn(String memberId, String pwd, int social) throws ExecutionException, InterruptedException {
+        return socialSignIn(memberId, pwd, social);
     }
 
     @Override
