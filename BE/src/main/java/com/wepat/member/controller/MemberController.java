@@ -58,16 +58,16 @@ public class    MemberController {
     }
     @PostMapping("/socialsignin")
     @ApiOperation(value = "로그인 시도",  notes = "로그인 요청을 한다.",response = MemberDto.class)
-    public ResponseEntity<?> socialsignin(String email,String id, String SNS) {
+    public ResponseEntity<?> socialsignin(String memberId, int social) {
         try {
             Map<String, String> resultMap = new HashMap<>();
-            MemberDto memberResult = memberService.snsSignIn(email,id,SNS);//유저가 로그인 가능한 유저인지 확인
+            MemberDto memberResult = memberService.socialSignIn(memberId,social);//유저가 로그인 가능한 유저인지 확인
             String accessToken = null;
             String refreshToken = null;//유저가 로그인 되면 토큰을 생성하여 저장할 String
             if(memberResult != null){//로그인에서 객체를 받아왔다.
-                accessToken = jwtUtil.createAccessToken("memberId", id);
-                refreshToken = jwtUtil.createRefreshToken("memberId", id);
-                memberService.saveRefreshToken(id, refreshToken);
+                accessToken = jwtUtil.createAccessToken("memberId", memberId);
+                refreshToken = jwtUtil.createRefreshToken("memberId", memberId);
+                memberService.saveRefreshToken(memberId, refreshToken);
 
                 resultMap.put("access-token", accessToken);
                 resultMap.put("refresh-token", refreshToken);
@@ -87,7 +87,7 @@ public class    MemberController {
     }
     @PostMapping("/signup")
     @ApiOperation(value = "회원가입", notes = "정보를 받아 회원가입 시도한다.", response = MemberDto.class)
-    public ResponseEntity<?> signUp(MemberDto member) {
+    public ResponseEntity<?> signUp(@RequestBody MemberDto member) {
         try {
             memberService.signUp(member);
             return new ResponseEntity<>(HttpStatus.ACCEPTED);
@@ -104,10 +104,6 @@ public class    MemberController {
     @PostMapping("/socialsignup")
     @ApiOperation(value = "SNS회원가입", notes = "SNS에서 정보를 받아 회원가입 시도한다.", response = MemberDto.class)
     public ResponseEntity<?> socialsignup(MemberDto member) {
-        System.out.println(member);
-        System.out.println(member.toString());
-
-
         try {
             memberService.socialsignup(member);
             return new ResponseEntity<>(HttpStatus.ACCEPTED);

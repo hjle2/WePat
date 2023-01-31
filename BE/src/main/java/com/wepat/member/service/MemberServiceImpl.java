@@ -29,12 +29,8 @@ public class MemberServiceImpl implements MemberService {
     }
     @Override
     public void socialsignup(MemberDto member) throws ExecutionException, InterruptedException {
-       //프론트에서 SNS 정보에서 필요한 정보를 객체로 생성해 받았다고 가정 ->테스트 해보려했는데 프론트를 못짜서 실패 2023-01-31-02:00
-        if (member.getCalendarId() == null) {
-            memberRepository.socialsignup(member);
-        } else {
-            memberRepository.socialsignupWithCalendar(member);
-        }
+            memberRepository.socialsignup(member);//무조건 아이디생성
+
     }
     @Override
     public MemberDto signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
@@ -42,8 +38,8 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberDto snsSignIn(String email,String id, String SNS) throws ExecutionException, InterruptedException {
-        return memberRepository.snsSignIn(email, id, SNS);
+    public MemberDto socialSignIn(String memberId, int social) throws ExecutionException, InterruptedException {
+        return memberRepository.socialsignin(memberId, social);
     }
 
     @Override

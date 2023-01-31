@@ -154,89 +154,59 @@ public class MemberRepositoryImpl implements MemberRepository {
 
         });
         // 트랜잭션 실행 결과를 반환
-
         returnTypeApiFuture.get();
     }
 
-    @Override
-    public void socialsignupWithCalendar(MemberDto member) throws ExecutionException, InterruptedException {
 
-        final DocumentReference memDocRef = memCollection.document(member.getMemberId());
-        final DocumentReference calDocRef = calCollection.document(member.getCalendarId());
-
-        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
-            DocumentSnapshot memSnapshot = transaction.get(memDocRef).get(); //입력한ID 값을 갖는 snapshot
-            DocumentSnapshot calSnapshot = transaction.get(calDocRef).get(); //입력한 캘린더ID 값을 갖는 snapshot
-
-                    if (calSnapshot.exists()) {
-                        member.setCalendarId(calDocRef.getId());
-                        transaction.create(memDocRef, new MemberEntity(member));
-
-                        //트랜잭션을 통해 얻은 calSnapshot의 member배열에 접근
-                        List<String> memberId = calSnapshot.toObject(CalendarEntity.class).getMemberId();
-                        //회원가입한 member의 Id를 포함하여 업데이트
-                        memberId.add(member.getMemberId());
-                        transaction.update(calDocRef, "memberId", memberId);
-
-                        return ReturnType.SUCCESS;
-                    } else {
-                        return ReturnType.NotExistCalendarException;//잘못된 달력 아이디를 가져올 경우
-                    }
-        });
-        // 트랜잭션 실행 결과를 반환
-        if (returnTypeApiFuture.get()==ReturnType.NotExistCalendarException) {
-            throw new NotExistCalendarException();
-        } else {
-            returnTypeApiFuture.get();
-        }
-    }
 
     @Override
     public MemberDto signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
 
         final DocumentReference memDocRef = memCollection.document(memberId);
 
-        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
+        ApiFuture<?> future = db.runTransaction(transaction -> {
 
             DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
-            MemberEntity memberEntity = transaction.get(memDocRef).get().toObject(MemberEntity.class);
+            MemberDto memberDto = transaction.get(memDocRef).get().toObject(MemberDto.class);
 
             if (!memSnapshot.exists()) { // 멤버ID가 없을 경우
                 return ReturnType.IdWriteException;
 
+            } else if (memSnapshot.toObject(MemberEntity.class).getSocial() != 0) { //SNS로 가입된 계정
+                return ReturnType.NotExistMember;
             } else if (memSnapshot.toObject(MemberEntity.class).isBlock()) { //차단된 계정
                 return ReturnType.BlockMember;
-
-            } else if (memSnapshot.exists() && memberEntity.getPwd().equals(pwd)) { //해당 멤버ID가 있고, pwd가 같다면 로그인 성공
-                return ReturnType.SUCCESS;
-
+            } else if (memSnapshot.exists() && memberDto.getPwd().equals(pwd)) { //해당 멤버ID가 있고, pwd가 같다면 로그인 성공
+                return memberDto;
             } else { //비밀번호가 다르다면
                 return ReturnType.PwdWriteException;
 
             }
         });
         // 트랜잭션 실행 결과를 반환
-        if (returnTypeApiFuture.get() == ReturnType.IdWriteException) {
+        if (future.get() == ReturnType.IdWriteException) {
             throw new IdWriteException();
-        } else if (returnTypeApiFuture.get() == ReturnType.BlockMember) {
+        } else if (future.get() == ReturnType.BlockMember) {
             throw new BlockMember();
-        } else if (returnTypeApiFuture.get() == ReturnType.PwdWriteException) {
+        } else if (future.get() == ReturnType.PwdWriteException) {
             throw new PwdWriteException();
-        } else {
-            MemberDto memberDto = memCollection.document(memberId).get().get().toObject(MemberDto.class);
-            logger.info(memberDto.toString());
-            return memberDto;
+        }
+        else if (future.get() == ReturnType.NotExistMember) {
+            throw new NotExistMember();
+        }
+        else {
+            return (MemberDto) future.get();
         }
     }
 
     @Override
-    public MemberDto snsSignIn(String email, String id, String SNS) throws ExecutionException, InterruptedException {
-        final DocumentReference memDocRef = memCollection.document(id);
+    public MemberDto socialsignin(String memberId, int social) throws ExecutionException, InterruptedException {
+        final DocumentReference memDocRef = memCollection.document(memberId);
 
-        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
+        ApiFuture<?> future = db.runTransaction(transaction -> {
 
             DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
-            MemberEntity memberEntity = transaction.get(memDocRef).get().toObject(MemberEntity.class);
+            MemberDto memberDto = transaction.get(memDocRef).get().toObject(MemberDto.class);
 
             if (!memSnapshot.exists()) { // 멤버ID가 없을 경우
                 return ReturnType.IdWriteException;
@@ -244,25 +214,22 @@ public class MemberRepositoryImpl implements MemberRepository {
             } else if (memSnapshot.toObject(MemberEntity.class).isBlock()) { //차단된 계정
                 return ReturnType.BlockMember;
             }
-             else if (memberEntity.getSocial().equals(SNS)) { //해당 SNS로 가입된 아이디아니면
+             else if (memberDto.getSocial() == social) { //해당 SNS로 가입된 아이디아니면
                return ReturnType.NotExistMember;//존재안하는 아이디로 판단
            }
              else { //다 통과
-                return ReturnType.SUCCESS;
-
+                return memberDto;
             }
         });
         // 트랜잭션 실행 결과를 반환
-        if (returnTypeApiFuture.get() == ReturnType.IdWriteException) {
+        if (future.get() == ReturnType.IdWriteException) {
             throw new IdWriteException();
-        } else if (returnTypeApiFuture.get() == ReturnType.BlockMember) {
+        } else if (future.get() == ReturnType.BlockMember) {
             throw new BlockMember();
-        } else if (returnTypeApiFuture.get() == ReturnType.PwdWriteException) {
+        } else if (future.get() == ReturnType.PwdWriteException) {
             throw new PwdWriteException();
         } else {
-            MemberDto memberDto = memCollection.document(id).get().get().toObject(MemberDto.class);
-            logger.info(memberDto.toString());
-            return memberDto;
+            return (MemberDto) future.get();
         }
     }
 
