@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutionException;
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final JavaMailSender javaMailSender;
+    private static final int RANDOM_LENGTH = 10;
 
     @Override
     public void signUp(MemberDto member) throws ExecutionException, InterruptedException {
@@ -47,7 +48,7 @@ public class MemberServiceImpl implements MemberService {
                 "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
                 "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
         int idx = 0;
-        for(int i=0; i<10; i++) {
+        for(int i=0; i<RANDOM_LENGTH; i++) {
             idx = (int) (word.length*Math.random());
             randomPassword += word[idx];
         }
