@@ -82,7 +82,7 @@ public class PhotoRepositoryImpl implements PhotoRepository {
 
     // SNS 업로드
     @Override
-    public void updateSNSByPhotoId(String photoId, boolean upload) throws ExecutionException, InterruptedException {
+    public void updateSNSByPhotoId(String photoId, boolean upload, String snsDate) throws ExecutionException, InterruptedException {
         DocumentReference photoDocRef = photoCollection.document(photoId);
 
         ApiFuture<?> responseEntityApiFuture = db.runTransaction(transaction -> {

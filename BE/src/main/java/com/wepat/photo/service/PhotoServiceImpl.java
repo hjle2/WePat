@@ -44,8 +44,8 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public void updateSNSByPhotoId(String photoId, boolean upload) throws InterruptedException, ExecutionException {
-        photoRepository.updateSNSByPhotoId(photoId, upload);
+    public void updateSNSByPhotoId(String photoId, boolean upload, String snsDate) throws InterruptedException, ExecutionException {
+        photoRepository.updateSNSByPhotoId(photoId, upload, snsDate);
     }
 
     @Override

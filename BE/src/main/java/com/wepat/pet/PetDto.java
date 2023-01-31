@@ -15,9 +15,9 @@ public class PetDto {
         this.calendarId = pet.getCalendarId();
         this.petId = pet.getPetId();
         this.name = pet.getName();
-        this.animalType = pet.getAnimalType();
+        this.types = pet.getTypes();
         this.age = pet.getAge();
-        this.photoURL = pet.getPhotoURL();
+        this.photoUrl = pet.getPhotoUrl();
         this.color = pet.getColor();
         this.birthday = pet.getBirthday();
         this.adaptday = pet.getAdaptday();
@@ -30,11 +30,11 @@ public class PetDto {
     @ApiParam(value = "반려동물 이름")
     private String name;
     @ApiParam(value = "동물 종류")
-    private String animalType;
+    private String types;
     @ApiParam(value = "반려동물 나이")
     private int age;
     @ApiParam(value = "반려동물 프로필")
-    private String photoURL;
+    private String photoUrl;
     @ApiParam(value = "프로필 색상")
     private String color;
     @ApiParam(value = "반려동물 생일")

@@ -72,9 +72,11 @@ public class PhotoController {
 
     @PutMapping("/sns/{photoid}")
     @ApiOperation(value = "SNS 에 사진 업로드하기")
-    public ResponseEntity<?> updateSNSByPhoto(@PathVariable("photoid") String photoId, boolean upload) {
+    public ResponseEntity<?> updateSNSByPhoto(@PathVariable("photoid") String photoId,
+                                              boolean upload,
+                                              String snsDate) {
         try {
-            photoService.updateSNSByPhotoId(photoId, upload);
+            photoService.updateSNSByPhotoId(photoId, upload, snsDate);
             return new ResponseEntity<>("업로드 성공", HttpStatus.OK);
         } catch (UpdateSNSCancel e) {
             throw new UpdateSNSCancel();

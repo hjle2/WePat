@@ -16,7 +16,7 @@ public interface PhotoRepository {
     // 사진 삭제하기
     void deletePhoto(String photoId) throws ExecutionException, InterruptedException;
     // SNS 업로드
-    void updateSNSByPhotoId(String photoId, boolean upload) throws ExecutionException, InterruptedException;
+    void updateSNSByPhotoId(String photoId, boolean upload, String snsDate) throws ExecutionException, InterruptedException;
     // 댓글 작성
     void addCommentByPhotoId(String photoId, CommentDto commentDto) throws ExecutionException, InterruptedException;
     // 댓글 삭제
