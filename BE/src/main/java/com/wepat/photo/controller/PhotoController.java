@@ -53,6 +53,7 @@ public class PhotoController {
     @ApiOperation(value = "이미지 추가", notes = "사용자ID, 사진URL, 등록일 입력")
     public ResponseEntity<?> addPhoto(@PathVariable("calendarid") String calendarId,
                                       @RequestBody PhotoDto photoDto) {
+
         photoService.addPhoto(calendarId, photoDto);
         return new ResponseEntity<>("이미지 추가 성공", HttpStatus.OK);
     }
@@ -72,9 +73,10 @@ public class PhotoController {
 
     @PutMapping("/sns/{photoid}")
     @ApiOperation(value = "SNS 에 사진 업로드하기")
-    public ResponseEntity<?> updateSNSByPhoto(@PathVariable("photoid") String photoId, boolean upload) {
+    public ResponseEntity<?> updateSNSByPhoto(@PathVariable("photoid") String photoId, boolean upload,
+                                              String snsDate) {
         try {
-            photoService.updateSNSByPhotoId(photoId, upload);
+            photoService.updateSNSByPhotoId(photoId, upload, snsDate);
             return new ResponseEntity<>("업로드 성공", HttpStatus.OK);
         } catch (UpdateSNSCancel e) {
             throw new UpdateSNSCancel();

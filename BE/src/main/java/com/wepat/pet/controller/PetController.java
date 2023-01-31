@@ -62,6 +62,8 @@ public class PetController {
     @ApiOperation(value = "반려동물 정보 수정")
     public ResponseEntity<?> modifyPet(@PathVariable("petid") String petId,
                                        @RequestBody PetDto petDto) {
+        System.out.println(">> " + petId);
+        System.out.println(">>>" + petDto);
         try {
             petService.modifyPet(petId, petDto);
             return new ResponseEntity<>("수정 성공", HttpStatus.ACCEPTED);

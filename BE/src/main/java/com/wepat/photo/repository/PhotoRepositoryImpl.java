@@ -29,11 +29,11 @@ public class PhotoRepositoryImpl implements PhotoRepository {
     private static final String PHOTO_COLLECTION = "photo";
     private final Firestore db = FirestoreClient.getFirestore();
     private final CollectionReference photoCollection = db.collection(PHOTO_COLLECTION);
+    private final String firstAddDate = "0";
 
     // 가족 앨범 전체 조회
     @Override
     public List<PhotoDto> getAllPhotoById(String calendarId) throws ExecutionException, InterruptedException {
-
         return photoCollection.whereEqualTo("calendarId", calendarId).orderBy("date", Query.Direction.DESCENDING).get().get().toObjects(PhotoDto.class);
     }
     
@@ -56,6 +56,7 @@ public class PhotoRepositoryImpl implements PhotoRepository {
         photoEntity.setCalendarId(calendarId);
         photoEntity.setPhotoId(photoDocRef.getId());
         photoEntity.setReportIdList(new ArrayList<>());
+        photoEntity.setSnsDate(firstAddDate);
         photoCollection.document(photoDocRef.getId()).set(photoEntity);
     }
 
@@ -82,14 +83,14 @@ public class PhotoRepositoryImpl implements PhotoRepository {
 
     // SNS 업로드
     @Override
-    public void updateSNSByPhotoId(String photoId, boolean upload) throws ExecutionException, InterruptedException {
+    public void updateSNSByPhotoId(String photoId, boolean upload, String snsDate) throws ExecutionException, InterruptedException {
         DocumentReference photoDocRef = photoCollection.document(photoId);
-
         ApiFuture<?> responseEntityApiFuture = db.runTransaction(transaction -> {
             DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
             if (photoSnapshot.exists()) {
                 boolean sns = photoCollection.document(photoId).get().get().toObject(PhotoEntity.class).isSns();
                 transaction.update(photoDocRef, "sns", !sns);
+                transaction.update(photoDocRef, "snsDate", snsDate);
                 return ReturnType.SUCCESS;
             } else {
                 return ReturnType.NotExistImage;

@@ -20,7 +20,7 @@ public interface PhotoService {
     // 사진 신고 반영하기
     PhotoDto addReport(String photoId) throws ExecutionException, InterruptedException ;
 
-    void updateSNSByPhotoId(String photoId, boolean upload) throws InterruptedException, ExecutionException;
+    void updateSNSByPhotoId(String photoId, boolean upload, String snsDate) throws InterruptedException, ExecutionException;
 
     void addCommentByPhotoId(String photoId, CommentDto commentDto) throws ExecutionException, InterruptedException ;
 

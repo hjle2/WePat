@@ -13,7 +13,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PhotoDto {
-
+    public PhotoDto(PhotoEntity photo) {
+        this.memberId = photo.getMemberId();
+        this.photoId = photo.getPhotoId();
+        this.photoUrl = photo.getPhotoUrl();
+        this.commentList = photo.getCommentList();
+        this.sns = photo.isSns();
+        this.like = photo.getLike();
+        this.date = photo.getDate();
+    }
     @ApiParam(value = "업로드한 사용자ID", required = true)
     private String memberId;
 //    @ApiParam(value = "캘린더ID", required = true)
@@ -21,7 +29,7 @@ public class PhotoDto {
     @ApiParam(value = "사진ID") //추후 sns에서도 사용 가능
     private String photoId;
     @ApiParam(value = "사진 url", required = true)
-    private String url;
+    private String photoUrl;
     @ApiParam(value = "댓글Dto 리스트")
     private List<CommentDto> commentList;
     @ApiParam(value = "SNS 등록 여부")
@@ -31,5 +39,5 @@ public class PhotoDto {
 //    @ApiParam(value = "신고자 명단")
 //    private List<String> reportIdList;
     @ApiParam(value = "등록일", required = true)
-    private String date;;
+    private String date;
 }
