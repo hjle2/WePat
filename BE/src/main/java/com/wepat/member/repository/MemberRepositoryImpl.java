@@ -78,6 +78,7 @@ public class MemberRepositoryImpl implements MemberRepository {
             throw new ExistIdException();
         } else if (future.get() == ReturnType.NotExistCalendarException) {
             throw new NotExistCalendarException();
+        } else {
         }
     }
 
@@ -126,7 +127,7 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public void socialSignUp(MemberDto member, int social) throws ExecutionException, InterruptedException {
+    public void socialSignUp(MemberDto member) throws ExecutionException, InterruptedException {
         CollectionReference calCollection = FirestoreClient.getFirestore().collection(CALENDAR_COLLECTION);
         CollectionReference memCollection = FirestoreClient.getFirestore().collection(MEMBER_COLLECTION);
 
@@ -206,8 +207,40 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public MemberDto socialSignIn(String memberId, String pwd, int social) throws ExecutionException, InterruptedException {
-        return null;
+    public MemberDto socialsSignIn(String memberId, int social) throws ExecutionException, InterruptedException {
+        CollectionReference memCollection = FirestoreClient.getFirestore().collection(MEMBER_COLLECTION);
+
+        final DocumentReference memDocRef = memCollection.document(memberId);
+
+        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
+
+            DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
+            MemberEntity memberEntity = transaction.get(memDocRef).get().toObject(MemberEntity.class);
+
+            if (!memSnapshot.exists()) { // 멤버ID가 없을 경우
+                return ReturnType.IdWriteException;
+
+            } else if (memSnapshot.toObject(MemberEntity.class).isBlock()) { //차단된 계정
+                return ReturnType.BlockMemberException;
+            }
+            else if ( !(memberEntity.getSocial()==(social))) { //해당 SNS로 가입된 아이디아니면
+                return ReturnType.NotExistMemberException;//존재안하는 아이디로 판단
+            }
+            else { //다 통과
+                MemberDto memberDto = memCollection.document(memberId).get().get().toObject(MemberDto.class);
+                return memberDto;
+            }
+        });
+        // 트랜잭션 실행 결과를 반환ㅐ
+        if (future.get() == ReturnType.IdWriteException) {
+            throw new IdWriteException();
+        } else if (future.get() == ReturnType.BlockMemberException) {
+            throw new BlockMemberException();
+        } else if (future.get() == ReturnType.PwdWriteException) {
+            throw new PwdWriteException();
+        } else {
+            return (MemberDto) future.get();
+        }
     }
 
     @Override

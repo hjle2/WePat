@@ -18,7 +18,8 @@ public class MemberEntity {
         this.email = member.getEmail();
         this.calendarId = member.getCalendarId();
         this.reportList = new ArrayList<>();
-        this.block = new Boolean(false);
+        this.block = false;
+        this.social=member.getSocial();
     }
     @ApiParam(value = "사용자 비밀번호", required = true)
     private String pwd;
