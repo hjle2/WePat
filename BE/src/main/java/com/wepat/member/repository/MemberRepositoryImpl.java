@@ -203,10 +203,10 @@ public class MemberRepositoryImpl implements MemberRepository {
     public MemberDto socialsignin(String memberId, int social) throws ExecutionException, InterruptedException {
         final DocumentReference memDocRef = memCollection.document(memberId);
 
-        ApiFuture<?> future = db.runTransaction(transaction -> {
+        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
 
             DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
-            MemberDto memberDto = transaction.get(memDocRef).get().toObject(MemberDto.class);
+            MemberEntity memberEntity = transaction.get(memDocRef).get().toObject(MemberEntity.class);
 
             if (!memSnapshot.exists()) { // 멤버ID가 없을 경우
                 return ReturnType.IdWriteException;
@@ -214,22 +214,25 @@ public class MemberRepositoryImpl implements MemberRepository {
             } else if (memSnapshot.toObject(MemberEntity.class).isBlock()) { //차단된 계정
                 return ReturnType.BlockMember;
             }
-             else if (memberDto.getSocial() == social) { //해당 SNS로 가입된 아이디아니면
-               return ReturnType.NotExistMember;//존재안하는 아이디로 판단
+             else if ( !(memberEntity.getSocial()==(social))) { //해당 SNS로 가입된 아이디아니면
+                return ReturnType.NotExistMember;//존재안하는 아이디로 판단
            }
-             else { //다 통과
-                return memberDto;
+            else { //다 통과
+                return ReturnType.SUCCESS;
+
             }
         });
         // 트랜잭션 실행 결과를 반환
-        if (future.get() == ReturnType.IdWriteException) {
+        if (returnTypeApiFuture.get() == ReturnType.IdWriteException) {
             throw new IdWriteException();
-        } else if (future.get() == ReturnType.BlockMember) {
+        } else if (returnTypeApiFuture.get() == ReturnType.BlockMember) {
             throw new BlockMember();
-        } else if (future.get() == ReturnType.PwdWriteException) {
+        } else if (returnTypeApiFuture.get() == ReturnType.PwdWriteException) {
             throw new PwdWriteException();
         } else {
-            return (MemberDto) future.get();
+            MemberDto memberDto = memCollection.document(memberId).get().get().toObject(MemberDto.class);
+            logger.info(memberDto.toString());
+            return memberDto;
         }
     }
 
