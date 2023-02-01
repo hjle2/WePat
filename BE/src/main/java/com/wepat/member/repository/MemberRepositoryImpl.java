@@ -30,6 +30,12 @@ public class MemberRepositoryImpl implements MemberRepository {
     private static final String PET_COLLECTION = "pet";
     private static final String SCHEDULE_COLLECTION = "schedule";
     private static final String PHOTO_COLLECTION = "photo";
+    private final Firestore db = FirestoreClient.getFirestore();
+    private final CollectionReference calCollection = db.collection(CALENDAR_COLLECTION);
+    private final CollectionReference memCollection = db.collection(MEMBER_COLLECTION);
+    private final CollectionReference petCollection = db.collection(PET_COLLECTION);
+    private final CollectionReference scheduleCollection = db.collection(SCHEDULE_COLLECTION);
+    private final CollectionReference photoCollection = db.collection(PHOTO_COLLECTION);
 
     //캘린더 ID가 있을 때, 회원가입 (ID 값이 틀렸다고 에러)
     @Override
@@ -127,7 +133,7 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public void socialSignUp(MemberDto member, int social) throws ExecutionException, InterruptedException {
+    public void socialsignup(MemberDto member) throws ExecutionException, InterruptedException {
         CollectionReference calCollection = FirestoreClient.getFirestore().collection(CALENDAR_COLLECTION);
         CollectionReference memCollection = FirestoreClient.getFirestore().collection(MEMBER_COLLECTION);
 
@@ -162,12 +168,7 @@ public class MemberRepositoryImpl implements MemberRepository {
             }
         });
         // 트랜잭션 실행 결과를 반환
-        if (future.get() == ReturnType.ExistEmailException) {
-            throw new ExistEmailException();
-        } else if (future.get() == ReturnType.ExistIdException) {
-            throw new ExistIdException();
-        } else {
-        }
+        future.get();
 
     }
 
@@ -185,6 +186,8 @@ public class MemberRepositoryImpl implements MemberRepository {
             if (!memSnapshot.exists()) { // 멤버ID가 없을 경우
                 return ReturnType.IdWriteException;
 
+            } else if (memSnapshot.toObject(MemberEntity.class).getSocial() != 0) { //SNS로 가입된 계정
+                return ReturnType.NotExistMember;
             } else if (memSnapshot.toObject(MemberEntity.class).isBlock()) { //차단된 계정
                 return ReturnType.BlockMember;
 
@@ -203,14 +206,49 @@ public class MemberRepositoryImpl implements MemberRepository {
             throw new BlockMember();
         } else if (future.get() == ReturnType.PwdWriteException) {
             throw new PwdWriteException();
+        }
+        else if (future.get() == ReturnType.NotExistMember) {
+            throw new NotExistMember();
         } else {
             return (MemberDto) future.get();
         }
     }
 
     @Override
-    public MemberDto socialSignIn(String memberId, String pwd, int social) throws ExecutionException, InterruptedException {
-        return null;
+    public MemberDto socialsignin(String memberId, int social) throws ExecutionException, InterruptedException {
+        final DocumentReference memDocRef = memCollection.document(memberId);
+
+        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
+
+            DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
+            MemberEntity memberEntity = transaction.get(memDocRef).get().toObject(MemberEntity.class);
+
+            if (!memSnapshot.exists()) { // 멤버ID가 없을 경우
+                return ReturnType.IdWriteException;
+
+            } else if (memSnapshot.toObject(MemberEntity.class).isBlock()) { //차단된 계정
+                return ReturnType.BlockMember;
+            }
+             else if ( !(memberEntity.getSocial()==(social))) { //해당 SNS로 가입된 아이디아니면
+                return ReturnType.NotExistMember;//존재안하는 아이디로 판단
+           }
+            else { //다 통과
+                return ReturnType.SUCCESS;
+
+            }
+        });
+        // 트랜잭션 실행 결과를 반환ㅐ
+        if (returnTypeApiFuture.get() == ReturnType.IdWriteException) {
+            throw new IdWriteException();
+        } else if (returnTypeApiFuture.get() == ReturnType.BlockMember) {
+            throw new BlockMember();
+        } else if (returnTypeApiFuture.get() == ReturnType.PwdWriteException) {
+            throw new PwdWriteException();
+        } else {
+            MemberDto memberDto = memCollection.document(memberId).get().get().toObject(MemberDto.class);
+            logger.info(memberDto.toString());
+            return memberDto;
+        }
     }
 
     @Override

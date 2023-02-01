@@ -56,12 +56,12 @@ public class MemberController {
             throw new RuntimeException();
         }
     }
-    @PostMapping("/signin/social")
+    @PostMapping("/socialsignin")
     @ApiOperation(value = "로그인 시도",  notes = "로그인 요청을 한다.",response = MemberDto.class)
-    public ResponseEntity<?> socialSignIn(String memberId, String pwd) {
+    public ResponseEntity<?> socialsignin(String memberId, int social) {
         try {
             Map<String, String> resultMap = new HashMap<>();
-            MemberDto memberResult = memberService.signIn(memberId, pwd);//유저가 로그인 가능한 유저인지 확인
+            MemberDto memberResult = memberService.socialSignIn(memberId,social);//유저가 로그인 가능한 유저인지 확인
             String accessToken = null;
             String refreshToken = null;//유저가 로그인 되면 토큰을 생성하여 저장할 String
             if(memberResult != null){//로그인에서 객체를 받아왔다.
@@ -103,11 +103,11 @@ public class MemberController {
         }
     }
 
-    @PostMapping("/signup/social")
-    @ApiOperation(value = "회원가입", notes = "정보를 받아 회원가입 시도한다.", response = MemberDto.class)
-    public ResponseEntity<?> socialSignUp(@RequestBody MemberDto member) {
+    @PostMapping("/socialsignup")
+    @ApiOperation(value = "SNS회원가입", notes = "SNS에서 정보를 받아 회원가입 시도한다.", response = MemberDto.class)
+    public ResponseEntity<?> socialsignup(MemberDto member) {
         try {
-            memberService.signUp(member);
+            memberService.socialsignup(member);
             return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } catch (ExistEmailException e) {
             throw new ExistEmailException(e.getMessage());
