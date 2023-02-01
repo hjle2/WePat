@@ -19,13 +19,13 @@ import java.util.concurrent.ExecutionException;
 public class CalendarRepositoryImpl implements CalendarRepository {
     private static final Logger logger = LoggerFactory.getLogger(CalendarRepositoryImpl.class);
     private static final String SCHEDULE_COLLECTION = "schedule";
-    private final CollectionReference scheduleCollection = null;//FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
 
     @Override
     public Map<String, List<String>> getScheduleByMonth(String calendarId, String startDate, String endDate) {
         try {
             Map<String, List<String>> datePetMap = new HashMap<>();
 
+            CollectionReference scheduleCollection = FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
             List<QueryDocumentSnapshot> documents = scheduleCollection
                     .whereEqualTo("calendarId", calendarId)
                     .whereGreaterThanOrEqualTo("date", startDate)
@@ -51,6 +51,7 @@ public class CalendarRepositoryImpl implements CalendarRepository {
 
     @Override
     public List<ScheduleDto> getScheduleListByDate(String calendarId, String date) throws ExecutionException, InterruptedException {
+        CollectionReference scheduleCollection = FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
         List<ScheduleDto> scheduleDtoList = scheduleCollection
                 .whereEqualTo("calendarId", calendarId)
                 .whereEqualTo("date", date)

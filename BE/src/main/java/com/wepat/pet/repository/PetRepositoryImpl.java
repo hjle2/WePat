@@ -30,13 +30,11 @@ public class PetRepositoryImpl implements PetRepository {
     private static final String CALENDAR_COLLECTION = "calendar";
     private static final String SCHEDULE_COLLECTION = "schedule";
     private final Firestore db = FirestoreClient.getFirestore();
-    private final CollectionReference petCollection = db.collection(PET_COLLECTION);
-    private final CollectionReference calCollection = db.collection(CALENDAR_COLLECTION);
-    private final CollectionReference scheduleCollection = db.collection(SCHEDULE_COLLECTION);
 
     @Override
     public void addPet(PetDto petDto) throws ExecutionException, InterruptedException {
-
+        CollectionReference petCollection = db.collection(PET_COLLECTION);
+        CollectionReference calCollection = db.collection(CALENDAR_COLLECTION);
         final DocumentReference petDocRef = petCollection.document(); //pet 랜덤 doc생성
         final DocumentReference calDocRef = calCollection.document(petDto.getCalendarId()); //받아온 캘린더 pk
 
@@ -63,16 +61,19 @@ public class PetRepositoryImpl implements PetRepository {
 
     @Override
     public List<PetDto> getAllPet(String calendarId) throws ExecutionException, InterruptedException {
+        CollectionReference petCollection = db.collection(PET_COLLECTION);
         return petCollection.whereEqualTo("calendarId", calendarId).get().get().toObjects(PetDto.class);
     }
 
     @Override
     public PetDto getPetById(String petId) throws ExecutionException, InterruptedException {
+        CollectionReference petCollection = db.collection(PET_COLLECTION);
         return petCollection.document(petId).get().get().toObject(PetDto.class);
     }
 
     @Override
     public void modifyPetById(String petId, PetDto petDto) throws ExecutionException, InterruptedException {
+        CollectionReference petCollection = db.collection(PET_COLLECTION);
         final DocumentReference petDocRef = petCollection.document(petId);
 
         ApiFuture<ReturnType> future = db.runTransaction(transaction -> {
@@ -96,6 +97,7 @@ public class PetRepositoryImpl implements PetRepository {
 
     @Override
     public void addPetWeightById(String petId, WeightDto weightDto) throws ExecutionException, InterruptedException {
+        CollectionReference petCollection = db.collection(PET_COLLECTION);
         DocumentReference petDocRef = petCollection.document(petId);
         ApiFuture<ReturnType> future = db.runTransaction(transaction -> {
             DocumentSnapshot petSnapshot = transaction.get(petDocRef).get();
@@ -115,6 +117,7 @@ public class PetRepositoryImpl implements PetRepository {
 
     @Override
     public void modifyPetWeight(String petId, WeightDto weightDto) throws ExecutionException, InterruptedException {
+        CollectionReference petCollection = db.collection(PET_COLLECTION);
         DocumentReference petDocRef = petCollection.document(petId);
         ApiFuture<ReturnType> future = db.runTransaction(transaction -> {
             DocumentSnapshot petSnapshot = transaction.get(petDocRef).get();
@@ -139,6 +142,8 @@ public class PetRepositoryImpl implements PetRepository {
 
     @Override
     public void deletePetById(String petId) throws ExecutionException, InterruptedException {
+        CollectionReference petCollection = db.collection(PET_COLLECTION);
+        CollectionReference scheduleCollection = db.collection(SCHEDULE_COLLECTION);
         DocumentReference petDocRef = petCollection.document(petId);
 
         ApiFuture<ReturnType> future = db.runTransaction(transaction -> {

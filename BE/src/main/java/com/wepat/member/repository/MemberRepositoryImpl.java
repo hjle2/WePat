@@ -31,15 +31,12 @@ public class MemberRepositoryImpl implements MemberRepository {
     private static final String SCHEDULE_COLLECTION = "schedule";
     private static final String PHOTO_COLLECTION = "photo";
     private final Firestore db = FirestoreClient.getFirestore();
-    private final CollectionReference calCollection = db.collection(CALENDAR_COLLECTION);
-    private final CollectionReference memCollection = db.collection(MEMBER_COLLECTION);
-    private final CollectionReference petCollection = db.collection(PET_COLLECTION);
-    private final CollectionReference scheduleCollection = db.collection(SCHEDULE_COLLECTION);
-    private final CollectionReference photoCollection = db.collection(PHOTO_COLLECTION);
 
     //캘린더 ID가 있을 때, 회원가입 (ID 값이 틀렸다고 에러)
     @Override
     public void signUpWithCalendar(MemberDto member) throws ExecutionException, InterruptedException {
+        CollectionReference calCollection = db.collection(CALENDAR_COLLECTION);
+        CollectionReference memCollection = db.collection(MEMBER_COLLECTION);
 
         final DocumentReference memDocRef = memCollection.document(member.getMemberId());
         final DocumentReference calDocRef = calCollection.document(member.getCalendarId());
@@ -88,6 +85,9 @@ public class MemberRepositoryImpl implements MemberRepository {
     //캘린더 ID null일 때, 회원가입
     @Override
     public void signUp(MemberDto member) throws ExecutionException, InterruptedException {
+        CollectionReference calCollection = db.collection(CALENDAR_COLLECTION);
+        CollectionReference memCollection = db.collection(MEMBER_COLLECTION);
+
 
         // memberId인 document 를 가져옴(없으면 생성)
         final DocumentReference memDocRef = memCollection.document(member.getMemberId());
@@ -129,6 +129,9 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public void socialSignUp(MemberDto member, int social) throws ExecutionException, InterruptedException {
+        CollectionReference calCollection = db.collection(CALENDAR_COLLECTION);
+        CollectionReference memCollection = db.collection(MEMBER_COLLECTION);
+
 
         // memberId인 document 를 가져옴(없으면 생성)
         final DocumentReference memDocRef = memCollection.document(member.getMemberId());
@@ -171,6 +174,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public MemberDto signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
+        CollectionReference memCollection = db.collection(MEMBER_COLLECTION);
 
         final DocumentReference memDocRef = memCollection.document(memberId);
 
@@ -212,6 +216,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public String findId(String email) throws ExecutionException, InterruptedException {
+        CollectionReference memCollection = db.collection(MEMBER_COLLECTION);
         List<QueryDocumentSnapshot> memDocs = memCollection.get().get().getDocuments();
         for (QueryDocumentSnapshot docs : memDocs) {
             if (docs.toObject(MemberEntity.class).getEmail().equals(email)) {
@@ -223,6 +228,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public void changePwdToRandom(String randomPassword, String memberId) throws ExecutionException, InterruptedException {
+        CollectionReference memCollection = db.collection(MEMBER_COLLECTION);
 
         boolean exists = memCollection.document(memberId).get().get().exists();
         if (exists) {
@@ -237,6 +243,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public void modifyPwd(String memberId, String pwd) throws ExecutionException, InterruptedException {
+        CollectionReference memCollection = db.collection(MEMBER_COLLECTION);
 
         final DocumentReference memDocRef = memCollection.document(memberId);
 
@@ -259,6 +266,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public MemberDto getMemberById(String memberId) throws ExecutionException, InterruptedException {
+        CollectionReference memCollection = db.collection(MEMBER_COLLECTION);
         DocumentReference memDocRef = memCollection.document(memberId);
 
         MemberDto memberdto = memDocRef.get().get().toObject(MemberDto.class);
@@ -272,6 +280,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public void modifyMember(String memberId, String nickName) throws ExecutionException, InterruptedException {
+        CollectionReference memCollection = db.collection(MEMBER_COLLECTION);
         final DocumentReference memDocRef = memCollection.document(memberId);
 
         ApiFuture<?> future = db.runTransaction(transaction -> {
@@ -290,6 +299,11 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public void deleteMember(String memberId) throws ExecutionException, InterruptedException {
+        CollectionReference calCollection = db.collection(CALENDAR_COLLECTION);
+        CollectionReference memCollection = db.collection(MEMBER_COLLECTION);
+        CollectionReference petCollection = db.collection(PET_COLLECTION);
+        CollectionReference scheduleCollection = db.collection(SCHEDULE_COLLECTION);
+        CollectionReference photoCollection = db.collection(PHOTO_COLLECTION);
 
         String calendarId = getMemberById(memberId).getCalendarId();
         DocumentReference calendarDocRef = calCollection.document(calendarId);
@@ -337,6 +351,12 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public void modifyCalendarId(String memberId, String calendarId) throws ExecutionException, InterruptedException {
+        CollectionReference calCollection = db.collection(CALENDAR_COLLECTION);
+        CollectionReference memCollection = db.collection(MEMBER_COLLECTION);
+        CollectionReference petCollection = db.collection(PET_COLLECTION);
+        CollectionReference scheduleCollection = db.collection(SCHEDULE_COLLECTION);
+        CollectionReference photoCollection = db.collection(PHOTO_COLLECTION);
+
         DocumentReference memDocRef = memCollection.document(memberId);
         DocumentReference calDocRef = calCollection.document(calendarId); // 변경할 캘린더
 
@@ -403,6 +423,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public void saveRefreshToken(String memberId, String refreshToken) throws Exception {
+        CollectionReference memCollection = db.collection(MEMBER_COLLECTION);
         final DocumentReference memDocRef = memCollection.document(memberId);
 
         ApiFuture<?> future = db.runTransaction(transaction -> {
@@ -419,6 +440,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public void deleteRefreshToken(String memberId) throws Exception {
+        CollectionReference memCollection = db.collection(MEMBER_COLLECTION);
         final DocumentReference memDocRef = memCollection.document(memberId);
 
         ApiFuture<?> future = db.runTransaction(transaction -> {
@@ -436,6 +458,9 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public void modifyCalendarIdAlone(String memberId) throws ExecutionException, InterruptedException {
+        CollectionReference memCollection = db.collection(MEMBER_COLLECTION);
+        CollectionReference calCollection = db.collection(CALENDAR_COLLECTION);
+
         String calendarId = getMemberById(memberId).getCalendarId();
         DocumentReference memDocRef = memCollection.document(memberId);
         DocumentReference calDocRef = calCollection.document(calendarId);

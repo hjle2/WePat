@@ -26,12 +26,11 @@ public class SNSRepositoryImpl implements SNSRepository {
     private final static Logger logger = LoggerFactory.getLogger(MemberRepository.class);
     private final static String PHOTO_COLLECTION = "photo";
     private final Firestore db = FirestoreClient.getFirestore();
-    private final CollectionReference photoCollection = db.collection(PHOTO_COLLECTION);
-    private final int warnCount = 3;
+    private final int WARN_LIMIT = 3;
 
     @Override
     public List<PhotoDto> getSNS(String date) throws ExecutionException, InterruptedException {
-
+        CollectionReference photoCollection = db.collection(PHOTO_COLLECTION);
         List<PhotoDto> photoDtoList = photoCollection
                 .whereEqualTo("block", false)
                 .whereEqualTo("sns", true)
@@ -44,11 +43,13 @@ public class SNSRepositoryImpl implements SNSRepository {
 
     @Override
     public PhotoDto getSNSByPhotoId(String photoId) throws ExecutionException, InterruptedException {
+        CollectionReference photoCollection = db.collection(PHOTO_COLLECTION);
         return photoCollection.document(photoId).get().get().toObject(PhotoDto.class);
     }
 
     @Override
     public void updateSNSLikeByPhotoId(String photoId) throws ExecutionException, InterruptedException {
+        CollectionReference photoCollection = db.collection(PHOTO_COLLECTION);
         DocumentReference photoDocRef = photoCollection.document(photoId);
         ApiFuture<ReturnType> future = db.runTransaction(transaction -> {
             DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
@@ -67,6 +68,7 @@ public class SNSRepositoryImpl implements SNSRepository {
 
     @Override
     public void reportSNSByPhotoId(String photoId, String memberId) throws ExecutionException, InterruptedException {
+        CollectionReference photoCollection = db.collection(PHOTO_COLLECTION);
         DocumentReference photoDocRef = photoCollection.document(photoId);
 
         ApiFuture<ReturnType> future = db.runTransaction(transaction -> {
@@ -93,10 +95,11 @@ public class SNSRepositoryImpl implements SNSRepository {
 
     @Override
     public List<PhotoDto> getReportedList() throws ExecutionException, InterruptedException {
+        CollectionReference photoCollection = db.collection(PHOTO_COLLECTION);
         List<QueryDocumentSnapshot> documentsList = photoCollection.get().get().getDocuments();
         List<PhotoDto> photoDtoList = new ArrayList<>();
         for (QueryDocumentSnapshot snapshot : documentsList) {
-            if (snapshot.toObject(PhotoEntity.class).getReportIdList().size() >= warnCount) {
+            if (snapshot.toObject(PhotoEntity.class).getReportIdList().size() >= WARN_LIMIT) {
                 photoDtoList.add(snapshot.toObject(PhotoDto.class));
             }
         }
@@ -105,6 +108,7 @@ public class SNSRepositoryImpl implements SNSRepository {
 
     @Override
     public void blockSNSByPhotoId(String photoId) throws ExecutionException, InterruptedException {
+        CollectionReference photoCollection = db.collection(PHOTO_COLLECTION);
         DocumentReference photoDocRef = photoCollection.document(photoId);
         ApiFuture<ReturnType> future = db.runTransaction(transaction -> {
             DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
