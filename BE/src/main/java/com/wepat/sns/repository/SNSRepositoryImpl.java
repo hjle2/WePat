@@ -25,12 +25,11 @@ public class SNSRepositoryImpl implements SNSRepository {
 
     private final static Logger logger = LoggerFactory.getLogger(MemberRepository.class);
     private final static String PHOTO_COLLECTION = "photo";
-    private final Firestore db = FirestoreClient.getFirestore();
     private final int WARN_LIMIT = 3;
 
     @Override
     public List<PhotoDto> getSNS(String date) throws ExecutionException, InterruptedException {
-        CollectionReference photoCollection = db.collection(PHOTO_COLLECTION);
+        CollectionReference photoCollection = FirestoreClient.getFirestore().collection(PHOTO_COLLECTION);
         List<PhotoDto> photoDtoList = photoCollection
                 .whereEqualTo("block", false)
                 .whereEqualTo("sns", true)
@@ -43,15 +42,15 @@ public class SNSRepositoryImpl implements SNSRepository {
 
     @Override
     public PhotoDto getSNSByPhotoId(String photoId) throws ExecutionException, InterruptedException {
-        CollectionReference photoCollection = db.collection(PHOTO_COLLECTION);
+        CollectionReference photoCollection = FirestoreClient.getFirestore().collection(PHOTO_COLLECTION);
         return photoCollection.document(photoId).get().get().toObject(PhotoDto.class);
     }
 
     @Override
     public void updateSNSLikeByPhotoId(String photoId) throws ExecutionException, InterruptedException {
-        CollectionReference photoCollection = db.collection(PHOTO_COLLECTION);
+        CollectionReference photoCollection = FirestoreClient.getFirestore().collection(PHOTO_COLLECTION);
         DocumentReference photoDocRef = photoCollection.document(photoId);
-        ApiFuture<ReturnType> future = db.runTransaction(transaction -> {
+        ApiFuture<ReturnType> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
             DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
             if (photoSnapshot.exists()) {
                 int like = photoSnapshot.toObject(PhotoEntity.class).getLike();
@@ -68,10 +67,10 @@ public class SNSRepositoryImpl implements SNSRepository {
 
     @Override
     public void reportSNSByPhotoId(String photoId, String memberId) throws ExecutionException, InterruptedException {
-        CollectionReference photoCollection = db.collection(PHOTO_COLLECTION);
+        CollectionReference photoCollection = FirestoreClient.getFirestore().collection(PHOTO_COLLECTION);
         DocumentReference photoDocRef = photoCollection.document(photoId);
 
-        ApiFuture<ReturnType> future = db.runTransaction(transaction -> {
+        ApiFuture<ReturnType> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
             DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
             if (photoSnapshot.exists()) {
                 List<String> reportIdList = photoSnapshot.toObject(PhotoEntity.class).getReportIdList();
@@ -95,7 +94,7 @@ public class SNSRepositoryImpl implements SNSRepository {
 
     @Override
     public List<PhotoDto> getReportedList() throws ExecutionException, InterruptedException {
-        CollectionReference photoCollection = db.collection(PHOTO_COLLECTION);
+        CollectionReference photoCollection = FirestoreClient.getFirestore().collection(PHOTO_COLLECTION);
         List<QueryDocumentSnapshot> documentsList = photoCollection.get().get().getDocuments();
         List<PhotoDto> photoDtoList = new ArrayList<>();
         for (QueryDocumentSnapshot snapshot : documentsList) {
@@ -108,9 +107,9 @@ public class SNSRepositoryImpl implements SNSRepository {
 
     @Override
     public void blockSNSByPhotoId(String photoId) throws ExecutionException, InterruptedException {
-        CollectionReference photoCollection = db.collection(PHOTO_COLLECTION);
+        CollectionReference photoCollection = FirestoreClient.getFirestore().collection(PHOTO_COLLECTION);
         DocumentReference photoDocRef = photoCollection.document(photoId);
-        ApiFuture<ReturnType> future = db.runTransaction(transaction -> {
+        ApiFuture<ReturnType> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
             DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
             if (photoSnapshot.exists()) {
                 transaction.update(photoDocRef, "block", true);
