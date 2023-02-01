@@ -8,7 +8,7 @@ import java.util.concurrent.ExecutionException;
 
 public interface MemberService {
     void signUp(MemberDto member) throws ExecutionException, InterruptedException;
-    void socialsignup(MemberDto member)throws ExecutionException, InterruptedException;
+    void socialSignUp(MemberDto member)throws ExecutionException, InterruptedException;
     MemberDto signIn(String memberId, String pwd) throws ExecutionException, InterruptedException;
     MemberDto socialSignIn(String memberId,int social) throws ExecutionException, InterruptedException;
     String findId(String email) throws ExecutionException, InterruptedException;

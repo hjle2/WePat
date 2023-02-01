@@ -207,7 +207,7 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public MemberDto socialsSignIn(String memberId, int social) throws ExecutionException, InterruptedException {
+    public MemberDto socialSignIn(String memberId, int social) throws ExecutionException, InterruptedException {
         CollectionReference memCollection = FirestoreClient.getFirestore().collection(MEMBER_COLLECTION);
 
         final DocumentReference memDocRef = memCollection.document(memberId);
@@ -236,8 +236,8 @@ public class MemberRepositoryImpl implements MemberRepository {
             throw new IdWriteException();
         } else if (future.get() == ReturnType.BlockMemberException) {
             throw new BlockMemberException();
-        } else if (future.get() == ReturnType.PwdWriteException) {
-            throw new PwdWriteException();
+        } else if (future.get() == ReturnType.NotExistMemberException) {
+            throw new NotExistMemberException();
         } else {
             return (MemberDto) future.get();
         }

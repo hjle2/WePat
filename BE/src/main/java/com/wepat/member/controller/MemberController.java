@@ -57,7 +57,7 @@ public class MemberController {
     }
     @PostMapping("/socialsignin")
     @ApiOperation(value = "로그인 시도",  notes = "로그인 요청을 한다.",response = MemberDto.class)
-    public ResponseEntity<?> socialsignin(String memberId, int social) {
+    public ResponseEntity<?> socialSignIn(String memberId, int social) {
         try {
             Map<String, String> resultMap = new HashMap<>();
             MemberDto memberResult = memberService.socialSignIn(memberId,social);//유저가 로그인 가능한 유저인지 확인
@@ -78,8 +78,8 @@ public class MemberController {
             throw new IdWriteException(e.getMessage());
         } catch (BlockMemberException e) {
             throw new BlockMemberException(e.getMessage());
-        } catch (PwdWriteException e) {
-            throw new PwdWriteException(e.getMessage());
+        } catch (NotExistMemberException e) {
+            throw new NotExistMemberException(e.getMessage());
         } catch (Exception e) {
             throw new RuntimeException();
         }
@@ -104,16 +104,14 @@ public class MemberController {
 
     @PostMapping("/socialsignup")
     @ApiOperation(value = "SNS회원가입", notes = "SNS에서 정보를 받아 회원가입 시도한다.", response = MemberDto.class)
-    public ResponseEntity<?> socialsignup(MemberDto member) {
+    public ResponseEntity<?> socialSignUp(MemberDto member) {
         try {
-            memberService.socialsignup(member);
+            memberService.socialSignUp(member);
             return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } catch (ExistEmailException e) {
             throw new ExistEmailException(e.getMessage());
         } catch (ExistIdException e) {
             throw new ExistIdException(e.getMessage());
-        } catch (NotExistCalendarException e) {
-            throw new NotExistCalendarException(e.getMessage());
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
