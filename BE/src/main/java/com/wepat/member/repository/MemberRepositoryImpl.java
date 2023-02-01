@@ -78,7 +78,6 @@ public class MemberRepositoryImpl implements MemberRepository {
             throw new ExistIdException();
         } else if (future.get() == ReturnType.NotExistCalendarException) {
             throw new NotExistCalendarException();
-        } else {
         }
     }
 
@@ -456,11 +455,11 @@ public class MemberRepositoryImpl implements MemberRepository {
         final DocumentReference memDocRef = memCollection.document(memberId);
 
         ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
-           if (transaction.get(memDocRef).get().exists()) {
-               transaction.update(memDocRef, "token", refreshToken);
-               return true;
-           }
-           return false;
+            if (transaction.get(memDocRef).get().exists()) {
+                transaction.update(memDocRef, "token", refreshToken);
+                return true;
+            }
+            return false;
         });
         if (!(boolean) future.get()) {
             throw new Exception();
