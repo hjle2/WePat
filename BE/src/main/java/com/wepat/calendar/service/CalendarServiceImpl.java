@@ -33,16 +33,16 @@ public class CalendarServiceImpl implements CalendarService{
 
     @Override
     public void addSchedule(ScheduleDto scheduleDto) {
-        Date startdate = DateUtil.getDate(scheduleDto.getDate());
+        Date startdate = DateUtil.getDate(scheduleDto.getStartDate());
         Date enddate = DateUtil.getDate(scheduleDto.getEndDate());
 
-        int unit = scheduleDto.getUnit();
-        int size = scheduleDto.getUnitSize();
+        int unit = scheduleDto.getRepeatUnit();
+        int size = scheduleDto.getRepeatUnit();
 
         // startdate < enddate 인 경우
-        if (scheduleDto.isRepeat()) {
+        if (scheduleDto.getRepeatUnit() > 0) {
             while (startdate.compareTo(enddate) < 0) {
-                scheduleDto.setDate(DateUtil.getStringDate(startdate));
+                scheduleDto.setStartDate(DateUtil.getStringDate(startdate));
                 calendarRepository.addSchedule(scheduleDto);
 
                 // 반봅 주기만큼 더하기

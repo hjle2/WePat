@@ -13,6 +13,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class ScheduleDto {
+    private String calendarId;
     @ApiParam(value = "스케쥴 id", hidden = true)
     private String scheduleId;
     @ApiParam(value = "스케쥴 이름")
@@ -23,16 +24,17 @@ public class ScheduleDto {
     private boolean show;
     @ApiParam(value = "펫ID(PK)", required = true)
     private String petId;
-    @ApiParam(value = "반복여부")
-    private boolean repeat;
     @ApiParam(value = "일정 시작일")
-    private String date;
+    private String startDate;
     @ApiParam(value = "일정 종료일")
     private String endDate;
+    @ApiParam(value = "알람 여부")
+    private int alarm;
+
     @ApiParam(value = "반복 주기")
-    private int unit;
+    private int repeatUnit;
     @ApiParam(value = "일 or 달")
-    private int unitSize;
+    private int repeatAmount;
     @ApiParam(value = "일정에 관한 메모")
     private String memo;
     @ApiParam(value = "사진ID 리스트", hidden = true)

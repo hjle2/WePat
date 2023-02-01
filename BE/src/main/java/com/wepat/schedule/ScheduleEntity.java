@@ -19,7 +19,7 @@ public class ScheduleEntity {
     @ApiParam(value = "펫ID(PK)", required = true)
     private String petId;
     @ApiParam(value = "반복여부")
-    private boolean repeat;
+    private boolean repeat = false;
     @ApiParam(value = "일정 시작일")
     private String startDate;
     @ApiParam(value = "일정 종료일")
