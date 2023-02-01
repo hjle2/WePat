@@ -30,16 +30,12 @@ public class MemberRepositoryImpl implements MemberRepository {
     private static final String PET_COLLECTION = "pet";
     private static final String SCHEDULE_COLLECTION = "schedule";
     private static final String PHOTO_COLLECTION = "photo";
-    private final Firestore db = FirestoreClient.getFirestore();
-    private final CollectionReference calCollection = db.collection(CALENDAR_COLLECTION);
-    private final CollectionReference memCollection = db.collection(MEMBER_COLLECTION);
-    private final CollectionReference petCollection = db.collection(PET_COLLECTION);
-    private final CollectionReference scheduleCollection = db.collection(SCHEDULE_COLLECTION);
-    private final CollectionReference photoCollection = db.collection(PHOTO_COLLECTION);
 
     //캘린더 ID가 있을 때, 회원가입 (ID 값이 틀렸다고 에러)
     @Override
     public void signUpWithCalendar(MemberDto member) throws ExecutionException, InterruptedException {
+        CollectionReference calCollection = FirestoreClient.getFirestore().collection(CALENDAR_COLLECTION);
+        CollectionReference memCollection = FirestoreClient.getFirestore().collection(MEMBER_COLLECTION);
 
         final DocumentReference memDocRef = memCollection.document(member.getMemberId());
         final DocumentReference calDocRef = calCollection.document(member.getCalendarId());
@@ -47,7 +43,7 @@ public class MemberRepositoryImpl implements MemberRepository {
         List<QueryDocumentSnapshot> documents = memCollection.get().get().getDocuments();
         boolean email = documents.stream().anyMatch(docs -> (docs.toObject(MemberEntity.class).getEmail()).equals(member.getEmail()));
 
-        ApiFuture<?> future = db.runTransaction(transaction -> {
+        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
             DocumentSnapshot memSnapshot = transaction.get(memDocRef).get(); //입력한ID 값을 갖는 snapshot
             DocumentSnapshot calSnapshot = transaction.get(calDocRef).get(); //입력한 캘린더ID 값을 갖는 snapshot
 
@@ -88,6 +84,9 @@ public class MemberRepositoryImpl implements MemberRepository {
     //캘린더 ID null일 때, 회원가입
     @Override
     public void signUp(MemberDto member) throws ExecutionException, InterruptedException {
+        CollectionReference calCollection = FirestoreClient.getFirestore().collection(CALENDAR_COLLECTION);
+        CollectionReference memCollection = FirestoreClient.getFirestore().collection(MEMBER_COLLECTION);
+
 
         // memberId인 document 를 가져옴(없으면 생성)
         final DocumentReference memDocRef = memCollection.document(member.getMemberId());
@@ -98,7 +97,7 @@ public class MemberRepositoryImpl implements MemberRepository {
         boolean email = documents.stream().anyMatch(docs -> (docs.toObject(MemberEntity.class).getEmail()).equals(member.getEmail()));
 
         // run an asynchronous transaction
-        ApiFuture<?> future = db.runTransaction(transaction -> {
+        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
 
             // memberId 인 document 를 가져옴
             DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
@@ -109,10 +108,10 @@ public class MemberRepositoryImpl implements MemberRepository {
                 if (memSnapshot.exists()) {
                     return ReturnType.ExistIdException;
                 } else {
-                    // memberEntity 를 db 에 추가 함
+                    // memberEntity 를 FirestoreClient.getFirestore() 에 추가 함
                     member.setCalendarId(calDocRef.getId());
                     transaction.create(memDocRef, new MemberEntity(member));
-                    // calendarEntity(memberId 를 갖는)를 db에 추가 함
+                    // calendarEntity(memberId 를 갖는)를 FirestoreClient.getFirestore()에 추가 함
                     transaction.create(calDocRef, new CalendarEntity(member.getMemberId()));
                     return ReturnType.SUCCESS;
                 }
@@ -129,6 +128,9 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public void socialSignUp(MemberDto member, int social) throws ExecutionException, InterruptedException {
+        CollectionReference calCollection = FirestoreClient.getFirestore().collection(CALENDAR_COLLECTION);
+        CollectionReference memCollection = FirestoreClient.getFirestore().collection(MEMBER_COLLECTION);
+
 
         // memberId인 document 를 가져옴(없으면 생성)
         final DocumentReference memDocRef = memCollection.document(member.getMemberId());
@@ -139,7 +141,7 @@ public class MemberRepositoryImpl implements MemberRepository {
         boolean email = documents.stream().anyMatch(docs -> (docs.toObject(MemberEntity.class).getEmail()).equals(member.getEmail()));
 
         // run an asynchronous transaction
-        ApiFuture<?> future = db.runTransaction(transaction -> {
+        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
 
             // memberId 인 document 를 가져옴
             DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
@@ -150,10 +152,10 @@ public class MemberRepositoryImpl implements MemberRepository {
                 if (memSnapshot.exists()) {
                     return ReturnType.ExistIdException;
                 } else {
-                    // memberEntity 를 db 에 추가 함
+                    // memberEntity 를 FirestoreClient.getFirestore() 에 추가 함
                     member.setCalendarId(calDocRef.getId());
                     transaction.create(memDocRef, new MemberEntity(member));
-                    // calendarEntity(memberId 를 갖는)를 db에 추가 함
+                    // calendarEntity(memberId 를 갖는)를 FirestoreClient.getFirestore()에 추가 함
                     transaction.create(calDocRef, new CalendarEntity(member.getMemberId()));
                     return ReturnType.SUCCESS;
                 }
@@ -171,10 +173,11 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public MemberDto signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
+        CollectionReference memCollection = FirestoreClient.getFirestore().collection(MEMBER_COLLECTION);
 
         final DocumentReference memDocRef = memCollection.document(memberId);
 
-        ApiFuture<?> future = db.runTransaction(transaction -> {
+        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
 
             DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
             MemberDto memberCto = transaction.get(memDocRef).get().toObject(MemberDto.class);
@@ -212,6 +215,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public String findId(String email) throws ExecutionException, InterruptedException {
+        CollectionReference memCollection = FirestoreClient.getFirestore().collection(MEMBER_COLLECTION);
         List<QueryDocumentSnapshot> memDocs = memCollection.get().get().getDocuments();
         for (QueryDocumentSnapshot docs : memDocs) {
             if (docs.toObject(MemberEntity.class).getEmail().equals(email)) {
@@ -223,6 +227,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public void changePwdToRandom(String randomPassword, String memberId) throws ExecutionException, InterruptedException {
+        CollectionReference memCollection = FirestoreClient.getFirestore().collection(MEMBER_COLLECTION);
 
         boolean exists = memCollection.document(memberId).get().get().exists();
         if (exists) {
@@ -237,10 +242,11 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public void modifyPwd(String memberId, String pwd) throws ExecutionException, InterruptedException {
+        CollectionReference memCollection = FirestoreClient.getFirestore().collection(MEMBER_COLLECTION);
 
         final DocumentReference memDocRef = memCollection.document(memberId);
 
-        ApiFuture<?> future = db.runTransaction(transaction -> {
+        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
 
             MemberEntity memberEntity = transaction.get(memDocRef).get().toObject(MemberEntity.class);
 
@@ -259,6 +265,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public MemberDto getMemberById(String memberId) throws ExecutionException, InterruptedException {
+        CollectionReference memCollection = FirestoreClient.getFirestore().collection(MEMBER_COLLECTION);
         DocumentReference memDocRef = memCollection.document(memberId);
 
         MemberDto memberdto = memDocRef.get().get().toObject(MemberDto.class);
@@ -272,9 +279,10 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public void modifyMember(String memberId, String nickName) throws ExecutionException, InterruptedException {
+        CollectionReference memCollection = FirestoreClient.getFirestore().collection(MEMBER_COLLECTION);
         final DocumentReference memDocRef = memCollection.document(memberId);
 
-        ApiFuture<?> future = db.runTransaction(transaction -> {
+        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
             if (transaction.get(memDocRef).get().exists()) {
                 transaction.update(memDocRef, "nickName", nickName);
                 return ReturnType.SUCCESS;
@@ -290,6 +298,11 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public void deleteMember(String memberId) throws ExecutionException, InterruptedException {
+        CollectionReference calCollection = FirestoreClient.getFirestore().collection(CALENDAR_COLLECTION);
+        CollectionReference memCollection = FirestoreClient.getFirestore().collection(MEMBER_COLLECTION);
+        CollectionReference petCollection = FirestoreClient.getFirestore().collection(PET_COLLECTION);
+        CollectionReference scheduleCollection = FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
+        CollectionReference photoCollection = FirestoreClient.getFirestore().collection(PHOTO_COLLECTION);
 
         String calendarId = getMemberById(memberId).getCalendarId();
         DocumentReference calendarDocRef = calCollection.document(calendarId);
@@ -337,6 +350,12 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public void modifyCalendarId(String memberId, String calendarId) throws ExecutionException, InterruptedException {
+        CollectionReference calCollection = FirestoreClient.getFirestore().collection(CALENDAR_COLLECTION);
+        CollectionReference memCollection = FirestoreClient.getFirestore().collection(MEMBER_COLLECTION);
+        CollectionReference petCollection = FirestoreClient.getFirestore().collection(PET_COLLECTION);
+        CollectionReference scheduleCollection = FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
+        CollectionReference photoCollection = FirestoreClient.getFirestore().collection(PHOTO_COLLECTION);
+
         DocumentReference memDocRef = memCollection.document(memberId);
         DocumentReference calDocRef = calCollection.document(calendarId); // 변경할 캘린더
 
@@ -344,7 +363,7 @@ public class MemberRepositoryImpl implements MemberRepository {
         String beforeCalendarId = member.getCalendarId(); // 변경 전 캘린더
         DocumentReference beforeCalDocRef = calCollection.document(beforeCalendarId);
 
-        ApiFuture<?> future = db.runTransaction(transaction -> {
+        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
             DocumentSnapshot calSnapshot = transaction.get(calDocRef).get();
             DocumentSnapshot beforeCalSnapshot = transaction.get(beforeCalDocRef).get();
 
@@ -403,9 +422,10 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public void saveRefreshToken(String memberId, String refreshToken) throws Exception {
+        CollectionReference memCollection = FirestoreClient.getFirestore().collection(MEMBER_COLLECTION);
         final DocumentReference memDocRef = memCollection.document(memberId);
 
-        ApiFuture<?> future = db.runTransaction(transaction -> {
+        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
            if (transaction.get(memDocRef).get().exists()) {
                transaction.update(memDocRef, "token", refreshToken);
                return true;
@@ -419,9 +439,10 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public void deleteRefreshToken(String memberId) throws Exception {
+        CollectionReference memCollection = FirestoreClient.getFirestore().collection(MEMBER_COLLECTION);
         final DocumentReference memDocRef = memCollection.document(memberId);
 
-        ApiFuture<?> future = db.runTransaction(transaction -> {
+        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
             if (transaction.get(memDocRef).get().exists()) {
                 transaction.update(memDocRef, "token", null);
                 return true;
@@ -436,11 +457,14 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public void modifyCalendarIdAlone(String memberId) throws ExecutionException, InterruptedException {
+        CollectionReference memCollection = FirestoreClient.getFirestore().collection(MEMBER_COLLECTION);
+        CollectionReference calCollection = FirestoreClient.getFirestore().collection(CALENDAR_COLLECTION);
+
         String calendarId = getMemberById(memberId).getCalendarId();
         DocumentReference memDocRef = memCollection.document(memberId);
         DocumentReference calDocRef = calCollection.document(calendarId);
         DocumentReference randomCal = calCollection.document();
-        ApiFuture<?> future = db.runTransaction(transaction -> {
+        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
             if (calDocRef.get().get().toObject(CalendarEntity.class).getMemberId().size() == 1) {
                 return ReturnType.AloneCalendarException;
             } else {

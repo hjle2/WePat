@@ -21,10 +21,9 @@ import java.util.concurrent.ExecutionException;
 public class ScheduleRepositoryImpl implements ScheduleRepository {
     private static final Logger logger = LoggerFactory.getLogger(ScheduleRepositoryImpl.class);
     private static final String SCHEDULE_COLLECTION = "schedule";
-    private final Firestore db = FirestoreClient.getFirestore();
-    private final CollectionReference scheduleCollection = db.collection(SCHEDULE_COLLECTION);
     @Override
     public Map<String, List<String>> getScheduleByMonth(String calendarId, String startDate, String endDate) {
+        CollectionReference scheduleCollection = FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
         try {
             Map<String, List<String>> datePetMap = new HashMap<>();
 
@@ -53,6 +52,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 
     @Override
     public List<ScheduleDto> getScheduleListByDate(String calendarId, String date) throws ExecutionException, InterruptedException {
+        CollectionReference scheduleCollection = FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
         List<ScheduleDto> scheduleDtoList = scheduleCollection
                 .whereEqualTo("calendarId", calendarId)
                 .whereEqualTo("date", date)
@@ -62,16 +62,18 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 
     @Override
     public void addSchedule(ScheduleDto scheduleDto) {
+        CollectionReference scheduleCollection = FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
         DocumentReference docRef = scheduleCollection.document();
         docRef.set(scheduleDto);
     }
 
     @Override
     public void modifySchedule(String calendarId, ScheduleDto scheduleDto, String date) throws ExecutionException, InterruptedException {
+        CollectionReference scheduleCollection = FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
         Query query = scheduleCollection.whereEqualTo("calendarId", calendarId)
                 .whereEqualTo("scheduleId", scheduleDto.getScheduleId());
 
-        ApiFuture<?> future = db.runTransaction(transaction -> {
+        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
             ApiFuture<QuerySnapshot> scheduleEntityList = transaction.get(query);
             List<ScheduleEntity> entityList = scheduleEntityList.get().toObjects(ScheduleEntity.class);
 
@@ -89,10 +91,11 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 
     @Override
     public void deleteSchedule(String calendarId, String scheduleId) {
+        CollectionReference scheduleCollection = FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
         Query query = scheduleCollection.whereEqualTo("calendarId", calendarId)
                 .whereEqualTo("scheduleId", scheduleId);
 
-        ApiFuture<?> future = db.runTransaction(transaction -> {
+        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
             List<QueryDocumentSnapshot> scheduleEntityList = transaction.get(query).get().getDocuments();
 
                 for (QueryDocumentSnapshot docRef : scheduleEntityList) {
@@ -109,6 +112,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 
     @Override
     public ScheduleDto getScheduleDetailByDate(String calendarId, String scheduleId) throws ExecutionException, InterruptedException {
+        CollectionReference scheduleCollection = FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
         return scheduleCollection.whereEqualTo("calendarId", calendarId)
                 .whereEqualTo("calendarId", calendarId)
                 .get().get().toObjects(ScheduleDto.class).get(0);

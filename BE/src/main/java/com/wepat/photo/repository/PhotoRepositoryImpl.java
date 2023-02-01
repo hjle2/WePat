@@ -25,20 +25,20 @@ public class PhotoRepositoryImpl implements PhotoRepository {
     }
     private static final Logger logger = LoggerFactory.getLogger(MemberRepository.class);
     private static final String PHOTO_COLLECTION = "photo";
-    private final Firestore db = FirestoreClient.getFirestore();
-    private final CollectionReference photoCollection = db.collection(PHOTO_COLLECTION);
     private final String firstAddDate = "0";
     private final int reset = 0;
 
     // 가족 앨범 전체 조회
     @Override
     public List<PhotoDto> getAllPhotoById(String calendarId) throws ExecutionException, InterruptedException {
+        CollectionReference photoCollection = FirestoreClient.getFirestore().collection(PHOTO_COLLECTION);
         return photoCollection.whereEqualTo("calendarId", calendarId).orderBy("date", Query.Direction.DESCENDING).get().get().toObjects(PhotoDto.class);
     }
 
     // 특정 이미지
     @Override
     public PhotoDto getPhotoById(String photoId) throws ExecutionException, InterruptedException {
+        CollectionReference photoCollection = FirestoreClient.getFirestore().collection(PHOTO_COLLECTION);
         DocumentSnapshot photoSnapshot = photoCollection.document(photoId).get().get();
         if (photoSnapshot.exists()) {
             return photoSnapshot.toObject(PhotoDto.class);
@@ -50,6 +50,7 @@ public class PhotoRepositoryImpl implements PhotoRepository {
     // 이미지 추가
     @Override
     public void addPhoto(String calendarId, PhotoDto photoDto) {
+        CollectionReference photoCollection = FirestoreClient.getFirestore().collection(PHOTO_COLLECTION);
         DocumentReference photoDocRef = photoCollection.document();
         PhotoEntity photoEntity = new PhotoEntity(photoDto);
         photoEntity.setCalendarId(calendarId);
@@ -61,9 +62,10 @@ public class PhotoRepositoryImpl implements PhotoRepository {
     // 이미지 삭제
     @Override
     public void deletePhoto(String photoId) throws ExecutionException, InterruptedException {
+        CollectionReference photoCollection = FirestoreClient.getFirestore().collection(PHOTO_COLLECTION);
         DocumentReference photoDocRef = photoCollection.document(photoId);
 
-        ApiFuture<?> future = db.runTransaction(transaction -> {
+        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
             DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
             if (photoSnapshot.exists()) {
                 transaction.delete(photoDocRef);
@@ -80,8 +82,9 @@ public class PhotoRepositoryImpl implements PhotoRepository {
     // SNS 업로드
     @Override
     public void uploadSNSByPhotoId(String photoId, String snsDate) throws ExecutionException, InterruptedException {
+        CollectionReference photoCollection = FirestoreClient.getFirestore().collection(PHOTO_COLLECTION);
         DocumentReference photoDocRef = photoCollection.document(photoId);
-        ApiFuture<?> future = db.runTransaction(transaction -> {
+        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
             DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
             if (photoSnapshot.exists()) {
                 boolean sns = photoCollection.document(photoId).get().get().toObject(PhotoEntity.class).isSns();
@@ -101,10 +104,11 @@ public class PhotoRepositoryImpl implements PhotoRepository {
     // 댓글 추가
     @Override
     public void addCommentByPhotoId(String photoId, CommentDto commentDto) throws ExecutionException, InterruptedException {
+        CollectionReference photoCollection = FirestoreClient.getFirestore().collection(PHOTO_COLLECTION);
         DocumentReference photoDocRef = photoCollection.document(photoId);
         DocumentReference randomDocRef = photoCollection.document();
 
-        ApiFuture<?> future = db.runTransaction(transaction -> {
+        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
             DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
             if (photoSnapshot.exists()) {
                 List<CommentDto> commentList = photoDocRef.get().get().toObject(PhotoEntity.class).getCommentList();
@@ -123,9 +127,10 @@ public class PhotoRepositoryImpl implements PhotoRepository {
     // 댓글 삭제
     @Override
     public void deleteCommentByPhotoId(String photoId, String commentId) throws ExecutionException, InterruptedException {
+        CollectionReference photoCollection = FirestoreClient.getFirestore().collection(PHOTO_COLLECTION);
         DocumentReference photoDocRef = photoCollection.document(photoId);
 
-        ApiFuture<ReturnType> future = db.runTransaction(transaction -> {
+        ApiFuture<ReturnType> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
             DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
             if (photoSnapshot.exists()) {
                 List<CommentDto> commentList = photoDocRef.get().get().toObject(PhotoEntity.class).getCommentList();
@@ -149,9 +154,10 @@ public class PhotoRepositoryImpl implements PhotoRepository {
     // 댓글 수정
     @Override
     public void updateCommentByPhotoId(String photoId, String commentId, CommentDto commentDto) throws ExecutionException, InterruptedException {
+        CollectionReference photoCollection = FirestoreClient.getFirestore().collection(PHOTO_COLLECTION);
         DocumentReference photoDocRef = photoCollection.document(photoId);
 
-        ApiFuture<?> future = db.runTransaction(transaction -> {
+        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
             DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
             if (photoSnapshot.exists()) {
 

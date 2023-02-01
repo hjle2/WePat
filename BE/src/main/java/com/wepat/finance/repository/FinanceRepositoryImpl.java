@@ -26,17 +26,19 @@ public class FinanceRepositoryImpl implements FinanceRepository {
     }
     private static Logger logger = LoggerFactory.getLogger(MemberRepository.class);
     private static final String CALENDAR_COLLECTION = "calendar";
-    private final Firestore db = FirestoreClient.getFirestore();
-    private final CollectionReference calCollection = db.collection(CALENDAR_COLLECTION);
-
 
     @Override
     public List<FinanceDto> getAllFinance(String calendarId) throws ExecutionException, InterruptedException {
+
+        CollectionReference calCollection = FirestoreClient.getFirestore().collection(CALENDAR_COLLECTION);
+
         return calCollection.document(calendarId).get().get().toObject(CalendarEntity.class).getFinanceList();
     }
 
     @Override
     public void addFinance(String calendarId, FinanceDto financeDto) throws ExecutionException, InterruptedException {
+        CollectionReference calCollection = FirestoreClient.getFirestore().collection(CALENDAR_COLLECTION);
+
         DocumentReference calDocRef = calCollection.document(calendarId);
         DocumentReference random = calCollection.document();
         financeDto.setFinanceId(random.getId());
@@ -47,6 +49,8 @@ public class FinanceRepositoryImpl implements FinanceRepository {
 
     @Override
     public FinanceDto getFinanceById(String calendarId, String financeId) throws ExecutionException, InterruptedException {
+        CollectionReference calCollection = FirestoreClient.getFirestore().collection(CALENDAR_COLLECTION);
+
         List<FinanceDto> financeList = calCollection.document(calendarId).get().get().toObject(CalendarEntity.class).getFinanceList();
         for (FinanceDto financeDto : financeList) {
             if (financeDto.getFinanceId().equals(financeId)) {
@@ -54,7 +58,7 @@ public class FinanceRepositoryImpl implements FinanceRepository {
             }
         }
         throw new AlreadyDeleteFinance();
-//        ApiFuture<?> objectApiFuture = db.runTransaction(transaction -> {
+//        ApiFuture<?> objectApiFuture = FirestoreClient.getFirestore().runTransaction(transaction -> {
 //            DocumentSnapshot calSnapshot = transaction.get(calDocRef).get();
 //            List<FinanceDto> financeList = calSnapshot.toObject(CalendarEntity.class).getFinanceList();
 //            for (FinanceDto finance : financeList) {
@@ -73,8 +77,10 @@ public class FinanceRepositoryImpl implements FinanceRepository {
 
     @Override
     public void modifyFinanceById(String calendarId, String financeId, FinanceDto financeDto) throws ExecutionException, InterruptedException {
+        CollectionReference calCollection = FirestoreClient.getFirestore().collection(CALENDAR_COLLECTION);
+
         DocumentReference calDocRef = calCollection.document(calendarId);
-        ApiFuture<?> returnTypeApiFuture = db.runTransaction(transaction -> {
+        ApiFuture<?> returnTypeApiFuture = FirestoreClient.getFirestore().runTransaction(transaction -> {
             DocumentSnapshot calSnapshot = transaction.get(calDocRef).get();
             List<FinanceDto> financeList = calSnapshot.toObject(CalendarEntity.class).getFinanceList();
             for (FinanceDto finance : financeList) {
@@ -96,8 +102,10 @@ public class FinanceRepositoryImpl implements FinanceRepository {
 
     @Override
     public void deleteFinanceById(String calendarId, String financeId) throws ExecutionException, InterruptedException {
+        CollectionReference calCollection = FirestoreClient.getFirestore().collection(CALENDAR_COLLECTION);
+
         DocumentReference calDocRef = calCollection.document(calendarId);
-        ApiFuture<?> returnTypeApiFuture = db.runTransaction(transaction -> {
+        ApiFuture<?> returnTypeApiFuture = FirestoreClient.getFirestore().runTransaction(transaction -> {
             DocumentSnapshot calSnapshot = transaction.get(calDocRef).get();
             List<FinanceDto> financeList = calSnapshot.toObject(CalendarEntity.class).getFinanceList();
             for (FinanceDto financeDto : financeList) {
