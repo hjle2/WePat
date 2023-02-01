@@ -10,11 +10,11 @@ public interface SNSService {
 
     PhotoDto getSNSByPhotoId(String photoId) throws ExecutionException, InterruptedException;
 
-    void updateSNSLike(String photoId) throws ExecutionException, InterruptedException;
+    void updateSNSLikeByPhotoId(String photoId) throws ExecutionException, InterruptedException;
 
-    void reportSNS(String photoId, String memberId) throws ExecutionException, InterruptedException;
+    void reportSNSByPhotoId(String photoId, String memberId) throws ExecutionException, InterruptedException;
 
-    List<PhotoDto> reportList() throws ExecutionException, InterruptedException;
+    List<PhotoDto> getReportedList() throws ExecutionException, InterruptedException;
 
-    void blockSNSByPhoto(String photoId) throws ExecutionException, InterruptedException;
+    void blockSNSByPhotoId(String photoId) throws ExecutionException, InterruptedException;
 }

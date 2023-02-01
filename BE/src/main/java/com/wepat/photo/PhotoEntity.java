@@ -16,10 +16,11 @@ public class PhotoEntity {
     public PhotoEntity(PhotoDto photo) {
         this.memberId = photo.getMemberId();
         this.photoId = photo.getPhotoId();
-        this.url = photo.getUrl();
+        this.photoUrl = photo.getPhotoUrl();
         this.commentList = new ArrayList<>();
         this.sns = new Boolean(false);
         this.like = 0;
+        this.reportIdList = new ArrayList<>();
         this.date = photo.getDate();
         this.block = new Boolean(false);
     }
@@ -30,7 +31,7 @@ public class PhotoEntity {
     @ApiParam(value = "사진ID") //추후 sns에서도 사용 가능
     private String photoId;
     @ApiParam(value = "사진 url", required = true)
-    private String url;
+    private String photoUrl;
     @ApiParam(value = "댓글Dto 리스트")
     private List<CommentDto> commentList;
     @ApiParam(value = "SNS 등록 여부")
@@ -41,6 +42,8 @@ public class PhotoEntity {
     private List<String> reportIdList;
     @ApiParam(value = "등록일")
     private String date;
+    @ApiParam(value = "SNS 등록일")
+    private String snsDate;
     @ApiParam(value = "차단 여부")
     private boolean block;
 }

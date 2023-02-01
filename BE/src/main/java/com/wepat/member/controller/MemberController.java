@@ -105,7 +105,7 @@ public class MemberController {
 
     @PostMapping("/signup/social")
     @ApiOperation(value = "회원가입", notes = "정보를 받아 회원가입 시도한다.", response = MemberDto.class)
-    public ResponseEntity<?> socialSignUp(MemberDto member) {
+    public ResponseEntity<?> socialSignUp(@RequestBody MemberDto member) {
         try {
             memberService.signUp(member);
             return new ResponseEntity<>(HttpStatus.ACCEPTED);

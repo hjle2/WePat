@@ -35,19 +35,19 @@ public class PetRepositoryImpl implements PetRepository {
     private final CollectionReference scheduleCollection = db.collection(SCHEDULE_COLLECTION);
 
     @Override
-    public void addPet(PetDto pet) throws ExecutionException, InterruptedException {
+    public void addPet(PetDto petDto) throws ExecutionException, InterruptedException {
 
         final DocumentReference petDocRef = petCollection.document(); //pet 랜덤 doc생성
-        final DocumentReference calDocRef = calCollection.document(pet.getCalendarId()); //받아온 캘린더 pk
+        final DocumentReference calDocRef = calCollection.document(petDto.getCalendarId()); //받아온 캘린더 pk
 
-        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
+        ApiFuture<ReturnType> future = db.runTransaction(transaction -> {
             DocumentSnapshot calSnapshot = transaction.get(calDocRef).get();
             if (calSnapshot.exists()) { //달력 존재
                 List<String> petIdList = calDocRef.get().get().toObject(CalendarEntity.class).getPetId();
                 petIdList.add(petDocRef.getId());
                 transaction.update(calDocRef, "petId", petIdList);
 
-                PetEntity petEntity = new PetEntity(pet);
+                PetEntity petEntity = new PetEntity(petDto);
                 petEntity.setCalendarId(calDocRef.getId());
                 petEntity.setPetId(petDocRef.getId());
                 transaction.create(petDocRef, petEntity);
@@ -56,29 +56,29 @@ public class PetRepositoryImpl implements PetRepository {
                 return ReturnType.NotExistCalendarException;
             }
         });
-        if (returnTypeApiFuture.get() == ReturnType.NotExistCalendarException) {
+        if (future.get() == ReturnType.NotExistCalendarException) {
             throw new NotExistCalendarException();
         }
     }
 
     @Override
-    public List<PetDto> getAllPets(String calendarId) throws ExecutionException, InterruptedException {
+    public List<PetDto> getAllPet(String calendarId) throws ExecutionException, InterruptedException {
         return petCollection.whereEqualTo("calendarId", calendarId).get().get().toObjects(PetDto.class);
     }
 
     @Override
-    public PetDto getPet(String petId) throws ExecutionException, InterruptedException {
+    public PetDto getPetById(String petId) throws ExecutionException, InterruptedException {
         return petCollection.document(petId).get().get().toObject(PetDto.class);
     }
 
     @Override
-    public void modifyPet(String petId, PetDto pet) throws ExecutionException, InterruptedException {
+    public void modifyPetById(String petId, PetDto petDto) throws ExecutionException, InterruptedException {
         final DocumentReference petDocRef = petCollection.document(petId);
 
-        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
+        ApiFuture<ReturnType> future = db.runTransaction(transaction -> {
             DocumentSnapshot petSnapshot = transaction.get(petDocRef).get();
             if (petSnapshot.exists()) {
-                PetEntity petEntity = new PetEntity(pet);
+                PetEntity petEntity = new PetEntity(petDto);
                 petEntity.setPetId(petId);
                 petEntity.setCalendarId(petSnapshot.toObject(PetEntity.class).getCalendarId());
                 petEntity.setSchedule(petSnapshot.toObject(PetEntity.class).getSchedule());
@@ -89,15 +89,15 @@ public class PetRepositoryImpl implements PetRepository {
                 return ReturnType.NotExistPet;
             }
         });
-        if (returnTypeApiFuture.get() == ReturnType.NotExistPet) {
+        if (future.get() == ReturnType.NotExistPet) {
             throw new NotExistPet();
         }
     }
 
     @Override
-    public void addPetWeight(String petId, WeightDto weightDto) throws ExecutionException, InterruptedException {
+    public void addPetWeightById(String petId, WeightDto weightDto) throws ExecutionException, InterruptedException {
         DocumentReference petDocRef = petCollection.document(petId);
-        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
+        ApiFuture<ReturnType> future = db.runTransaction(transaction -> {
             DocumentSnapshot petSnapshot = transaction.get(petDocRef).get();
             if (petSnapshot.exists()) {
                 List<WeightDto> weightList = petDocRef.get().get().toObject(PetEntity.class).getWeightList();
@@ -108,20 +108,20 @@ public class PetRepositoryImpl implements PetRepository {
                 return ReturnType.NotExistPet;
             }
         });
-        if (returnTypeApiFuture.get() == ReturnType.NotExistPet) {
+        if (future.get() == ReturnType.NotExistPet) {
             throw new NotExistPet();
         }
     }
 
     @Override
-    public void modifyPetWeight(String petId, String date, WeightDto weightDto) throws ExecutionException, InterruptedException {
+    public void modifyPetWeight(String petId, WeightDto weightDto) throws ExecutionException, InterruptedException {
         DocumentReference petDocRef = petCollection.document(petId);
-        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
+        ApiFuture<ReturnType> future = db.runTransaction(transaction -> {
             DocumentSnapshot petSnapshot = transaction.get(petDocRef).get();
             if (petSnapshot.exists()) {
                 List<WeightDto> weightList = petDocRef.get().get().toObject(PetEntity.class).getWeightList();
                 for (WeightDto weight : weightList) {
-                    if (weight.getDate().equals(date)) {
+                    if (weight.getDate().equals(weightDto.getDate())) {
                         weight.setWeight(weightDto.getWeight());
                         break;
                     }
@@ -132,16 +132,16 @@ public class PetRepositoryImpl implements PetRepository {
                 return ReturnType.NotExistPet;
             }
         });
-        if (returnTypeApiFuture.get() == ReturnType.NotExistPet) {
+        if (future.get() == ReturnType.NotExistPet) {
             throw new NotExistPet();
         }
     }
 
     @Override
-    public void deletePet(String petId) throws ExecutionException, InterruptedException {
+    public void deletePetById(String petId) throws ExecutionException, InterruptedException {
         DocumentReference petDocRef = petCollection.document(petId);
 
-        ApiFuture<ReturnType> returnTypeApiFuture = db.runTransaction(transaction -> {
+        ApiFuture<ReturnType> future = db.runTransaction(transaction -> {
             DocumentSnapshot petSnapshot = transaction.get(petDocRef).get();
             if (petSnapshot.exists()) {
                 List<String> scheduleList = petDocRef.get().get().toObject(PetEntity.class).getSchedule();
@@ -154,7 +154,7 @@ public class PetRepositoryImpl implements PetRepository {
                 return ReturnType.AlreadyDeletePet;
             }
         });
-        if (returnTypeApiFuture.get() == ReturnType.AlreadyDeletePet) {
+        if (future.get() == ReturnType.AlreadyDeletePet) {
             throw new AlreadyDeletePet();
         }
     }

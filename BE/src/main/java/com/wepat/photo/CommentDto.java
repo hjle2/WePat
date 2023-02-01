@@ -13,6 +13,8 @@ import java.time.LocalDate;
 public class CommentDto {
     @ApiParam(value = "댓글 ID")
     private String commentId;
+    @ApiParam(value = "멤버ID", required = true)
+    private String memberId;
     @ApiParam(value = "작성자", required = true)
     private String writter;
     @ApiParam(value = "글 내용", required = true)

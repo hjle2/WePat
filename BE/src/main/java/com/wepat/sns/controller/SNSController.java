@@ -40,8 +40,6 @@ public class SNSController {
     public ResponseEntity<?> getSNSByPhotoId(@PathVariable("photoid") String photoId) {
         try {
             return new ResponseEntity<>(snsService.getSNSByPhotoId(photoId), HttpStatus.OK);
-        } catch (NotExistImage e) {
-            throw new NotExistImage();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -49,10 +47,10 @@ public class SNSController {
 
     @PutMapping("/like/{photoid}")
     @ApiOperation(value = "좋아요 클릭", response = PhotoDto.class)
-    public ResponseEntity<?> updateSNSLike(@PathVariable("photoid") String photoId) {
+    public ResponseEntity<?> updateSNSLikeByPhotoId(@PathVariable("photoid") String photoId) {
 
         try {
-            snsService.updateSNSLike(photoId);
+            snsService.updateSNSLikeByPhotoId(photoId);
             return new ResponseEntity<>("좋아요 클릭", HttpStatus.ACCEPTED);
         } catch (NotExistImage e) {
             throw new NotExistImage();
@@ -63,10 +61,10 @@ public class SNSController {
 
     @PutMapping("/report/{photoid}")
     @ApiOperation(value = "신고 클릭")
-    public ResponseEntity<?> reportSNS(HttpServletRequest request, @PathVariable("photoid") String photoId) {
+    public ResponseEntity<?> reportSNSByPhotoId(HttpServletRequest request, @PathVariable("photoid") String photoId) {
         try {
             String memberId = request.getSession().getAttribute("memberId").toString();
-            snsService.reportSNS(photoId, memberId);
+            snsService.reportSNSByPhotoId(photoId, memberId);
             return new ResponseEntity<>("신고 성공", HttpStatus.ACCEPTED);
         } catch (AlreadyReportImage e) {
             throw new AlreadyReportImage();
@@ -81,7 +79,7 @@ public class SNSController {
     @ApiOperation(value = "3번 이상 신고 당한 게시물")
     public ResponseEntity<?> getReportedList() {
         try {
-            return new ResponseEntity<>(snsService.reportList(), HttpStatus.OK);
+            return new ResponseEntity<>(snsService.getReportedList(), HttpStatus.OK);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -89,9 +87,9 @@ public class SNSController {
 
     @PutMapping("/block/{photoid}")
     @ApiOperation(value = "게시물 차단")
-    public ResponseEntity<?> blockSNSByPhoto(@PathVariable("photoid") String photoId) {
+    public ResponseEntity<?> blockSNSByPhotoId(@PathVariable("photoid") String photoId) {
         try {
-            snsService.blockSNSByPhoto(photoId);
+            snsService.blockSNSByPhotoId(photoId);
             return new ResponseEntity<>("게시물 차단 성공", HttpStatus.ACCEPTED);
         } catch (NotExistImage e) {
             throw new NotExistImage();

@@ -50,9 +50,9 @@ public class PetController {
 
     @GetMapping("/{petid}")
     @ApiOperation(value = "반려동물 상세페이지")
-    public ResponseEntity<?> getPet(@PathVariable("petid") String petId) {
+    public ResponseEntity<?> getPetById(@PathVariable("petid") String petId) {
         try {
-            return new ResponseEntity<>(petService.getPet(petId), HttpStatus.OK);
+            return new ResponseEntity<>(petService.getPetById(petId), HttpStatus.OK);
         } catch (Exception e) {
             throw new RuntimeException();
         }
@@ -60,10 +60,11 @@ public class PetController {
 
     @PutMapping("/modify/{petid}")
     @ApiOperation(value = "반려동물 정보 수정")
-    public ResponseEntity<?> modifyPet(@PathVariable("petid") String petId,
-                                       @RequestBody PetDto petDto) {
+    public ResponseEntity<?> modifyPetById(@PathVariable("petid") String petId,
+                                           @RequestBody PetDto petDto) {
+
         try {
-            petService.modifyPet(petId, petDto);
+            petService.modifyPetById(petId, petDto);
             return new ResponseEntity<>("수정 성공", HttpStatus.ACCEPTED);
         } catch (NotExistPet e) {
             throw new NotExistPet();
@@ -74,9 +75,9 @@ public class PetController {
 
     @PutMapping("/add/weight")
     @ApiOperation(value = "몸무게 추가")
-    public ResponseEntity<?> addPetWeight(String petId, @RequestBody WeightDto weightDto) {
+    public ResponseEntity<?> addPetWeightById(String petId, @RequestBody WeightDto weightDto) {
         try {
-            petService.addPetWeight(petId, weightDto);
+            petService.addPetWeightById(petId, weightDto);
             return new ResponseEntity<>("몸무게 추가 성공", HttpStatus.OK);
         } catch (NotExistPet e) {
             throw new NotExistPet();
@@ -87,9 +88,9 @@ public class PetController {
 
     @PutMapping("/modify/weight")
     @ApiOperation(value = "몸무게 수정")
-    public ResponseEntity<?> modifyPetWeight(String petId, String date, @RequestBody WeightDto weightDto) {
+    public ResponseEntity<?> modifyPetWeightById(String petId, @RequestBody WeightDto weightDto) {
         try {
-            petService.modifyPetWeight(petId, date, weightDto);
+            petService.modifyPetWeight(petId, weightDto);
             return new ResponseEntity<>("수정 성공", HttpStatus.ACCEPTED);
         } catch (NotExistPet e) {
             throw new NotExistPet();
@@ -100,10 +101,10 @@ public class PetController {
 
     @DeleteMapping("/delete/{petid}")
     @ApiOperation(value = "반려동물 삭제")
-    public ResponseEntity<?> deletePet(@PathVariable("petid") String petId) {
+    public ResponseEntity<?> deletePetById(@PathVariable("petid") String petId) {
         try {
-            petService.deletePet(petId);
-            return new ResponseEntity<>(HttpStatus.OK);
+            petService.deletePetById(petId);
+            return new ResponseEntity<>("삭제 성공", HttpStatus.OK);
         } catch (AlreadyDeletePet e) {
             throw new AlreadyDeletePet();
         } catch (Exception e) {
