@@ -2,7 +2,6 @@ package com.wepat.photo.controller;
 
 import com.wepat.exception.photo.AlreadyDeleteImage;
 import com.wepat.exception.photo.NotExistImage;
-import com.wepat.exception.photo.UpdateSNSCancel;
 import com.wepat.photo.CommentDto;
 import com.wepat.photo.PhotoDto;
 import com.wepat.photo.service.PhotoService;
@@ -28,9 +27,9 @@ public class PhotoController {
     private final PhotoService photoService;
     @GetMapping("/{calendarid}")
     @ApiOperation(value = "가족 전체 앨범 이미지 조회", notes = "calendar의 전체 이미지 조회", response = List.class)
-    public ResponseEntity<?> getAllPhoto(@PathVariable("calendarid") String calendarId) {
+    public ResponseEntity<?> getAllPhotoById(@PathVariable("calendarid") String calendarId) {
         try {
-            return new ResponseEntity<>(photoService.getAllPhoto(calendarId), HttpStatus.OK);
+            return new ResponseEntity<>(photoService.getAllPhotoById(calendarId), HttpStatus.OK);
         } catch (Exception e) {
             throw new RuntimeException();
         }
@@ -73,14 +72,12 @@ public class PhotoController {
 
     @PutMapping("/sns/{photoid}")
     @ApiOperation(value = "SNS 에 사진 업로드하기")
-    public ResponseEntity<?> updateSNSByPhoto(@PathVariable("photoid") String photoId,
-                                              boolean upload,
-                                              String snsDate) {
+    public ResponseEntity<?> uploadSNSByPhotoId(@PathVariable("photoid") String photoId,
+                                                String snsDate) {
+
         try {
-            photoService.updateSNSByPhotoId(photoId, upload, snsDate);
+            photoService.uploadSNSByPhotoId(photoId, snsDate);
             return new ResponseEntity<>("업로드 성공", HttpStatus.OK);
-        } catch (UpdateSNSCancel e) {
-            throw new UpdateSNSCancel();
         } catch (NotExistImage e) {
             throw new NotExistImage();
         } catch (Exception e) {
@@ -91,8 +88,8 @@ public class PhotoController {
     // calendarid X
     @PostMapping("/{photoid}")
     @ApiOperation(value = "앨범 댓글 작성")
-    public ResponseEntity<?> addCommentByPhoto(@PathVariable("photoid") String photoId,
-                                                  @RequestBody CommentDto commentDto) {
+    public ResponseEntity<?> addCommentByPhotoId(@PathVariable("photoid") String photoId,
+                                                 @RequestBody CommentDto commentDto) {
 
         try {
             photoService.addCommentByPhotoId(photoId, commentDto);
@@ -107,8 +104,8 @@ public class PhotoController {
 
     @DeleteMapping("/{photoid}/{commentid}")
     @ApiOperation(value = "앨범 댓글 삭제")
-    public ResponseEntity<?> deleteCommentByPhoto(@PathVariable("photoid") String photoId,
-                                                  @PathVariable("commentid") String commentId) {
+    public ResponseEntity<?> deleteCommentByPhotoId(@PathVariable("photoid") String photoId,
+                                                    @PathVariable("commentid") String commentId) {
 
         try {
             photoService.deleteCommentByPhotoId(photoId, commentId);
@@ -122,12 +119,12 @@ public class PhotoController {
 
     @PutMapping("/comment/{photoid}/{commentid}")
     @ApiOperation(value = "앨범 댓글 수정")
-    public ResponseEntity<?> updateCommentByPhoto(@PathVariable("photoid") String photoId,
-                                                  @PathVariable("commentid") String commentId,
-                                                  @RequestBody CommentDto commentDto) {
+    public ResponseEntity<?> updateCommentByPhotoId(@PathVariable("photoid") String photoId,
+                                                    @PathVariable("commentid") String commentId,
+                                                    @RequestBody CommentDto commentDto) {
         try {
             photoService.updateCommentByPhotoId(photoId, commentId, commentDto);
-            return new ResponseEntity<>("댓글 수정 완료", HttpStatus.OK);
+            return new ResponseEntity<>("댓글 수정 완료", HttpStatus.ACCEPTED);
         } catch (NotExistImage e) {
             throw new NotExistImage();
         } catch (Exception e) {

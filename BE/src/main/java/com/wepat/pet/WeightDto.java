@@ -11,8 +11,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WeightDto {
-//    @ApiParam(value = "반려동물ID")
-//    private String petId;
     @ApiParam(value = "몸무게")
     private double weight;
     @ApiParam(value = "등록일")

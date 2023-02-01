@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutionException;
 public class PhotoServiceImpl implements PhotoService {
     private final PhotoRepository photoRepository;
     @Override
-    public List<PhotoDto> getAllPhoto(String calendarId) throws ExecutionException, InterruptedException {
+    public List<PhotoDto> getAllPhotoById(String calendarId) throws ExecutionException, InterruptedException {
         return photoRepository.getAllPhotoById(calendarId);
     }
 
@@ -34,18 +34,8 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public PhotoDto addLike(String photoId) throws ExecutionException, InterruptedException {
-        return null;
-    }
-
-    @Override
-    public PhotoDto addReport(String photoId) throws ExecutionException, InterruptedException {
-        return null;
-    }
-
-    @Override
-    public void updateSNSByPhotoId(String photoId, boolean upload, String snsDate) throws InterruptedException, ExecutionException {
-        photoRepository.updateSNSByPhotoId(photoId, upload, snsDate);
+    public void uploadSNSByPhotoId(String photoId, String snsDate) throws InterruptedException, ExecutionException {
+        photoRepository.uploadSNSByPhotoId(photoId, snsDate);
     }
 
     @Override

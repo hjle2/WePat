@@ -20,6 +20,7 @@ public class PhotoEntity {
         this.commentList = new ArrayList<>();
         this.sns = new Boolean(false);
         this.like = 0;
+        this.reportIdList = new ArrayList<>();
         this.date = photo.getDate();
         this.block = new Boolean(false);
     }

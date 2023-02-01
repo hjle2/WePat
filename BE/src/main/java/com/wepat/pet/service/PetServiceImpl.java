@@ -19,38 +19,38 @@ public class PetServiceImpl implements PetService {
     private final PetRepository petRepo;
 
     @Override
-    public void addPet(PetDto pet) throws ExecutionException, InterruptedException {
-        petRepo.addPet(pet);
+    public void addPet(PetDto petDto) throws ExecutionException, InterruptedException {
+        petRepo.addPet(petDto);
     }
 
     @Override
     public List<PetDto> getAllPet(String calendarId) throws ExecutionException, InterruptedException {
-        return petRepo.getAllPets(calendarId);
+        return petRepo.getAllPet(calendarId);
     }
 
     @Override
-    public PetDto getPet(String calendarId) throws ExecutionException, InterruptedException {
-        return petRepo.getPet(calendarId);
+    public PetDto getPetById(String petId) throws ExecutionException, InterruptedException {
+        return petRepo.getPetById(petId);
     }
 
     @Override
-    public void modifyPet(String petId, PetDto pet) throws ExecutionException, InterruptedException {
-        petRepo.modifyPet(petId, pet);
+    public void modifyPetById(String petId, PetDto petDto) throws ExecutionException, InterruptedException {
+        petRepo.modifyPetById(petId, petDto);
     }
 
     @Override
-    public void addPetWeight(String petId, WeightDto weightDto) throws ExecutionException, InterruptedException {
-        petRepo.addPetWeight(petId, weightDto);
+    public void addPetWeightById(String petId, WeightDto weightDto) throws ExecutionException, InterruptedException {
+        petRepo.addPetWeightById(petId, weightDto);
     }
 
     @Override
-    public void modifyPetWeight(String petId, String date, WeightDto weightDto) throws ExecutionException, InterruptedException {
-        petRepo.modifyPetWeight(petId, date, weightDto);
+    public void modifyPetWeight(String petId, WeightDto weightDto) throws ExecutionException, InterruptedException {
+        petRepo.modifyPetWeight(petId, weightDto);
     }
 
     @Override
-    public void deletePet(String petId) throws ExecutionException, InterruptedException {
-        petRepo.deletePet(petId);
+    public void deletePetById(String petId) throws ExecutionException, InterruptedException {
+        petRepo.deletePetById(petId);
     }
 
 }

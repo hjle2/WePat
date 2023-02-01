@@ -32,22 +32,22 @@ public class SNSServiceImpl implements SNSService {
     }
 
     @Override
-    public void updateSNSLike(String photoId) throws ExecutionException, InterruptedException {
-        snsRepository.updateSNSLike(photoId);
+    public void updateSNSLikeByPhotoId(String photoId) throws ExecutionException, InterruptedException {
+        snsRepository.updateSNSLikeByPhotoId(photoId);
     }
 
     @Override
-    public void reportSNS(String photoId, String memberId) throws ExecutionException, InterruptedException {
-        snsRepository.reportSNS(photoId, memberId);
+    public void reportSNSByPhotoId(String photoId, String memberId) throws ExecutionException, InterruptedException {
+        snsRepository.reportSNSByPhotoId(photoId, memberId);
     }
 
     @Override
-    public List<PhotoDto> reportList() throws ExecutionException, InterruptedException {
-        return snsRepository.reportList();
+    public List<PhotoDto> getReportedList() throws ExecutionException, InterruptedException {
+        return snsRepository.getReportedList();
     }
 
     @Override
-    public void blockSNSByPhoto(String photoId) throws ExecutionException, InterruptedException {
-        snsRepository.blockSNSByPhoto(photoId);
+    public void blockSNSByPhotoId(String photoId) throws ExecutionException, InterruptedException {
+        snsRepository.blockSNSByPhotoId(photoId);
     }
 }
