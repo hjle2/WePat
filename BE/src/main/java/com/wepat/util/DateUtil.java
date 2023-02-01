@@ -7,18 +7,18 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class DateUtil {
-    private static final DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+    private static final DateFormat dateFormat = new SimpleDateFormat("YYYYMMddHHmmss");
     public static String getStringDate(Date date) {
         return dateFormat.format(date);
     }
 
-    public static Date getDate(String ymd) {
+    public static Date getDate(String source) {
         Date date = null;
         try {
-            date = dateFormat.parse(ymd);
+            date = dateFormat.parse(source);
         } catch (ParseException e) {
             try {
-                date = new SimpleDateFormat("yyyyMMddHHmmss").parse(ymd);
+                date = dateFormat.parse(source);
             } catch (ParseException ex) {
                 throw new RuntimeException(ex);
             }
@@ -47,5 +47,14 @@ public class DateUtil {
         date.setDate(1);
 
         return dateFormat.format(date);
+    }
+
+    public static Date setZeroTime(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        return calendar.getTime();
     }
 }

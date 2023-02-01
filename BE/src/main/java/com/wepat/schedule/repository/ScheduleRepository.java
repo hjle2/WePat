@@ -2,21 +2,19 @@ package com.wepat.schedule.repository;
 
 import com.wepat.schedule.ScheduleDto;
 
-import java.sql.Timestamp;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public interface ScheduleRepository {
     // 현재 선택된 날짜 기준
-    Map<String, List<String>> getScheduleByMonth(String calendarId, String startDate, String endDate);
-    List<ScheduleDto> getScheduleListByDate(String calendarId, String date) throws ExecutionException, InterruptedException;
+    List<ScheduleDto> getScheduleByCalendarId(String calendarId);
+    List<ScheduleDto> getScheduleListByDate(String calendarId, String startDate, String endDate) throws ExecutionException, InterruptedException;
     // 일정 추가
     void addSchedule(ScheduleDto scheduleDto);
     // 일정 변경
-    void modifySchedule(String calendarId, ScheduleDto scheduleDto, String date) throws ExecutionException, InterruptedException;
+    void modifySchedule(String calendarId, String scheduleId, ScheduleDto scheduleDto) throws ExecutionException, InterruptedException;
     // 일정 삭제
-    void deleteSchedule(String calendarId, String ScheduleId);
+    void deleteSchedule(String calendarId, String scheduleId);
     // 일정 상세 정보 읽기
-    ScheduleDto getScheduleDetailByDate(String calendarId, String ScheduleId) throws ExecutionException, InterruptedException;
+    ScheduleDto getScheduleDetailByDate(String calendarId, String scheduleId) throws ExecutionException, InterruptedException;
 }

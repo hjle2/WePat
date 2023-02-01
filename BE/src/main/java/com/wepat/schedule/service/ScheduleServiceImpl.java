@@ -4,46 +4,58 @@ import com.wepat.schedule.ScheduleDto;
 import com.wepat.schedule.repository.ScheduleRepository;
 import com.wepat.util.DateUtil;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @Service
 @RequiredArgsConstructor
 public class ScheduleServiceImpl implements ScheduleService {
     private final ScheduleRepository scheduleRepository;
+    private static final int CALEDAR_DATE = 1;
     @Override
-    public Map<String, List<String>> getScheduleByMonth(String calendarId, String date) {
-        String startdate = DateUtil.getFirstDayOfMonth(date);
-        String enddate = DateUtil.getFirstDayOfNextMonth(date);
-
-        return scheduleRepository.getScheduleByMonth(calendarId, startdate, enddate);
+    public List<ScheduleDto> getScheduleByCalendarId(String calendarId) {
+        return scheduleRepository.getScheduleByCalendarId(calendarId);
     }
-
     @Override
     public List<ScheduleDto> getScheduleListByDate(String calendarId, String date) throws ExecutionException, InterruptedException {
-        return scheduleRepository.getScheduleListByDate(calendarId, date);
+        Date startDate = DateUtil.getDate(date);
+        Date endDate = DateUtil.addDays(startDate, CALEDAR_DATE, Calendar.DATE);
+
+        startDate = DateUtil.setZeroTime(startDate);
+        endDate = DateUtil.setZeroTime(endDate);
+        return scheduleRepository.getScheduleListByDate(calendarId,DateUtil.getStringDate(startDate), DateUtil.getStringDate(endDate));
     }
 
     @Override
-    public void addSchedule(ScheduleDto scheduleDto) {
-        Date startdate = DateUtil.getDate(scheduleDto.getDate());
-        Date enddate = DateUtil.getDate(scheduleDto.getEndDate());
+    public void addSchedule(String calendarId, ScheduleDto scheduleDto) {
 
-        int unit = scheduleDto.getUnit();
-        int size = scheduleDto.getUnitSize();
+        Date startDate = null;
+        Date endDate = null;
+        try {
+            startDate = DateUtil.getDate(scheduleDto.getStartDate());
+            endDate = DateUtil.getDate(scheduleDto.getEndDate());
+        } catch (Exception e) {
+            throw new TypeNotPresentException("Date", e);
+        }
+        int unit = scheduleDto.getRepeatUnit();
+        int size = scheduleDto.getRepeatAmount();
 
-        if (scheduleDto.isRepeat()) {
+        scheduleDto.setCalendarId(calendarId);
+
+        if (scheduleDto.getRepeatUnit() > 0) {
             // startdate < enddate 인 경우
-            while (startdate.compareTo(enddate) <= 0) {
-                scheduleDto.setDate(DateUtil.getStringDate(startdate));
+            while (startDate.compareTo(endDate) <= 0) {
+                scheduleDto.setStartDate(DateUtil.getStringDate(startDate));
                 scheduleRepository.addSchedule(scheduleDto);
 
                 // 반봅 주기만큼 더하기
-                startdate = DateUtil.addDays(startdate, unit, size);
+                startDate = DateUtil.addDays(startDate, unit, size);
             }
         } else {
             scheduleRepository.addSchedule(scheduleDto);
@@ -51,17 +63,17 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public void modifySchedule(ScheduleDto scheduleDto, String date) {
-
+    public void modifySchedule(String calendarId, String scheduleId, ScheduleDto scheduleDto) throws ExecutionException, InterruptedException {
+        scheduleRepository.modifySchedule(calendarId, scheduleId, scheduleDto);
     }
 
     @Override
-    public void deleteSchedule(String calendarId, String date) {
-
+    public void deleteSchedule(String calendarId, String scheduleId) {
+        scheduleRepository.deleteSchedule(calendarId, scheduleId);
     }
 
     @Override
-    public ScheduleDto getScheduleDetailByDate(String calendarId, String date) {
-        return null;
+    public ScheduleDto getScheduleDetailByDate(String calendarId, String scheduleId) throws ExecutionException, InterruptedException {
+        return scheduleRepository.getScheduleDetailByDate(calendarId, scheduleId);
     }
 }
