@@ -32,9 +32,8 @@ dependencies {
 	// aop
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
 
-
 	// WebSocket
-	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+//	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
 	// Validation
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -47,13 +46,13 @@ dependencies {
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
 
 	// devtools
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+//	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
 	// swagger
 	implementation "io.springfox:springfox-boot-starter:3.0.0"
 
 	// firebase
-	implementation 'com.google.firebase:firebase-admin:8.1.0'
+	implementation 'com.google.firebase:firebase-admin:9.1.1'
 
 	// JWT
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
