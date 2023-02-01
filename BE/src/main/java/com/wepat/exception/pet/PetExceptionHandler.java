@@ -18,15 +18,15 @@ public class PetExceptionHandler {
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(NotExistPet.class)
-    public ResponseEntity<?> NotExistPet(NotExistPet e) {
-        ErrorDto errorDto = new ErrorDto("NotExistPet", "존재하지 않는 반려동물입니다.");
+    @ExceptionHandler(NotExistPetException.class)
+    public ResponseEntity<?> NotExistPet(NotExistPetException e) {
+        ErrorDto errorDto = new ErrorDto("NotExistPetException", "존재하지 않는 반려동물입니다.");
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(AlreadyDeletePet.class)
-    public ResponseEntity<?> AlreadyDeletePet(AlreadyDeletePet e) {
-        ErrorDto errorDto = new ErrorDto("AlreadyDeletePet", "이미 삭제된 반려동물입니다.");
+    @ExceptionHandler(AlreadyDeletePetException.class)
+    public ResponseEntity<?> AlreadyDeletePet(AlreadyDeletePetException e) {
+        ErrorDto errorDto = new ErrorDto("AlreadyDeletePetException", "이미 삭제된 반려동물입니다.");
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 

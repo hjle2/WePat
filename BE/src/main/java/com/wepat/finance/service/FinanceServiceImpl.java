@@ -20,8 +20,8 @@ public class FinanceServiceImpl implements FinanceService{
     }
 
     @Override
-    public void addFinance(String calendarId, FinanceDto financeDto) throws ExecutionException, InterruptedException {
-        financeRepository.addFinance(calendarId, financeDto);
+    public void addFinanceById(String calendarId, FinanceDto financeDto) throws ExecutionException, InterruptedException {
+        financeRepository.addFinanceById(calendarId, financeDto);
     }
 
     @Override

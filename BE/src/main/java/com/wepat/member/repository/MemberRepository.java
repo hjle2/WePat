@@ -13,17 +13,17 @@ public interface MemberRepository {
     MemberDto socialSignIn(String memberId, String pwd, int social) throws ExecutionException, InterruptedException;
     String findId(String email) throws ExecutionException, InterruptedException;
     void changePwdToRandom(String randomPassword, String memberId) throws ExecutionException, InterruptedException;
-    void modifyPwd(String memberId, String pwd) throws ExecutionException, InterruptedException ;
+    void modifyPwdById(String memberId, String pwd) throws ExecutionException, InterruptedException ;
     MemberDto getMemberById(String memberId) throws ExecutionException, InterruptedException;
-    void modifyMember(String memberId, String nickName) throws ExecutionException, InterruptedException;
+    void modifyMemberById(String memberId, String nickName) throws ExecutionException, InterruptedException;
     void deleteMember(String memberId) throws ExecutionException, InterruptedException;
-    void modifyCalendarId(String memberId, String calendarId) throws ExecutionException, InterruptedException;
+    void modifyCalendarById(String memberId, String calendarId) throws ExecutionException, InterruptedException;
 
     void addWarnMember(String memberId, String warnMemberId) throws ExecutionException, InterruptedException;
     void addBlockMember(String memberId, String blockMemberId) throws ExecutionException, InterruptedException;
     void saveRefreshToken(String memberId, String refreshToken) throws Exception;
     void deleteRefreshToken(String memberId) throws Exception;
 
-    void modifyCalendarIdAlone(String memberId) throws ExecutionException, InterruptedException;
+    void addCalendarById(String memberId) throws ExecutionException, InterruptedException;
 }
 

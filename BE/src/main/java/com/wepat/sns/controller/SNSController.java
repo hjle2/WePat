@@ -1,7 +1,7 @@
 package com.wepat.sns.controller;
 
-import com.wepat.exception.photo.NotExistImage;
-import com.wepat.exception.sns.AlreadyReportImage;
+import com.wepat.exception.photo.NotExistImageException;
+import com.wepat.exception.sns.AlreadyReportImageException;
 import com.wepat.photo.PhotoDto;
 import com.wepat.pet.controller.PetController;
 import com.wepat.sns.service.SNSService;
@@ -52,8 +52,8 @@ public class SNSController {
         try {
             snsService.updateSNSLikeByPhotoId(photoId);
             return new ResponseEntity<>("좋아요 클릭", HttpStatus.ACCEPTED);
-        } catch (NotExistImage e) {
-            throw new NotExistImage();
+        } catch (NotExistImageException e) {
+            throw new NotExistImageException();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -66,10 +66,10 @@ public class SNSController {
             String memberId = request.getSession().getAttribute("memberId").toString();
             snsService.reportSNSByPhotoId(photoId, memberId);
             return new ResponseEntity<>("신고 성공", HttpStatus.ACCEPTED);
-        } catch (AlreadyReportImage e) {
-            throw new AlreadyReportImage();
-        } catch (NotExistImage e) {
-            throw new NotExistImage();
+        } catch (AlreadyReportImageException e) {
+            throw new AlreadyReportImageException();
+        } catch (NotExistImageException e) {
+            throw new NotExistImageException();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -91,8 +91,8 @@ public class SNSController {
         try {
             snsService.blockSNSByPhotoId(photoId);
             return new ResponseEntity<>("게시물 차단 성공", HttpStatus.ACCEPTED);
-        } catch (NotExistImage e) {
-            throw new NotExistImage();
+        } catch (NotExistImageException e) {
+            throw new NotExistImageException();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

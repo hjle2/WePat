@@ -79,20 +79,20 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void modifyPwd(String memberId, String pwd) throws ExecutionException, InterruptedException {
-        memberRepository.modifyPwd(memberId, pwd);
+    public void modifyPwdById(String memberId, String pwd) throws ExecutionException, InterruptedException {
+        memberRepository.modifyPwdById(memberId, pwd);
     }
 
     @Override
-    public MemberDto getMemberDetail(String memberId) throws ExecutionException, InterruptedException {
+    public MemberDto getMemberById(String memberId) throws ExecutionException, InterruptedException {
         MemberDto memberDto = memberRepository.getMemberById(memberId);
         memberDto.setPwd(null);
         return memberDto;
     }
 
     @Override
-    public void modifyMemberDetail(String memberId, String nickName) throws ExecutionException, InterruptedException {
-        memberRepository.modifyMember(memberId, nickName);
+    public void modifyMemberById(String memberId, String nickName) throws ExecutionException, InterruptedException {
+        memberRepository.modifyMemberById(memberId, nickName);
     }
 
     @Override
@@ -107,8 +107,8 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void modifyCalendarId(String memberId, String calendarId) throws ExecutionException, InterruptedException {
-        memberRepository.modifyCalendarId(memberId, calendarId);
+    public void modifyCalendarById(String memberId, String calendarId) throws ExecutionException, InterruptedException {
+        memberRepository.modifyCalendarById(memberId, calendarId);
     }
 
     @Override
@@ -127,8 +127,8 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void modifyCalendarIdAlone(String memberId) throws ExecutionException, InterruptedException {
-        memberRepository.modifyCalendarIdAlone(memberId);
+    public void addCalendarById(String memberId) throws ExecutionException, InterruptedException {
+        memberRepository.addCalendarById(memberId);
     }
 
 }

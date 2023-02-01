@@ -13,15 +13,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice(assignableTypes = {SNSController.class})
 public class SNSExceptionHandler {
 
-    @ExceptionHandler(NotExistImage.class)
-    public ResponseEntity<?> NotExistImage(NotExistImage e) {
-        ErrorDto errorDto = new ErrorDto("NotExistImage", "존재하지 않는 이미지입니다.");
+    @ExceptionHandler(NotExistImageException.class)
+    public ResponseEntity<?> NotExistImage(NotExistImageException e) {
+        ErrorDto errorDto = new ErrorDto("NotExistImageException", "존재하지 않는 이미지입니다.");
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(AlreadyReportImage.class)
-    public ResponseEntity<?> AlreadyReportImage(AlreadyReportImage e) {
-        ErrorDto errorDto = new ErrorDto("AlreadyReportImage", "이미 신고한 이미지입니다.");
+    @ExceptionHandler(AlreadyReportImageException.class)
+    public ResponseEntity<?> AlreadyReportImage(AlreadyReportImageException e) {
+        ErrorDto errorDto = new ErrorDto("AlreadyReportImageException", "이미 신고한 이미지입니다.");
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 

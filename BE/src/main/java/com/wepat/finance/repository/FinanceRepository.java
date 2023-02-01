@@ -8,7 +8,7 @@ import java.util.concurrent.ExecutionException;
 public interface FinanceRepository {
     List<FinanceDto> getAllFinance(String calendarId) throws ExecutionException, InterruptedException;
 
-    void addFinance(String calendarId, FinanceDto financeDto) throws ExecutionException, InterruptedException;
+    void addFinanceById(String calendarId, FinanceDto financeDto) throws ExecutionException, InterruptedException;
 
     FinanceDto getFinanceById(String calendarId, String financeId) throws ExecutionException, InterruptedException;
 

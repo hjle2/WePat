@@ -6460,7 +6460,7 @@ java.lang.NumberFormatException: empty String
 21:08:22.193 INFO  com.wepat.aop.aspect.LogAspect - ----> Done  :  deletePhoto
 21:08:22.194 INFO  com.wepat.aop.aspect.LogAspect - ----> Done  :  deletePhoto
 21:08:22.209 INFO  com.wepat.aop.aspect.LogAspect - ----> Done  :  AlreadyDeleteImage
-21:08:22.215 WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [com.wepat.exception.photo.AlreadyDeleteImage]
+21:08:22.215 WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [com.wepat.exception.photo.AlreadyDeleteImageException]
 21:08:35.581 INFO  com.wepat.aop.aspect.LogAspect - ----> Done  :  deletePhoto
 21:08:35.581 INFO  com.wepat.aop.aspect.LogAspect - ----> Done  :  deletePhoto
 21:08:35.581 INFO  com.wepat.aop.aspect.LogAspect - ----> Done  :  deletePhoto

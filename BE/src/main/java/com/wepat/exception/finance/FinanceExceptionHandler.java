@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice(assignableTypes = {FinanceController.class})
 public class FinanceExceptionHandler {
 
-    @ExceptionHandler(AlreadyDeleteFinance.class)
-    public ResponseEntity<?> AlreadyDeleteFinance(AlreadyDeleteFinance e) {
-        ErrorDto errorDto = new ErrorDto("AlreadyDeleteFinance", "삭제된 가계부 내용입니다.");
+    @ExceptionHandler(AlreadyDeleteFinanceException.class)
+    public ResponseEntity<?> AlreadyDeleteFinance(AlreadyDeleteFinanceException e) {
+        ErrorDto errorDto = new ErrorDto("AlreadyDeleteFinanceException", "삭제된 가계부 내용입니다.");
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 

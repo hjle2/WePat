@@ -1,6 +1,5 @@
 package com.wepat.member.controller;
 
-import com.google.gson.Gson;
 import com.wepat.exception.member.*;
 import com.wepat.member.MemberDto;
 import com.wepat.member.service.MemberService;
@@ -48,8 +47,8 @@ public class MemberController {
             }
         } catch (IdWriteException e) {
             throw new IdWriteException(e.getMessage());
-        } catch (BlockMember e) {
-            throw new BlockMember(e.getMessage());
+        } catch (BlockMemberException e) {
+            throw new BlockMemberException(e.getMessage());
         } catch (PwdWriteException e) {
             throw new PwdWriteException(e.getMessage());
         } catch (Exception e) {
@@ -77,8 +76,8 @@ public class MemberController {
             }
         } catch (IdWriteException e) {
             throw new IdWriteException(e.getMessage());
-        } catch (BlockMember e) {
-            throw new BlockMember(e.getMessage());
+        } catch (BlockMemberException e) {
+            throw new BlockMemberException(e.getMessage());
         } catch (PwdWriteException e) {
             throw new PwdWriteException(e.getMessage());
         } catch (Exception e) {
@@ -137,46 +136,46 @@ public class MemberController {
         try {
             memberService.findPwd(memberId, email);
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (NotExistMember e) {
-            throw new NotExistMember(e.getMessage());
+        } catch (NotExistMemberException e) {
+            throw new NotExistMemberException(e.getMessage());
         } catch (Exception e) {
             throw new RuntimeException();
         }
     }
     @PutMapping("modifypwd")
     @ApiOperation(value = "비밀번호 변경", response = HttpResponse.class)
-    public ResponseEntity<?> modifyPwd(HttpServletRequest request, String pwd) {
+    public ResponseEntity<?> modifyPwdById(HttpServletRequest request, String pwd) {
         try {
             String memberId = request.getSession().getAttribute("memberId").toString();
-            memberService.modifyPwd(memberId, pwd);
+            memberService.modifyPwdById(memberId, pwd);
             return new ResponseEntity<>(HttpStatus.ACCEPTED);
-        } catch (NotExistMember e) {
-            throw new NotExistMember(e.getMessage());
+        } catch (NotExistMemberException e) {
+            throw new NotExistMemberException(e.getMessage());
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
     }
     @GetMapping
     @ApiOperation(value = "마이페이지", notes = "현재 로그인되어있는 회원의 정보 조회", response = MemberDto.class)
-    public ResponseEntity<?> getMember(HttpServletRequest request) {
+    public ResponseEntity<?> getMemberById(HttpServletRequest request) {
         try {
             String memberId = request.getSession().getAttribute("memberId").toString();
-            return new ResponseEntity<>(memberService.getMemberDetail(memberId), HttpStatus.OK);
-        } catch (NotExistMember e) {
-            throw new NotExistMember(e.getMessage());
+            return new ResponseEntity<>(memberService.getMemberById(memberId), HttpStatus.OK);
+        } catch (NotExistMemberException e) {
+            throw new NotExistMemberException(e.getMessage());
         } catch (Exception e) {
             throw new RuntimeException();
         }
     }
     @PutMapping("/modify")
     @ApiOperation(value = "회원 정보 수정", notes = "현재 회원의 정보를 수정한다.", response = MemberDto.class)
-    public ResponseEntity<?> modifyMember(HttpServletRequest request, String nickName) {
+    public ResponseEntity<?> modifyMemberById(HttpServletRequest request, String nickName) {
         try {
             String memberId = request.getSession().getAttribute("memberId").toString();
-            memberService.modifyMemberDetail(memberId, nickName);
+            memberService.modifyMemberById(memberId, nickName);
             return new ResponseEntity<>(HttpStatus.ACCEPTED);
-        } catch (NotExistMember e) {
-            throw new NotExistMember(e.getMessage());
+        } catch (NotExistMemberException e) {
+            throw new NotExistMemberException(e.getMessage());
         } catch (Exception e) {
             throw new RuntimeException();
         }
@@ -206,10 +205,10 @@ public class MemberController {
 
     @PutMapping("/modify/calendar")
     @ApiOperation(value = "캘린더 변경")
-    public ResponseEntity<?> modifyCalendarId(HttpServletRequest request, String calendarId) {
+    public ResponseEntity<?> modifyCalendarById(HttpServletRequest request, String calendarId) {
         try {
             String memberId = request.getSession().getAttribute("memberId").toString();
-            memberService.modifyCalendarId(memberId, calendarId);
+            memberService.modifyCalendarById(memberId, calendarId);
             return new ResponseEntity<>("캘린더 변경 완료", HttpStatus.OK);
         } catch (NotExistCalendarException e) {
             throw new NotExistCalendarException();
@@ -220,12 +219,12 @@ public class MemberController {
 
     @PutMapping("/modify/calendar/alone")
     @ApiOperation(value = "자신만의 캘린더 생성")
-    public ResponseEntity<?> modifyCalendarIdAlone(String memberId) {
+    public ResponseEntity<?> addCalendarById(String memberId) {
         try {
-            memberService.modifyCalendarIdAlone(memberId);
+            memberService.addCalendarById(memberId);
             return new ResponseEntity<>("생성 성공", HttpStatus.OK);
-        } catch (AlreadyAloneCalendar e) {
-            throw new AlreadyAloneCalendar();
+        } catch (AlreadyAloneCalendarException e) {
+            throw new AlreadyAloneCalendarException();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
