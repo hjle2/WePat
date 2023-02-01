@@ -222,7 +222,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
             }
         });
-        // 트랜잭션 실행 결과를 반환
+        // 트랜잭션 실행 결과를 반환ㅐ
         if (returnTypeApiFuture.get() == ReturnType.IdWriteException) {
             throw new IdWriteException();
         } else if (returnTypeApiFuture.get() == ReturnType.BlockMember) {
