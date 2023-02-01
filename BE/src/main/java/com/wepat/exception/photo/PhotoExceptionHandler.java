@@ -13,15 +13,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice(assignableTypes = {PhotoController.class})
 public class PhotoExceptionHandler {
 
-    @ExceptionHandler(NotExistImage.class)
-    public ResponseEntity<?> NotExistImage(NotExistImage e) {
-        ErrorDto errorDto = new ErrorDto("NotExistImage", "존재하지 않는 이미지입니다.");
+    @ExceptionHandler(NotExistImageException.class)
+    public ResponseEntity<?> NotExistImage(NotExistImageException e) {
+        ErrorDto errorDto = new ErrorDto("NotExistImageException", "존재하지 않는 이미지입니다.");
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(AlreadyDeleteImage.class)
-    public ResponseEntity<?> AlreadyDeleteImage(AlreadyDeleteImage e) {
-        ErrorDto errorDto = new ErrorDto("AlreadyDeleteImage", "이미 삭제된 이미지입니다.");
+    @ExceptionHandler(AlreadyDeleteImageException.class)
+    public ResponseEntity<?> AlreadyDeleteImage(AlreadyDeleteImageException e) {
+        ErrorDto errorDto = new ErrorDto("AlreadyDeleteImageException", "이미 삭제된 이미지입니다.");
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 

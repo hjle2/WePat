@@ -4,9 +4,9 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import com.wepat.calendar.CalendarEntity;
-import com.wepat.exception.pet.AlreadyDeletePet;
+import com.wepat.exception.pet.AlreadyDeletePetException;
 import com.wepat.exception.pet.NotExistCalendarException;
-import com.wepat.exception.pet.NotExistPet;
+import com.wepat.exception.pet.NotExistPetException;
 import com.wepat.member.repository.MemberRepository;
 import com.wepat.pet.PetDto;
 import com.wepat.pet.PetEntity;
@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -23,7 +22,7 @@ import java.util.concurrent.ExecutionException;
 public class PetRepositoryImpl implements PetRepository {
 
     public enum ReturnType {
-        SUCCESS, NotExistCalendarException, NotExistPet, AlreadyDeletePet
+        SUCCESS, NotExistCalendarException, NotExistPetException, AlreadyDeletePetException
     }
     private static final Logger logger = LoggerFactory.getLogger(MemberRepository.class);
     private static final String PET_COLLECTION = "pet";
@@ -86,11 +85,11 @@ public class PetRepositoryImpl implements PetRepository {
                 petCollection.document(petId).set(petEntity);
                 return ReturnType.SUCCESS;
             } else {
-                return ReturnType.NotExistPet;
+                return ReturnType.NotExistPetException;
             }
         });
-        if (future.get() == ReturnType.NotExistPet) {
-            throw new NotExistPet();
+        if (future.get() == ReturnType.NotExistPetException) {
+            throw new NotExistPetException();
         }
     }
 
@@ -106,11 +105,11 @@ public class PetRepositoryImpl implements PetRepository {
                 transaction.update(petDocRef, "weightList", weightList);
                 return ReturnType.SUCCESS;
             } else {
-                return ReturnType.NotExistPet;
+                return ReturnType.NotExistPetException;
             }
         });
-        if (future.get() == ReturnType.NotExistPet) {
-            throw new NotExistPet();
+        if (future.get() == ReturnType.NotExistPetException) {
+            throw new NotExistPetException();
         }
     }
 
@@ -131,11 +130,11 @@ public class PetRepositoryImpl implements PetRepository {
                 transaction.update(petDocRef, "weightList", weightList);
                 return ReturnType.SUCCESS;
             } else {
-                return ReturnType.NotExistPet;
+                return ReturnType.NotExistPetException;
             }
         });
-        if (future.get() == ReturnType.NotExistPet) {
-            throw new NotExistPet();
+        if (future.get() == ReturnType.NotExistPetException) {
+            throw new NotExistPetException();
         }
     }
 
@@ -155,11 +154,11 @@ public class PetRepositoryImpl implements PetRepository {
                 transaction.delete(petDocRef);
                 return ReturnType.SUCCESS;
             } else {
-                return ReturnType.AlreadyDeletePet;
+                return ReturnType.AlreadyDeletePetException;
             }
         });
-        if (future.get() == ReturnType.AlreadyDeletePet) {
-            throw new AlreadyDeletePet();
+        if (future.get() == ReturnType.AlreadyDeletePetException) {
+            throw new AlreadyDeletePetException();
         }
     }
 }

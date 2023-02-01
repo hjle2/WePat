@@ -4,11 +4,10 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.Firestore;
 import com.google.firebase.cloud.FirestoreClient;
 import com.wepat.calendar.CalendarDto;
 import com.wepat.calendar.CalendarEntity;
-import com.wepat.exception.finance.AlreadyDeleteFinance;
+import com.wepat.exception.finance.AlreadyDeleteFinanceException;
 import com.wepat.finance.FinanceDto;
 import com.wepat.member.repository.MemberRepository;
 import org.slf4j.Logger;
@@ -22,7 +21,7 @@ import java.util.concurrent.ExecutionException;
 public class FinanceRepositoryImpl implements FinanceRepository {
 
     public enum ReturnType {
-        SUCCESS, AlreadyDeleteFinance
+        SUCCESS, AlreadyDeleteFinanceException
     }
     private static Logger logger = LoggerFactory.getLogger(MemberRepository.class);
     private static final String CALENDAR_COLLECTION = "calendar";
@@ -36,7 +35,7 @@ public class FinanceRepositoryImpl implements FinanceRepository {
     }
 
     @Override
-    public void addFinance(String calendarId, FinanceDto financeDto) throws ExecutionException, InterruptedException {
+    public void addFinanceById(String calendarId, FinanceDto financeDto) throws ExecutionException, InterruptedException {
         CollectionReference calCollection = FirestoreClient.getFirestore().collection(CALENDAR_COLLECTION);
 
         DocumentReference calDocRef = calCollection.document(calendarId);
@@ -57,22 +56,7 @@ public class FinanceRepositoryImpl implements FinanceRepository {
                 return financeDto;
             }
         }
-        throw new AlreadyDeleteFinance();
-//        ApiFuture<?> objectApiFuture = FirestoreClient.getFirestore().runTransaction(transaction -> {
-//            DocumentSnapshot calSnapshot = transaction.get(calDocRef).get();
-//            List<FinanceDto> financeList = calSnapshot.toObject(CalendarEntity.class).getFinanceList();
-//            for (FinanceDto finance : financeList) {
-//                if (finance.getFinanceId().equals(financeId)) {
-//                    return finance;
-//                }
-//            }
-//            return ReturnType.AlreadyDeleteFinance;
-//        });
-//        if (objectApiFuture.get() == ReturnType.AlreadyDeleteFinance) {
-//            throw new AlreadyDeleteFinance();
-//        } else {
-//            return (FinanceDto) objectApiFuture.get();
-//        }
+        throw new AlreadyDeleteFinanceException();
     }
 
     @Override
@@ -80,7 +64,7 @@ public class FinanceRepositoryImpl implements FinanceRepository {
         CollectionReference calCollection = FirestoreClient.getFirestore().collection(CALENDAR_COLLECTION);
 
         DocumentReference calDocRef = calCollection.document(calendarId);
-        ApiFuture<?> returnTypeApiFuture = FirestoreClient.getFirestore().runTransaction(transaction -> {
+        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
             DocumentSnapshot calSnapshot = transaction.get(calDocRef).get();
             List<FinanceDto> financeList = calSnapshot.toObject(CalendarEntity.class).getFinanceList();
             for (FinanceDto finance : financeList) {
@@ -93,10 +77,10 @@ public class FinanceRepositoryImpl implements FinanceRepository {
                     return ReturnType.SUCCESS;
                 }
             }
-            return ReturnType.AlreadyDeleteFinance;
+            return ReturnType.AlreadyDeleteFinanceException;
         });
-        if (returnTypeApiFuture.get() == ReturnType.AlreadyDeleteFinance) {
-            throw new AlreadyDeleteFinance();
+        if (future.get() == ReturnType.AlreadyDeleteFinanceException) {
+            throw new AlreadyDeleteFinanceException();
         }
     }
 
@@ -105,7 +89,7 @@ public class FinanceRepositoryImpl implements FinanceRepository {
         CollectionReference calCollection = FirestoreClient.getFirestore().collection(CALENDAR_COLLECTION);
 
         DocumentReference calDocRef = calCollection.document(calendarId);
-        ApiFuture<?> returnTypeApiFuture = FirestoreClient.getFirestore().runTransaction(transaction -> {
+        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
             DocumentSnapshot calSnapshot = transaction.get(calDocRef).get();
             List<FinanceDto> financeList = calSnapshot.toObject(CalendarEntity.class).getFinanceList();
             for (FinanceDto financeDto : financeList) {
@@ -115,10 +99,10 @@ public class FinanceRepositoryImpl implements FinanceRepository {
                     return ReturnType.SUCCESS;
                 }
             }
-            return ReturnType.AlreadyDeleteFinance;
+            return ReturnType.AlreadyDeleteFinanceException;
         });
-        if (returnTypeApiFuture.get() == ReturnType.AlreadyDeleteFinance) {
-            throw new AlreadyDeleteFinance();
+        if (future.get() == ReturnType.AlreadyDeleteFinanceException) {
+            throw new AlreadyDeleteFinanceException();
         }
     }
 }

@@ -4,8 +4,8 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import com.wepat.exception.DataNotExitsException;
-import com.wepat.exception.photo.AlreadyDeleteImage;
-import com.wepat.exception.photo.NotExistImage;
+import com.wepat.exception.photo.AlreadyDeleteImageException;
+import com.wepat.exception.photo.NotExistImageException;
 import com.wepat.member.repository.MemberRepository;
 import com.wepat.photo.CommentDto;
 import com.wepat.photo.PhotoDto;
@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutionException;
 public class PhotoRepositoryImpl implements PhotoRepository {
 
     public enum ReturnType {
-        SUCCESS, NotExistImage, AlreadyDeleteImage
+        SUCCESS, NotExistImageException, AlreadyDeleteImageException
     }
     private static final Logger logger = LoggerFactory.getLogger(MemberRepository.class);
     private static final String PHOTO_COLLECTION = "photo";
@@ -43,7 +43,7 @@ public class PhotoRepositoryImpl implements PhotoRepository {
         if (photoSnapshot.exists()) {
             return photoSnapshot.toObject(PhotoDto.class);
         } else {
-            throw new NotExistImage();
+            throw new NotExistImageException();
         }
     }
 
@@ -71,11 +71,11 @@ public class PhotoRepositoryImpl implements PhotoRepository {
                 transaction.delete(photoDocRef);
                 return ReturnType.SUCCESS;
             } else {
-                return ReturnType.AlreadyDeleteImage;
+                return ReturnType.AlreadyDeleteImageException;
             }
         });
-        if (future.get() == ReturnType.AlreadyDeleteImage) {
-            throw new AlreadyDeleteImage();
+        if (future.get() == ReturnType.AlreadyDeleteImageException) {
+            throw new AlreadyDeleteImageException();
         }
     }
 
@@ -93,11 +93,11 @@ public class PhotoRepositoryImpl implements PhotoRepository {
                 transaction.update(photoDocRef, "snsDate", snsDate);
                 return ReturnType.SUCCESS;
             } else {
-                return ReturnType.NotExistImage;
+                return ReturnType.NotExistImageException;
             }
         });
-        if (future.get() == ReturnType.NotExistImage) {
-            throw new NotExistImage();
+        if (future.get() == ReturnType.NotExistImageException) {
+            throw new NotExistImageException();
         }
     }
 
@@ -117,11 +117,11 @@ public class PhotoRepositoryImpl implements PhotoRepository {
                 transaction.update(photoDocRef, "commentList", commentList);
                 return ReturnType.SUCCESS;
             } else {
-                return ReturnType.NotExistImage;
+                return ReturnType.NotExistImageException;
             }
         });
-        if (future.get() == ReturnType.NotExistImage) {
-            throw new NotExistImage();
+        if (future.get() == ReturnType.NotExistImageException) {
+            throw new NotExistImageException();
         }
     }
     // 댓글 삭제
@@ -143,11 +143,11 @@ public class PhotoRepositoryImpl implements PhotoRepository {
                 transaction.update(photoDocRef, "commentList", commentList);
                 return ReturnType.SUCCESS;
             } else {
-                return ReturnType.NotExistImage;
+                return ReturnType.NotExistImageException;
             }
         });
-        if (future.get() == ReturnType.NotExistImage) {
-            throw new NotExistImage();
+        if (future.get() == ReturnType.NotExistImageException) {
+            throw new NotExistImageException();
         }
     }
 
@@ -165,6 +165,7 @@ public class PhotoRepositoryImpl implements PhotoRepository {
 
                 for (CommentDto comment : commentList) {
                     if ((comment.getCommentId()).equals(commentId)) {
+                        comment.setDate(commentDto.getDate());
                         comment.setContent(commentDto.getContent());
                         break;
                     }
@@ -172,10 +173,10 @@ public class PhotoRepositoryImpl implements PhotoRepository {
                 transaction.update(photoDocRef, "commentList", commentList);
                 return ReturnType.SUCCESS;
             } else {
-                return ReturnType.NotExistImage;
+                return ReturnType.NotExistImageException;
             }
         });
-        if (future.get() == ReturnType.NotExistImage) {
+        if (future.get() == ReturnType.NotExistImageException) {
             throw new DataNotExitsException();
         }
     }

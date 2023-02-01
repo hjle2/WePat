@@ -1,8 +1,8 @@
 package com.wepat.pet.controller;
 
-import com.wepat.exception.pet.AlreadyDeletePet;
+import com.wepat.exception.pet.AlreadyDeletePetException;
 import com.wepat.exception.pet.NotExistCalendarException;
-import com.wepat.exception.pet.NotExistPet;
+import com.wepat.exception.pet.NotExistPetException;
 import com.wepat.pet.PetDto;
 import com.wepat.pet.WeightDto;
 import com.wepat.pet.service.PetService;
@@ -14,8 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.ApiOperation;
-
-import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/pet")
@@ -66,8 +64,8 @@ public class PetController {
         try {
             petService.modifyPetById(petId, petDto);
             return new ResponseEntity<>("수정 성공", HttpStatus.ACCEPTED);
-        } catch (NotExistPet e) {
-            throw new NotExistPet();
+        } catch (NotExistPetException e) {
+            throw new NotExistPetException();
         } catch (Exception e) {
             throw new RuntimeException();
         }
@@ -79,8 +77,8 @@ public class PetController {
         try {
             petService.addPetWeightById(petId, weightDto);
             return new ResponseEntity<>("몸무게 추가 성공", HttpStatus.OK);
-        } catch (NotExistPet e) {
-            throw new NotExistPet();
+        } catch (NotExistPetException e) {
+            throw new NotExistPetException();
         } catch (Exception e) {
             throw new RuntimeException();
         }
@@ -92,8 +90,8 @@ public class PetController {
         try {
             petService.modifyPetWeight(petId, weightDto);
             return new ResponseEntity<>("수정 성공", HttpStatus.ACCEPTED);
-        } catch (NotExistPet e) {
-            throw new NotExistPet();
+        } catch (NotExistPetException e) {
+            throw new NotExistPetException();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -105,8 +103,8 @@ public class PetController {
         try {
             petService.deletePetById(petId);
             return new ResponseEntity<>("삭제 성공", HttpStatus.OK);
-        } catch (AlreadyDeletePet e) {
-            throw new AlreadyDeletePet();
+        } catch (AlreadyDeletePetException e) {
+            throw new AlreadyDeletePetException();
         } catch (Exception e) {
             throw new RuntimeException();
         }

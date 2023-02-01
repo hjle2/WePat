@@ -3,8 +3,8 @@ package com.wepat.sns.repository;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
-import com.wepat.exception.sns.AlreadyReportImage;
-import com.wepat.exception.sns.NotExistImage;
+import com.wepat.exception.sns.AlreadyReportImageException;
+import com.wepat.exception.sns.NotExistImageException;
 import com.wepat.member.repository.MemberRepository;
 import com.wepat.photo.PhotoDto;
 import com.wepat.photo.PhotoEntity;
@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutionException;
 public class SNSRepositoryImpl implements SNSRepository {
 
     public enum ReturnType {
-        SUCCESS, AlreadyReportImage, NotExistImage
+        SUCCESS, AlreadyReportImageException, NotExistImageException
     }
 
     private final static Logger logger = LoggerFactory.getLogger(MemberRepository.class);
@@ -57,11 +57,11 @@ public class SNSRepositoryImpl implements SNSRepository {
                 transaction.update(photoDocRef, "like", like + 1);
                 return ReturnType.SUCCESS;
             } else {
-                return ReturnType.NotExistImage;
+                return ReturnType.NotExistImageException;
             }
         });
-        if (future.get() == ReturnType.NotExistImage) {
-            throw new NotExistImage();
+        if (future.get() == ReturnType.NotExistImageException) {
+            throw new NotExistImageException();
         }
     }
 
@@ -75,20 +75,20 @@ public class SNSRepositoryImpl implements SNSRepository {
             if (photoSnapshot.exists()) {
                 List<String> reportIdList = photoSnapshot.toObject(PhotoEntity.class).getReportIdList();
                 if (reportIdList.contains(memberId)) {
-                    return ReturnType.AlreadyReportImage;
+                    return ReturnType.AlreadyReportImageException;
                 } else {
                     reportIdList.add(memberId);
                     transaction.update(photoDocRef, "reportIdList", reportIdList);
                     return ReturnType.SUCCESS;
                 }
             } else {
-                return ReturnType.NotExistImage;
+                return ReturnType.NotExistImageException;
             }
         });
-        if (future.get() == ReturnType.AlreadyReportImage) {
-            throw new AlreadyReportImage();
-        } else if (future.get() == ReturnType.NotExistImage) {
-            throw new NotExistImage();
+        if (future.get() == ReturnType.AlreadyReportImageException) {
+            throw new AlreadyReportImageException();
+        } else if (future.get() == ReturnType.NotExistImageException) {
+            throw new NotExistImageException();
         }
     }
 
@@ -115,11 +115,11 @@ public class SNSRepositoryImpl implements SNSRepository {
                 transaction.update(photoDocRef, "block", true);
                 return ReturnType.SUCCESS;
             } else {
-                return ReturnType.NotExistImage;
+                return ReturnType.NotExistImageException;
             }
         });
-        if (future.get() == ReturnType.NotExistImage) {
-            throw new NotExistImage();
+        if (future.get() == ReturnType.NotExistImageException) {
+            throw new NotExistImageException();
         }
     }
 }

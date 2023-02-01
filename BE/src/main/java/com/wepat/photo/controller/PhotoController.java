@@ -1,7 +1,7 @@
 package com.wepat.photo.controller;
 
-import com.wepat.exception.photo.AlreadyDeleteImage;
-import com.wepat.exception.photo.NotExistImage;
+import com.wepat.exception.photo.AlreadyDeleteImageException;
+import com.wepat.exception.photo.NotExistImageException;
 import com.wepat.photo.CommentDto;
 import com.wepat.photo.PhotoDto;
 import com.wepat.photo.service.PhotoService;
@@ -41,8 +41,8 @@ public class PhotoController {
     public ResponseEntity<?> getPhotoById(@PathVariable("photoid") String photoId) {
         try {
             return new ResponseEntity<>(photoService.getPhotoById(photoId), HttpStatus.OK);
-        } catch (NotExistImage e) {
-            throw new NotExistImage();
+        } catch (NotExistImageException e) {
+            throw new NotExistImageException();
         } catch (Exception e) {
             throw new RuntimeException();
         }
@@ -63,8 +63,8 @@ public class PhotoController {
         try {
             photoService.deletePhoto(photoId);
             return new ResponseEntity<>("이미지 삭제 성공", HttpStatus.OK);
-        } catch (AlreadyDeleteImage e) {
-            throw new AlreadyDeleteImage();
+        } catch (AlreadyDeleteImageException e) {
+            throw new AlreadyDeleteImageException();
         } catch (Exception e) {
             throw new RuntimeException();
         }
@@ -78,8 +78,8 @@ public class PhotoController {
         try {
             photoService.uploadSNSByPhotoId(photoId, snsDate);
             return new ResponseEntity<>("업로드 성공", HttpStatus.OK);
-        } catch (NotExistImage e) {
-            throw new NotExistImage();
+        } catch (NotExistImageException e) {
+            throw new NotExistImageException();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -94,8 +94,8 @@ public class PhotoController {
         try {
             photoService.addCommentByPhotoId(photoId, commentDto);
             return new ResponseEntity<>("댓글 작성 성공", HttpStatus.OK);
-        } catch (NotExistImage e) {
-            throw new NotExistImage();
+        } catch (NotExistImageException e) {
+            throw new NotExistImageException();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -110,8 +110,8 @@ public class PhotoController {
         try {
             photoService.deleteCommentByPhotoId(photoId, commentId);
             return new ResponseEntity<>("댓글 삭제 성공", HttpStatus.OK);
-        } catch (NotExistImage e) {
-            throw new NotExistImage();
+        } catch (NotExistImageException e) {
+            throw new NotExistImageException();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -125,8 +125,8 @@ public class PhotoController {
         try {
             photoService.updateCommentByPhotoId(photoId, commentId, commentDto);
             return new ResponseEntity<>("댓글 수정 완료", HttpStatus.ACCEPTED);
-        } catch (NotExistImage e) {
-            throw new NotExistImage();
+        } catch (NotExistImageException e) {
+            throw new NotExistImageException();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

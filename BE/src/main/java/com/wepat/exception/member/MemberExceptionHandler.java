@@ -43,15 +43,15 @@ public class MemberExceptionHandler {
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(NotExistMember.class)
-    public ResponseEntity<?> NotExistMember(NotExistMember e) {
-        ErrorDto errorDto = new ErrorDto("NotExistMember", "존재하지 않는 회원입니다");
+    @ExceptionHandler(NotExistMemberException.class)
+    public ResponseEntity<?> NotExistMember(NotExistMemberException e) {
+        ErrorDto errorDto = new ErrorDto("NotExistMemberException", "존재하지 않는 회원입니다");
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(BlockMember.class)
-    public ResponseEntity<?> BlockMember(BlockMember e) {
-        ErrorDto errorDto = new ErrorDto("BlockMember", "차단된 계정입니다.");
+    @ExceptionHandler(BlockMemberException.class)
+    public ResponseEntity<?> BlockMember(BlockMemberException e) {
+        ErrorDto errorDto = new ErrorDto("BlockMemberException", "차단된 계정입니다.");
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
@@ -60,9 +60,9 @@ public class MemberExceptionHandler {
         ErrorDto errorDto = new ErrorDto("NotExistCalendarException", "존재하지 않는 코드입니다.");
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
-    @ExceptionHandler(AlreadyAloneCalendar.class)
-    public ResponseEntity<?> AlreadyAloneCalendar(AlreadyAloneCalendar e) {
-        ErrorDto errorDto = new ErrorDto("AlreadyAloneCalendar", "이미 혼자 사용중인 캘린더입니다.");
+    @ExceptionHandler(AlreadyAloneCalendarException.class)
+    public ResponseEntity<?> AlreadyAloneCalendar(AlreadyAloneCalendarException e) {
+        ErrorDto errorDto = new ErrorDto("AlreadyAloneCalendarException", "이미 혼자 사용중인 캘린더입니다.");
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
