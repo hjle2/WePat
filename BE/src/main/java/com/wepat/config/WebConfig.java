@@ -12,7 +12,6 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         // login auth
         registry.addInterceptor(new JwtIntercepptor())
-//                .addPathPatterns("/**")
                 .addPathPatterns("/member/**")
                 .addPathPatterns("/schedule/**")
                 .addPathPatterns("/calendar/**")
@@ -20,16 +19,13 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/sns/**")
                 .addPathPatterns("/photo/**")
                 .addPathPatterns("/finance/**")
-//                .excludePathPatterns("/swagger-resource/**")
-//                .excludePathPatterns("/swagger-ui/**")
-//                .excludePathPatterns("/v2/api-docs")
-                .excludePathPatterns("/member/signup")
                 .excludePathPatterns("/member/signin")
                 .excludePathPatterns("/member/logout")
-                .excludePathPatterns("/member/findpwd")
-                .excludePathPatterns("/member/findid")
+                .excludePathPatterns("/member/signup")
                 .excludePathPatterns("/member/socialsignup")
-                .excludePathPatterns("/member/socialsignin");
+                .excludePathPatterns("/member/socialsignin")
+                .excludePathPatterns("/member/findid")
+                .excludePathPatterns("/member/findpwd");
 
     }
 }
