@@ -78,8 +78,8 @@ public class MemberController {
             throw new IdWriteException(e.getMessage());
         } catch (BlockMemberException e) {
             throw new BlockMemberException(e.getMessage());
-        } catch (NotExistMemberException e) {
-            throw new NotExistMemberException(e.getMessage());
+        } catch (PwdWriteException e) {
+            throw new PwdWriteException(e.getMessage());
         } catch (Exception e) {
             throw new RuntimeException();
         }
