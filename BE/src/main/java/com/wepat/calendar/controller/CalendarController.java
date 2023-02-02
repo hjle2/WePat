@@ -23,14 +23,14 @@ public class CalendarController {
     public ResponseEntity<?> getScheduleByMonth(@PathVariable("calendarid") String calendarId,
                                                 @PathVariable("date") String date) {
         calService.getScheduleByMonth(calendarId, date);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
     @PostMapping("/add/{calendarid}/{date}")
     @ApiOperation(value = "일정 추가", notes = "일정 추가 버튼 클릭 시, 일정 추가", response = HttpStatus.class)
     public ResponseEntity<?> addSchedule(@PathVariable("date") String date,
                                          @RequestBody ScheduleDto scheduleDto) {
         calService.addSchedule(scheduleDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/list/{calendarid}/{date}")
@@ -38,7 +38,7 @@ public class CalendarController {
     public ResponseEntity<?> getScheduleByDate(@PathVariable("calendarid") String calendarId,
                                                @PathVariable("date") String writtenDate) {
         calService.getScheduleByDate(calendarId, writtenDate);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/detail/{calendarid}/{date}")
@@ -46,20 +46,20 @@ public class CalendarController {
     public ResponseEntity<?> getDetailScheduleByDate(@PathVariable("calendarid") String calendarId,
                                                      @PathVariable("date") String writtenDate) {
         calService.getScheduleDetailByDate(calendarId, writtenDate);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
     @PostMapping("/modify/{calendarid}/{date}")
     @ApiOperation(value = "일정 변경", response = HttpStatus.class)
     public ResponseEntity<?> modifySchedule(@RequestBody ScheduleDto scheduleDto,
                                             @PathVariable("date") String writtenDate) {
         calService.modifySchedule(scheduleDto, writtenDate);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
     @PostMapping("/delete/{calendarid}/{date}")
     @ApiOperation(value = "일정 삭제", response = HttpStatus.class)
     public ResponseEntity<?> deleteSchedule(@PathVariable("calendarid") String calendarId,
                                             @PathVariable("date") String writtenDate) {
         calService.deleteSchedule(calendarId, writtenDate);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 }
