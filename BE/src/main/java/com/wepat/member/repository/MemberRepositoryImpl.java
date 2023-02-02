@@ -258,15 +258,33 @@ public class MemberRepositoryImpl implements MemberRepository {
     public void changePwdToRandom(String randomPassword, String memberId) throws ExecutionException, InterruptedException {
         CollectionReference memCollection = FirestoreClient.getFirestore().collection(MEMBER_COLLECTION);
 
-        boolean exists = memCollection.document(memberId).get().get().exists();
-        if (exists) {
+        final DocumentReference memDocRef = memCollection.document(memberId);
+
+        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
+
+            DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
+            MemberDto memberDto = transaction.get(memDocRef).get().toObject(MemberDto.class);
+
+            if (!memSnapshot.exists()) { // 멤버ID가 없을 경우
+                return ReturnType.IdWriteException;
+
+            } else if (memSnapshot.toObject(MemberEntity.class).isBlock()) { //차단된 계정
+                return ReturnType.BlockMemberException;
+
+            } else{
+                return memberDto;
+            }
+        });
+        // 트랜잭션 실행 결과를 반환
+        if (future.get() == ReturnType.IdWriteException) {
+            throw new IdWriteException();
+        } else if (future.get() == ReturnType.BlockMemberException) {
+            throw new BlockMemberException();
+        } else {
             MemberEntity memberEntity = memCollection.document(memberId).get().get().toObject(MemberEntity.class);
             memberEntity.setPwd(randomPassword);
             memCollection.document(memberId).set(memberEntity);
-        } else {
-            throw new NotExistMemberException();
         }
-
     }
 
     @Override

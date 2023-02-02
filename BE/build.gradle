@@ -75,7 +75,7 @@ dependencies {
 	// commons io for gcp test
 	implementation 'commons-io:commons-io:2.11.0'
 
-	// alarm
+	// sse
 	implementation("org.infinispan:infinispan-core:12.0.1.Final")
 	implementation("org.infinispan:infinispan-commons:12.0.1.Final")
 	implementation("org.infinispan:infinispan-marshaller-protostuff:12.0.1.Final")
