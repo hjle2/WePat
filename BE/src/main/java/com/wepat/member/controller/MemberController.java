@@ -90,7 +90,7 @@ public class MemberController {
     public ResponseEntity<?> signUp(MemberDto member) {
         try {
             memberService.signUp(member);
-            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+            return ResponseEntity.accepted().build();
         } catch (ExistEmailException e) {
             throw new ExistEmailException(e.getMessage());
         } catch (ExistIdException e) {
@@ -107,7 +107,7 @@ public class MemberController {
     public ResponseEntity<?> socialSignUp(@RequestBody MemberDto member) {
         try {
             memberService.signUp(member);
-            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+            return ResponseEntity.accepted().build();
         } catch (ExistEmailException e) {
             throw new ExistEmailException(e.getMessage());
         } catch (ExistIdException e) {
@@ -135,7 +135,7 @@ public class MemberController {
     public ResponseEntity<?> findPwd(String memberId, String email) throws ExecutionException, InterruptedException {
         try {
             memberService.findPwd(memberId, email);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return ResponseEntity.ok().build();
         } catch (NotExistMemberException e) {
             throw new NotExistMemberException(e.getMessage());
         } catch (Exception e) {
@@ -148,7 +148,7 @@ public class MemberController {
         try {
             String memberId = request.getSession().getAttribute("memberId").toString();
             memberService.modifyPwdById(memberId, pwd);
-            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+            return ResponseEntity.accepted().build();
         } catch (NotExistMemberException e) {
             throw new NotExistMemberException(e.getMessage());
         } catch (Exception e) {
@@ -173,7 +173,7 @@ public class MemberController {
         try {
             String memberId = request.getSession().getAttribute("memberId").toString();
             memberService.modifyMemberById(memberId, nickName);
-            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+            return ResponseEntity.accepted().build();
         } catch (NotExistMemberException e) {
             throw new NotExistMemberException(e.getMessage());
         } catch (Exception e) {
@@ -186,7 +186,7 @@ public class MemberController {
         try {
             String memberId = request.getSession().getAttribute("memberId").toString();
             memberService.deleteMember(memberId);
-            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+            return ResponseEntity.accepted().build();
         } catch (Exception e) {
             throw new RuntimeException();
         }
@@ -197,7 +197,7 @@ public class MemberController {
         try {
             String memberId = request.getSession().getAttribute("memberId").toString();
             memberService.logout(memberId);
-            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+            return ResponseEntity.accepted().build();
         } catch (Exception e) {
             throw new RuntimeException();
         }
