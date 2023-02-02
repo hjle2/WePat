@@ -4,10 +4,6 @@ import com.wepat.photo.CommentDto;
 import io.swagger.annotations.ApiParam;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.core.parameters.P;
-
-import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -21,7 +17,7 @@ public class ScheduleDto {
     @ApiParam(value = "카테고리")
     private String category;
     @ApiParam(value = "달력에 표시 여부")
-    private boolean show;
+    private boolean display;
     @ApiParam(value = "펫ID(PK)", required = true)
     private String petId;
     @ApiParam(value = "일정 시작일")
@@ -30,6 +26,11 @@ public class ScheduleDto {
     private String endDate;
     @ApiParam(value = "알람 여부")
     private int alarm;
+    // nick name
+    @ApiParam(value = "일정 완료자")
+    private String manager;
+    @ApiParam(value = "일정 수행 여부")
+    private boolean completed = false;
 
     @ApiParam(value = "반복 주기")
     private int repeatUnit;

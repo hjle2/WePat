@@ -15,7 +15,7 @@ public class ScheduleEntity {
     @ApiParam(value = "카테고리")
     private String category;
     @ApiParam(value = "달력에 표시 여부")
-    private boolean show;
+    private boolean diplay;
     @ApiParam(value = "펫ID(PK)", required = true)
     private String petId;
     @ApiParam(value = "반복여부")
