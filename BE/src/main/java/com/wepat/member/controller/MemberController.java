@@ -3,6 +3,7 @@ package com.wepat.member.controller;
 import com.wepat.exception.member.*;
 import com.wepat.member.MemberDto;
 import com.wepat.member.service.MemberService;
+import com.wepat.security.OpenCrypt;
 import com.wepat.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -31,12 +32,13 @@ public class MemberController {
     public ResponseEntity<?> signIn(String memberId, String pwd) {
         try {
             Map<String, String> resultMap = new HashMap<>();
+            pwd=(OpenCrypt.getSHA256(pwd,"salt"));
             MemberDto memberResult = memberService.signIn(memberId, pwd);//유저가 로그인 가능한 유저인지 확인
             String accessToken = null;
             String refreshToken = null;//유저가 로그인 되면 토큰을 생성하여 저장할 String
             if(memberResult != null){//로그인에서 객체를 받아왔다.
-                accessToken = jwtUtil.createAccessToken("memberId", memberId);
-                refreshToken = jwtUtil.createRefreshToken("memberId", memberId);
+                accessToken = jwtUtil.createAccessToken("AccessToken", memberId);
+                refreshToken = jwtUtil.createRefreshToken("RefreshToken", memberId);
                 memberService.saveRefreshToken(memberId, refreshToken);
 
                 resultMap.put("access-token", accessToken);
@@ -64,8 +66,8 @@ public class MemberController {
             String accessToken = null;
             String refreshToken = null;//유저가 로그인 되면 토큰을 생성하여 저장할 String
             if(memberResult != null){//로그인에서 객체를 받아왔다.
-                accessToken = jwtUtil.createAccessToken("memberId", memberId);
-                refreshToken = jwtUtil.createRefreshToken("memberId", memberId);
+                accessToken = jwtUtil.createAccessToken("AccessToken", memberId);
+                refreshToken = jwtUtil.createRefreshToken("RefreshToken", memberId);
                 memberService.saveRefreshToken(memberId, refreshToken);
 
                 resultMap.put("access-token", accessToken);
@@ -89,8 +91,9 @@ public class MemberController {
     @ApiOperation(value = "회원가입", notes = "정보를 받아 회원가입 시도한다.", response = MemberDto.class)
     public ResponseEntity<?> signUp(MemberDto member) {
         try {
+            member.setPwd(OpenCrypt.getSHA256(member.getPwd(),"salt"));
             memberService.signUp(member);
-            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+            return ResponseEntity.accepted().build();
         } catch (ExistEmailException e) {
             throw new ExistEmailException(e.getMessage());
         } catch (ExistIdException e) {
@@ -106,8 +109,8 @@ public class MemberController {
     @ApiOperation(value = "SNS회원가입", notes = "SNS에서 정보를 받아 회원가입 시도한다.", response = MemberDto.class)
     public ResponseEntity<?> socialSignUp(MemberDto member) {
         try {
-            memberService.socialSignUp(member);
-            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+            memberService.signUp(member);
+            return ResponseEntity.accepted().build();
         } catch (ExistEmailException e) {
             throw new ExistEmailException(e.getMessage());
         } catch (ExistIdException e) {
@@ -133,7 +136,7 @@ public class MemberController {
     public ResponseEntity<?> findPwd(String memberId, String email) throws ExecutionException, InterruptedException {
         try {
             memberService.findPwd(memberId, email);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return ResponseEntity.ok().build();
         } catch (NotExistMemberException e) {
             throw new NotExistMemberException(e.getMessage());
         } catch (Exception e) {
@@ -146,7 +149,7 @@ public class MemberController {
         try {
             String memberId = request.getSession().getAttribute("memberId").toString();
             memberService.modifyPwdById(memberId, pwd);
-            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+            return ResponseEntity.accepted().build();
         } catch (NotExistMemberException e) {
             throw new NotExistMemberException(e.getMessage());
         } catch (Exception e) {
@@ -171,7 +174,7 @@ public class MemberController {
         try {
             String memberId = request.getSession().getAttribute("memberId").toString();
             memberService.modifyMemberById(memberId, nickName);
-            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+            return ResponseEntity.accepted().build();
         } catch (NotExistMemberException e) {
             throw new NotExistMemberException(e.getMessage());
         } catch (Exception e) {
@@ -184,7 +187,7 @@ public class MemberController {
         try {
             String memberId = request.getSession().getAttribute("memberId").toString();
             memberService.deleteMember(memberId);
-            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+            return ResponseEntity.accepted().build();
         } catch (Exception e) {
             throw new RuntimeException();
         }
@@ -195,7 +198,7 @@ public class MemberController {
         try {
             String memberId = request.getSession().getAttribute("memberId").toString();
             memberService.logout(memberId);
-            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+            return ResponseEntity.accepted().build();
         } catch (Exception e) {
             throw new RuntimeException();
         }
@@ -231,7 +234,7 @@ public class MemberController {
     @PostMapping("/gettoken")
     public ResponseEntity<?> getAccessToken(HttpServletRequest request, String refreshToken) {
         String memberId = request.getSession().getAttribute("memberId").toString();
-        String accessToken = jwtUtil.createAccessToken("memberId", memberId);
+        String accessToken = jwtUtil.createAccessToken("AccessToken", memberId);
         return new ResponseEntity<>(accessToken, HttpStatus.OK);
     }
 

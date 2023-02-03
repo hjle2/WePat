@@ -31,7 +31,7 @@ public class ScheduleController {
     public ResponseEntity<?> addSchedule(@PathVariable("calendarid") String calendarId,
                                          @RequestBody ScheduleDto scheduleDto) {
         scheduleService.addSchedule(calendarId, scheduleDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/list/{calendarid}")
@@ -52,7 +52,7 @@ public class ScheduleController {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
     @PostMapping("/modify/{calendarid}/{scheduleid")
     @ApiOperation(value = "일정 변경", response = HttpStatus.class)
@@ -66,13 +66,13 @@ public class ScheduleController {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
     @PostMapping("/delete/{calendarid}")
     @ApiOperation(value = "일정 삭제", response = HttpStatus.class)
     public ResponseEntity<?> deleteSchedule(@PathVariable("calendarid") String calendarId,
                                             @RequestParam("date") String writtenDate) {
         scheduleService.deleteSchedule(calendarId, writtenDate);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 }
