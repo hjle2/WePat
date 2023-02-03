@@ -22,6 +22,8 @@ public class ScheduleDto {
     private String petId;
     @ApiParam(value = "일정 시작일")
     private String startDate;
+    @ApiParam(value = "일정 입력/수정/완료 처리 날짜")
+    private String nowDate;
     @ApiParam(value = "일정 종료일")
     private String endDate;
     @ApiParam(value = "알람 여부")

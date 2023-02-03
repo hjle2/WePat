@@ -3,15 +3,13 @@ package com.wepat.member.repository;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
-import com.wepat.calendar.CalendarEntity;
+import com.wepat.schedule.CalendarEntity;
 import com.wepat.exception.calendar.AloneScheduleException;
 import com.wepat.member.MemberDto;
 import com.wepat.member.MemberEntity;
 import com.wepat.pet.PetEntity;
 import com.wepat.photo.PhotoEntity;
 import com.wepat.exception.member.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.concurrent.ExecutionException;
@@ -178,8 +176,8 @@ public class MemberRepositoryImpl implements MemberRepository {
             DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
             MemberDto memberDto = transaction.get(memDocRef).get().toObject(MemberDto.class);
 
-            System.out.println(memberDto.getPwd());
-            System.out.println(pwd);
+//            System.out.println(memberDto.getPwd());
+//            System.out.println(pwd);
 
             if (!memSnapshot.exists()) { // 멤버ID가 없을 경우
                 return ReturnType.IdWriteException;

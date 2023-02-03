@@ -80,12 +80,14 @@ public class JwtUtil {
         return value;
     }
 
-    public static String getUserId(String token) {
+    public static String getUserId
+            (String token) {
         Claims jws = Jwts.parser()
                 .setSigningKey(SALT.getBytes())
                 .parseClaimsJws(token).getBody();
 
-        return jws.get("memberId").toString();
+        String memberId = jws.get("memberId").toString();
+        return memberId;
     }
     public static String getUserIdByHttpRequest(HttpServletRequest request) {
         String token = request.getHeader("token");

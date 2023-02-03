@@ -1,4 +1,4 @@
-package com.wepat.calendar;
+package com.wepat.schedule;
 
 import com.wepat.finance.FinanceDto;
 import io.swagger.annotations.ApiParam;

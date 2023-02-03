@@ -3,16 +3,13 @@ package com.wepat.pet.repository;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
-import com.wepat.calendar.CalendarEntity;
+import com.wepat.schedule.CalendarEntity;
 import com.wepat.exception.pet.AlreadyDeletePetException;
 import com.wepat.exception.pet.NotExistCalendarException;
 import com.wepat.exception.pet.NotExistPetException;
-import com.wepat.member.repository.MemberRepository;
 import com.wepat.pet.PetDto;
 import com.wepat.pet.PetEntity;
 import com.wepat.pet.WeightDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

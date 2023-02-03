@@ -1,4 +1,4 @@
-package com.wepat.calendar;
+package com.wepat.schedule;
 
 import com.wepat.member.MemberDto;
 import com.wepat.finance.FinanceDto;

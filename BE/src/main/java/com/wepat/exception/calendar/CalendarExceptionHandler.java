@@ -1,6 +1,5 @@
 package com.wepat.exception.calendar;
 
-import com.wepat.calendar.controller.CalendarController;
 import com.wepat.exception.ErrorDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(assignableTypes = {CalendarController.class})
+//@RestControllerAdvice(assignableTypes = {CalendarController.class})
 public class CalendarExceptionHandler {
 
     @ExceptionHandler(NotExistCalendarException.class)
