@@ -1,27 +1,25 @@
-package com.wepat.security;
+package com.wepat.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class OpenCrypt {
-    private static final Logger logger = LoggerFactory.getLogger(OpenCrypt.class);
-
-    public static byte[] getSHA256(String source, String salt) {
+@Slf4j
+public class SecurityUtil {
+    public static String getSHA256(String source, String salt) {
         byte byteData[] = null;
         try{
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update(source.getBytes());
             md.update(salt.getBytes());
             byteData = md.digest();
-            logger.info("원문: "+source+ "   SHA-256: "+
-                    byteData.length+","+byteArrayToHex(byteData));
+            log.info("원문: "+ source + "   SHA-256: "+
+                    byteData.length+"," + byteArrayToHex(byteData));
         }catch(NoSuchAlgorithmException e){
             e.printStackTrace();
         }
-        return byteData;
+        return byteArrayToHex(byteData);
     }
 
 
@@ -40,6 +38,4 @@ public class OpenCrypt {
         }
         return sb.toString();
     }
-
 }
-

@@ -18,9 +18,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/pet")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class PetController {
-    private static final Logger logger = LoggerFactory.getLogger(PetController.class);
     private final PetService petService;
 
     @PostMapping("/add")

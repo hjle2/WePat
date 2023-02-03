@@ -5,11 +5,8 @@ import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import com.wepat.exception.sns.AlreadyReportImageException;
 import com.wepat.exception.sns.NotExistImageException;
-import com.wepat.member.repository.MemberRepository;
 import com.wepat.photo.PhotoDto;
 import com.wepat.photo.PhotoEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -23,7 +20,6 @@ public class SNSRepositoryImpl implements SNSRepository {
         SUCCESS, AlreadyReportImageException, NotExistImageException
     }
 
-    private final static Logger logger = LoggerFactory.getLogger(MemberRepository.class);
     private final static String PHOTO_COLLECTION = "photo";
     private final int WARN_LIMIT = 3;
 

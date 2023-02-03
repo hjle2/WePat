@@ -24,7 +24,6 @@ public class MemberRepositoryImpl implements MemberRepository {
         SUCCESS, ExistEmailException, ExistIdException, NotExistCalendarException, IdWriteException, BlockMemberException,
         PwdWriteException, AlreadyAloneCalendarException, NotExistMemberException
     }
-    private static Logger logger = LoggerFactory.getLogger(MemberRepository.class);
     private static final String CALENDAR_COLLECTION = "calendar";
     private static final String MEMBER_COLLECTION = "member";
     private static final String PET_COLLECTION = "pet";
@@ -178,6 +177,9 @@ public class MemberRepositoryImpl implements MemberRepository {
 
             DocumentSnapshot memSnapshot = transaction.get(memDocRef).get();
             MemberDto memberDto = transaction.get(memDocRef).get().toObject(MemberDto.class);
+
+            System.out.println(memberDto.getPwd());
+            System.out.println(pwd);
 
             if (!memSnapshot.exists()) { // 멤버ID가 없을 경우
                 return ReturnType.IdWriteException;

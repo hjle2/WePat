@@ -6,9 +6,6 @@ import com.wepat.photo.CommentDto;
 import com.wepat.photo.PhotoDto;
 import com.wepat.photo.service.PhotoService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.ApiOperation;
@@ -21,9 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/photo")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class PhotoController {
-    private static final Logger logger = LoggerFactory.getLogger(PhotoController.class);
     private final PhotoService photoService;
     @GetMapping("/{calendarid}")
     @ApiOperation(value = "가족 전체 앨범 이미지 조회", notes = "calendar의 전체 이미지 조회", response = List.class)

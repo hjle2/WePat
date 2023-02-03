@@ -18,9 +18,7 @@ import java.util.concurrent.ExecutionException;
 @RestController
 @RequestMapping("/finance")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class FinanceController {
-    private static final Logger logger = LoggerFactory.getLogger(FinanceController.class);
     private final FinanceService financeService;
 
     @GetMapping("/{calendarid}")

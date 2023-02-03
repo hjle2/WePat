@@ -9,9 +9,6 @@ import com.wepat.calendar.CalendarDto;
 import com.wepat.calendar.CalendarEntity;
 import com.wepat.exception.finance.AlreadyDeleteFinanceException;
 import com.wepat.finance.FinanceDto;
-import com.wepat.member.repository.MemberRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -23,7 +20,6 @@ public class FinanceRepositoryImpl implements FinanceRepository {
     public enum ReturnType {
         SUCCESS, AlreadyDeleteFinanceException
     }
-    private static Logger logger = LoggerFactory.getLogger(MemberRepository.class);
     private static final String CALENDAR_COLLECTION = "calendar";
 
     @Override
