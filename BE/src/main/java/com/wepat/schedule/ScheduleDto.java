@@ -26,9 +26,10 @@ public class ScheduleDto {
     private String endDate;
     @ApiParam(value = "알람 여부")
     private int alarm;
-    // nick name
+    @ApiParam(value = "일정 예정자")
+    private String whoPlanned;
     @ApiParam(value = "일정 완료자")
-    private String manager;
+    private String whoCompleted;
     @ApiParam(value = "일정 수행 여부")
     private boolean completed = false;
 
