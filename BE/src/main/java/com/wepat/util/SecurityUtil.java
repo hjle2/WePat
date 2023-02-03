@@ -19,7 +19,14 @@ public class SecurityUtil {
         }catch(NoSuchAlgorithmException e){
             e.printStackTrace();
         }
-        return byteArrayToHex(byteData);
+        StringBuffer sb = new StringBuffer(byteData.length * 2);
+        String hexNumber;
+        for (int x = 0; x < byteData.length; x++) {
+            hexNumber = "0" + Integer.toHexString(0xff & byteData[x]);
+
+            sb.append(hexNumber.substring(hexNumber.length() - 2));
+        }
+        return sb.toString();
     }
 
 
@@ -38,4 +45,6 @@ public class SecurityUtil {
         }
         return sb.toString();
     }
+
 }
+

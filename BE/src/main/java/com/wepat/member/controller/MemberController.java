@@ -56,7 +56,6 @@ public class MemberController {
     @ApiOperation(value = "로그인 시도",  notes = "로그인 요청을 한다.",response = MemberDto.class)
     public ResponseEntity<?> socialSignIn(String memberId, String pwd) {
         try {
-            pwd = SecurityUtil.getSHA256(pwd,"salt");
             Map<String, String> resultMap = new HashMap<>();
             MemberDto memberResult = memberService.signIn(memberId, pwd);//유저가 로그인 가능한 유저인지 확인
             String accessToken = null;
@@ -87,8 +86,6 @@ public class MemberController {
     @ApiOperation(value = "회원가입", notes = "정보를 받아 회원가입 시도한다.", response = MemberDto.class)
     public ResponseEntity<?> signUp(MemberDto member) {
         try {
-            String pwd = SecurityUtil.getSHA256(member.getPwd(),"salt");
-            member.setPwd(pwd);
             memberService.signUp(member);
             return ResponseEntity.accepted().build();
         } catch (ExistEmailException e) {
@@ -106,8 +103,6 @@ public class MemberController {
     @ApiOperation(value = "회원가입", notes = "정보를 받아 회원가입 시도한다.", response = MemberDto.class)
     public ResponseEntity<?> socialSignUp(@RequestBody MemberDto member) {
         try {
-            String pwd = SecurityUtil.getSHA256(member.getPwd(),"salt");
-            member.setPwd(pwd);
             memberService.signUp(member);
             return ResponseEntity.accepted().build();
         } catch (ExistEmailException e) {
