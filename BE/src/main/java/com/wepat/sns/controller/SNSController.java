@@ -5,6 +5,7 @@ import com.wepat.exception.sns.AlreadyReportImageException;
 import com.wepat.photo.PhotoDto;
 import com.wepat.pet.controller.PetController;
 import com.wepat.sns.service.SNSService;
+import com.wepat.util.JwtUtil;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -19,10 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/sns")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class SNSController {
-    private static final Logger logger = LoggerFactory.getLogger(PetController.class);
-
     private final SNSService snsService;
 
     @GetMapping("/")
@@ -63,7 +61,7 @@ public class SNSController {
     @ApiOperation(value = "신고 클릭")
     public ResponseEntity<?> reportSNSByPhotoId(HttpServletRequest request, @PathVariable("photoid") String photoId) {
         try {
-            String memberId = request.getSession().getAttribute("memberId").toString();
+            String memberId = JwtUtil.getUserIdByHttpRequest(request);
             snsService.reportSNSByPhotoId(photoId, memberId);
             return new ResponseEntity<>("신고 성공", HttpStatus.ACCEPTED);
         } catch (AlreadyReportImageException e) {

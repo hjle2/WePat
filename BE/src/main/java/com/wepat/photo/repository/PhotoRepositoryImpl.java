@@ -23,7 +23,6 @@ public class PhotoRepositoryImpl implements PhotoRepository {
     public enum ReturnType {
         SUCCESS, NotExistImageException, AlreadyDeleteImageException
     }
-    private static final Logger logger = LoggerFactory.getLogger(MemberRepository.class);
     private static final String PHOTO_COLLECTION = "photo";
     private final String firstAddDate = "0";
     private final int reset = 0;

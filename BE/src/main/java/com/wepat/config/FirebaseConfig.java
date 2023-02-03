@@ -14,16 +14,15 @@ public class FirebaseConfig  {
     @PostConstruct
     public void init(){
         try{
-            ClassPathResource serviceAccount = new ClassPathResource("serviceAccountKey.json");
+            ClassPathResource serviceAccount = new ClassPathResource("firebase_key.json");
 //            FileInputStream serviceAccount =
 //                    new FileInputStream("src/main/resources/serviceAccountKey.json");
             FirebaseOptions options = new FirebaseOptions.Builder()
 //                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount.getInputStream()))
-                    .setDatabaseUrl("AIzaSyDBscWBxZ3rgirNFIu2HYByRSLX2gsrn2A")
                     .build();
             FirebaseApp.initializeApp(options);
-        }catch (Exception e){
+        } catch (Exception e){
             e.printStackTrace();
         }
     }

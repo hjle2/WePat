@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.wepat.exception.TokenExpiredException;
 import com.wepat.exception.UnAuthorizedException;
 import io.jsonwebtoken.*;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -16,16 +17,16 @@ import java.util.Date;
 import java.util.Map;
 
 @Component
+@Slf4j
 public class JwtUtil {
-    public static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
     private static final String SALT = "wepatsecretkeythisissecretsecretkeybyhj";
     private static final long ACCESS_TOKEN_EXPIRE_MINUTES = 1000L * 60 * 60; // 시간 단위
     private static final long REFRESH_TOKEN_EXPIRE_MINUTES = 1000L * 60 * 60 * 24 * 7; // 주단위
-    public <T> String createAccessToken(String key, T data) {
+    public static <T> String createAccessToken(String key, T data) {
         return create(key, data, "access-token", ACCESS_TOKEN_EXPIRE_MINUTES);
     }
 
-    public <T> String createRefreshToken(String key, T data) {
+    public static <T> String createRefreshToken(String key, T data) {
         return create(key, data, "refresh-token", REFRESH_TOKEN_EXPIRE_MINUTES);
     }
 
@@ -37,7 +38,7 @@ public class JwtUtil {
      * expire : 토큰 유효기간 설정을 위한 값
      * jwt 토큰의 구성 : header+payload+signature
      */
-    public <T> String create(String key, T data, String subject, long expire) {
+    public static <T> String create(String key, T data, String subject, long expire) {
         Date exp = new Date();
         exp.setTime(exp.getTime() + expire);
 
@@ -55,7 +56,7 @@ public class JwtUtil {
         return jwt;
     }
 
-    public Map<String, Object> get(String key) {
+    public static Map<String, Object> get(String key) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
                 .getRequest();
         String jwt = request.getHeader("access-token");
@@ -66,7 +67,7 @@ public class JwtUtil {
 //			if (logger.isInfoEnabled()) {
 //				e.printStackTrace();
 //			} else {
-            logger.error(e.getMessage());
+            log.error(e.getMessage());
 //			}
             throw new UnAuthorizedException();
 //			개발환경
@@ -75,16 +76,20 @@ public class JwtUtil {
 //			return testMap;
         }
         Map<String, Object> value = claims.getBody();
-        logger.info("value : {}", value);
+        log.info("value : {}", value);
         return value;
     }
 
-    public String getUserId(String token) {
+    public static String getUserId(String token) {
         Claims jws = Jwts.parser()
                 .setSigningKey(SALT.getBytes())
                 .parseClaimsJws(token).getBody();
 
         return jws.get("memberId").toString();
+    }
+    public static String getUserIdByHttpRequest(HttpServletRequest request) {
+        String token = request.getHeader("token");
+        return getUserId(token);
     }
     // Signature 설정에 들어갈 key 생성.
     private byte[] generateKey() {
@@ -93,17 +98,17 @@ public class JwtUtil {
             // charset 설정 안하면 사용자 플랫폼의 기본 인코딩 설정으로 인코딩 됨.
             key = SALT.getBytes("UTF-8");
         } catch (UnsupportedEncodingException e) {
-            if (logger.isInfoEnabled()) {
+            if (log.isInfoEnabled()) {
                 e.printStackTrace();
             } else {
-                logger.error("Making JWT Key Error ::: {}", e.getMessage());
+                log.error("Making JWT Key Error ::: {}", e.getMessage());
             }
         }
 
         return key;
     }
 
-    public boolean validateToken(String jwt) {
+    public static boolean validateToken(String jwt) {
         try {
 //			Json Web Signature? 서버에서 인증을 근거로 인증정보를 서버의 private key로 서명 한것을 토큰화 한것
 //			setSigningKey : JWS 서명 검증을 위한  secret key 세팅

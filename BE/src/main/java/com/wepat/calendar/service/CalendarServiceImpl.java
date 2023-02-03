@@ -4,8 +4,6 @@ import com.wepat.calendar.repository.CalendarRepository;
 import com.wepat.schedule.ScheduleDto;
 import com.wepat.util.DateUtil;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -16,7 +14,6 @@ import java.util.concurrent.ExecutionException;
 @Service
 @RequiredArgsConstructor
 public class CalendarServiceImpl implements CalendarService{
-    private static final Logger logger = LoggerFactory.getLogger(CalendarServiceImpl.class);
     private final CalendarRepository calendarRepository;
     @Override
     public Map<String, List<String>> getScheduleByMonth(String calendarId, String date) {

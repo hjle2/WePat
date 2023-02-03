@@ -3,11 +3,9 @@ package com.wepat.member.controller;
 import com.wepat.exception.member.*;
 import com.wepat.member.MemberDto;
 import com.wepat.member.service.MemberService;
-import com.wepat.security.OpenCrypt;
 import com.wepat.util.JwtUtil;
+import com.wepat.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import io.swagger.annotations.ApiOperation;
 import org.apache.http.HttpResponse;
 import org.springframework.http.HttpStatus;
@@ -22,9 +20,7 @@ import java.util.concurrent.ExecutionException;
 @RestController
 @RequestMapping("/member")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class MemberController {
-    private static final Logger logger = LoggerFactory.getLogger(MemberController.class);
     private final MemberService memberService;
     private final JwtUtil jwtUtil;
     @PostMapping("/signin")
@@ -32,13 +28,12 @@ public class MemberController {
     public ResponseEntity<?> signIn(String memberId, String pwd) {
         try {
             Map<String, String> resultMap = new HashMap<>();
-            pwd=(OpenCrypt.getSHA256(pwd,"salt"));
             MemberDto memberResult = memberService.signIn(memberId, pwd);//유저가 로그인 가능한 유저인지 확인
             String accessToken = null;
             String refreshToken = null;//유저가 로그인 되면 토큰을 생성하여 저장할 String
             if(memberResult != null){//로그인에서 객체를 받아왔다.
-                accessToken = jwtUtil.createAccessToken("AccessToken", memberId);
-                refreshToken = jwtUtil.createRefreshToken("RefreshToken", memberId);
+                accessToken = jwtUtil.createAccessToken("access-token", memberId);
+                refreshToken = jwtUtil.createRefreshToken("refresh-token", memberId);
                 memberService.saveRefreshToken(memberId, refreshToken);
 
                 resultMap.put("access-token", accessToken);
@@ -66,8 +61,8 @@ public class MemberController {
             String accessToken = null;
             String refreshToken = null;//유저가 로그인 되면 토큰을 생성하여 저장할 String
             if(memberResult != null){//로그인에서 객체를 받아왔다.
-                accessToken = jwtUtil.createAccessToken("AccessToken", memberId);
-                refreshToken = jwtUtil.createRefreshToken("RefreshToken", memberId);
+                accessToken = jwtUtil.createAccessToken("access-token", memberId);
+                refreshToken = jwtUtil.createRefreshToken("create-token", memberId);
                 memberService.saveRefreshToken(memberId, refreshToken);
 
                 resultMap.put("access-token", accessToken);
@@ -91,7 +86,6 @@ public class MemberController {
     @ApiOperation(value = "회원가입", notes = "정보를 받아 회원가입 시도한다.", response = MemberDto.class)
     public ResponseEntity<?> signUp(MemberDto member) {
         try {
-            member.setPwd(OpenCrypt.getSHA256(member.getPwd(),"salt"));
             memberService.signUp(member);
             return ResponseEntity.accepted().build();
         } catch (ExistEmailException e) {
@@ -147,7 +141,7 @@ public class MemberController {
     @ApiOperation(value = "비밀번호 변경", response = HttpResponse.class)
     public ResponseEntity<?> modifyPwdById(HttpServletRequest request, String pwd) {
         try {
-            String memberId = request.getSession().getAttribute("memberId").toString();
+            String memberId = JwtUtil.getUserIdByHttpRequest(request);
             memberService.modifyPwdById(memberId, pwd);
             return ResponseEntity.accepted().build();
         } catch (NotExistMemberException e) {
@@ -160,7 +154,7 @@ public class MemberController {
     @ApiOperation(value = "마이페이지", notes = "현재 로그인되어있는 회원의 정보 조회", response = MemberDto.class)
     public ResponseEntity<?> getMemberById(HttpServletRequest request) {
         try {
-            String memberId = request.getSession().getAttribute("memberId").toString();
+            String memberId = JwtUtil.getUserIdByHttpRequest(request);
             return new ResponseEntity<>(memberService.getMemberById(memberId), HttpStatus.OK);
         } catch (NotExistMemberException e) {
             throw new NotExistMemberException(e.getMessage());
@@ -172,7 +166,7 @@ public class MemberController {
     @ApiOperation(value = "회원 정보 수정", notes = "현재 회원의 정보를 수정한다.", response = MemberDto.class)
     public ResponseEntity<?> modifyMemberById(HttpServletRequest request, String nickName) {
         try {
-            String memberId = request.getSession().getAttribute("memberId").toString();
+            String memberId = JwtUtil.getUserIdByHttpRequest(request);
             memberService.modifyMemberById(memberId, nickName);
             return ResponseEntity.accepted().build();
         } catch (NotExistMemberException e) {
@@ -185,7 +179,7 @@ public class MemberController {
     @ApiOperation(value = "사용자의 정보를 삭제한다.", response = HttpResponse.class)
     public ResponseEntity<?> deleteMember(HttpServletRequest request, String nickName) {
         try {
-            String memberId = request.getSession().getAttribute("memberId").toString();
+            String memberId = JwtUtil.getUserIdByHttpRequest(request);
             memberService.deleteMember(memberId);
             return ResponseEntity.accepted().build();
         } catch (Exception e) {
@@ -196,7 +190,7 @@ public class MemberController {
     @ApiOperation(value = "로그아웃", notes = "현재 로그인되어있는 사용자 로그아웃", response = HttpResponse.class)
     public ResponseEntity<?> logout(HttpServletRequest request) {
         try {
-            String memberId = request.getSession().getAttribute("memberId").toString();
+            String memberId = JwtUtil.getUserIdByHttpRequest(request);
             memberService.logout(memberId);
             return ResponseEntity.accepted().build();
         } catch (Exception e) {
@@ -208,7 +202,7 @@ public class MemberController {
     @ApiOperation(value = "캘린더 변경")
     public ResponseEntity<?> modifyCalendarById(HttpServletRequest request, String calendarId) {
         try {
-            String memberId = request.getSession().getAttribute("memberId").toString();
+            String memberId = JwtUtil.getUserIdByHttpRequest(request);
             memberService.modifyCalendarById(memberId, calendarId);
             return new ResponseEntity<>("캘린더 변경 완료", HttpStatus.OK);
         } catch (NotExistCalendarException e) {
@@ -220,8 +214,9 @@ public class MemberController {
 
     @PutMapping("/modify/calendar/alone")
     @ApiOperation(value = "자신만의 캘린더 생성")
-    public ResponseEntity<?> addCalendarById(String memberId) {
+    public ResponseEntity<?> addCalendarById(HttpServletRequest request) {
         try {
+            String memberId = JwtUtil.getUserIdByHttpRequest(request);
             memberService.addCalendarById(memberId);
             return new ResponseEntity<>("생성 성공", HttpStatus.OK);
         } catch (AlreadyAloneCalendarException e) {
@@ -233,8 +228,8 @@ public class MemberController {
 
     @PostMapping("/gettoken")
     public ResponseEntity<?> getAccessToken(HttpServletRequest request, String refreshToken) {
-        String memberId = request.getSession().getAttribute("memberId").toString();
-        String accessToken = jwtUtil.createAccessToken("AccessToken", memberId);
+        String memberId = JwtUtil.getUserId(request.getHeader("token"));
+        String accessToken = jwtUtil.createAccessToken("memberId", memberId);
         return new ResponseEntity<>(accessToken, HttpStatus.OK);
     }
 

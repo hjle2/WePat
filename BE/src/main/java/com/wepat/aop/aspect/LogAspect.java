@@ -1,5 +1,6 @@
 package com.wepat.aop.aspect;
 
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
@@ -12,19 +13,18 @@ import java.util.Arrays;
 
 @Aspect
 @Component
+@Slf4j
 public class LogAspect {
-
-    private Logger logger = LoggerFactory.getLogger(LogAspect.class);
 
     @Before(value = "execution(* com.wepat..*.*Controller(..))") //어떤 메서드에 적용할지를 표현식에 서술
     public void beforeMethod(JoinPoint joinPoint) {
-        logger.info("----> Call  : {}", joinPoint.getSignature().getName());
-        logger.info("----> Param : {}", Arrays.toString(joinPoint.getArgs()));
+        log.info("----> Call  : {}", joinPoint.getSignature().getName());
+        log.info("----> Param : {}", Arrays.toString(joinPoint.getArgs()));
     }
 
     @After(value = "execution(* com.wepat..*.*(..))") //어떤 메서드에 적용할지를 표현식에 서술
     public void afterMethod(JoinPoint joinPoint) {
-        logger.info("----> Done  :  {}", joinPoint.getSignature().getName());
+        log.info("----> Done  :  {}", joinPoint.getSignature().getName());
         //공통기능
     }
 
@@ -44,9 +44,9 @@ public class LogAspect {
 //
 //        stopWatch.stop();
 //        //후처리
-//        logger.debug("pretty: {}", stopWatch.prettyPrint());
-//        logger.debug("totalTime: {}", stopWatch.getTotalTimeMillis());
-//        logger.debug("메서드정보: {}", joinPoint.getSignature());
+//        log.debug("pretty: {}", stopWatch.prettyPrint());
+//        log.debug("totalTime: {}", stopWatch.getTotalTimeMillis());
+//        log.debug("메서드정보: {}", joinPoint.getSignature());
 //
 //        return proceed; //또다른 설정 AOP 호출
 //    }

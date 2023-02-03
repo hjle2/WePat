@@ -24,7 +24,6 @@ public class PetRepositoryImpl implements PetRepository {
     public enum ReturnType {
         SUCCESS, NotExistCalendarException, NotExistPetException, AlreadyDeletePetException
     }
-    private static final Logger logger = LoggerFactory.getLogger(MemberRepository.class);
     private static final String PET_COLLECTION = "pet";
     private static final String CALENDAR_COLLECTION = "calendar";
     private static final String SCHEDULE_COLLECTION = "schedule";

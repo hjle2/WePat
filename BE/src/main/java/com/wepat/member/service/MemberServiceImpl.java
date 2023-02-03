@@ -31,7 +31,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void socialSignUp(MemberDto member) throws ExecutionException, InterruptedException {
-            memberRepository.socialSignUp(member);//무조건 아이디생성
+        memberRepository.socialSignUp(member);
     }
 
     @Override

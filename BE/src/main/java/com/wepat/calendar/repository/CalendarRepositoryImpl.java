@@ -5,8 +5,6 @@ import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.firebase.cloud.FirestoreClient;
 import com.wepat.schedule.ScheduleDto;
 import com.wepat.schedule.ScheduleEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -17,7 +15,6 @@ import java.util.concurrent.ExecutionException;
 
 @Repository
 public class CalendarRepositoryImpl implements CalendarRepository {
-    private static final Logger logger = LoggerFactory.getLogger(CalendarRepositoryImpl.class);
     private static final String SCHEDULE_COLLECTION = "schedule";
 
     @Override
