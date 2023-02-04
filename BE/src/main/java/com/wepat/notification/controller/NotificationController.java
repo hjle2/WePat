@@ -26,14 +26,14 @@ public class NotificationController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/deleteAll/memberId")
-    public ResponseEntity<?> deleteAll(@PathVariable("notificationid") String memberId) {
+    @DeleteMapping("/deleteAll/{memberId}")
+    public ResponseEntity<?> deleteAll(@PathVariable("memberId") String memberId) {
         notificationService.deleteAll(memberId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/readAll/{memberid}")
-    public ResponseEntity<?> readlAll(@PathVariable("notificationid") String memberId) {
+    public ResponseEntity<?> readlAll(@PathVariable("memberId") String memberId) {
         notificationService.readlAll(memberId);
         return ResponseEntity.ok().build();
     }
