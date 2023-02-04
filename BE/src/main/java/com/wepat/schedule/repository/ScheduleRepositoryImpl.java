@@ -4,6 +4,7 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import com.wepat.exception.DataNotExitsException;
+import com.wepat.notification.NotifiacationType;
 import com.wepat.notification.NotificationDto;
 import com.wepat.schedule.ScheduleDto;
 import com.wepat.schedule.ScheduleEntity;
@@ -16,16 +17,6 @@ import java.util.concurrent.ExecutionException;
 public class ScheduleRepositoryImpl implements ScheduleRepository {
     private static final String SCHEDULE_COLLECTION = "schedule";
     private static final String NOTIFICATION_COLLECTION = "notification";
-
-    private enum NotificationType {
-        ADD_SCHEDULE,
-        MODIFY_SCHEDULE,
-        COMPLETED_SCHEDULE,
-        DELETE_SCHEDULE,
-        // 일정 수행시간 관련 알림
-        SCHEDULE_ALARM
-
-    }
 
 //    private static Firestore firestore1 = FirestoreClient.getFirestore();
 //    private final Firestore firestore2 = FirestoreClient.getFirestore();
@@ -76,7 +67,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
                     .builder()
                     .date(scheduleDto.getNowDate())
                     .notificationId(notificationDocRef.getId())
-                    .notificationType(NotificationType.ADD_SCHEDULE.ordinal()).build();
+                    .notificationType(NotifiacationType.ADD.ordinal()).build();
 
             return null;
         });
@@ -84,6 +75,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 
     @Override
     public void modifySchedule(String calendarId, String scheduleId,  ScheduleDto scheduleDto) throws ExecutionException, InterruptedException {
+
         CollectionReference scheduleCollection = FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
         Query query = scheduleCollection.whereEqualTo("calendarId", calendarId)
                 .whereEqualTo("scheduleId", scheduleDto.getScheduleId());

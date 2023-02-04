@@ -1,11 +1,16 @@
 package com.wepat.notification.service;
 
+import com.wepat.dto.ScheduleDto;
 import com.wepat.notification.NotificationDto;
 
 import java.util.concurrent.ExecutionException;
 
 public interface NotificationService {
-    void addNotification(NotificationDto notificationDto);
+    void addNotification(String calendarId,
+                         String memberId,
+                         String scheduleId,
+                         String date,
+                         int type);
     void readNotification(String notificationId);
     void deleteNotification(String NotificationId);
     void deleteAll(String memberId);

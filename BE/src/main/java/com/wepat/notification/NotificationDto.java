@@ -8,8 +8,9 @@ import lombok.Data;
 public class NotificationDto {
     private String notificationId;
     private String scheduleId;
+    private String calendarId;
     private String memberId;
     private String date;
-    private boolean read;
+    private boolean read = false;
     private int notificationType;
 }

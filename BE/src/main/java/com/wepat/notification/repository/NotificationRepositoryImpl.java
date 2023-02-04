@@ -4,20 +4,29 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import com.wepat.notification.NotificationDto;
+import com.wepat.sse.SseEmitterRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 @Repository
+@RequiredArgsConstructor
 public class NotificationRepositoryImpl implements NotificationRepository {
     private static final String NOTIFICATION_COLLECTION = "notification";
+    private final SseEmitterRepository sseEmitterRepository;
+
     @Override
-    public void addNotification(NotificationDto notificationDto) {
+    public String addNotification(NotificationDto notificationDto) {
         CollectionReference notificationCollection = FirestoreClient.getFirestore().collection(NOTIFICATION_COLLECTION);
         DocumentReference notificationDocRef = notificationCollection.document();
         notificationDto.setNotificationId(notificationDocRef.getId());
         notificationDocRef.set(notificationDto);
+
+
+        sseEmitterRepository.send(notificationDto);
+        return notificationDto.getNotificationId();
     }
 
     @Override
