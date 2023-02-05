@@ -1,6 +1,5 @@
 package com.wepat.notification.service;
 
-import com.wepat.dto.ScheduleDto;
 import com.wepat.notification.NotificationDto;
 import com.wepat.notification.repository.NotificationRepository;
 import com.wepat.sse.SseEmitterRepository;
@@ -19,7 +18,7 @@ public class NotificationServiceImpl implements NotificationService {
                                 String memberId,
                                 String scheduleId,
                                 String date,
-                                int type) {
+                                int type) throws ExecutionException, InterruptedException {
 
         NotificationDto notificationDto = NotificationDto.builder()
                 .calendarId(calendarId)
@@ -30,7 +29,6 @@ public class NotificationServiceImpl implements NotificationService {
 
         String notificationId = notificationRepository.addNotification(notificationDto); // db에 notification을 저장하고 id값 반환
         notificationDto.setNotificationId(notificationId);
-        sseEmitterRepository.send(notificationDto); // notification 보내기
     }
 
     @Override

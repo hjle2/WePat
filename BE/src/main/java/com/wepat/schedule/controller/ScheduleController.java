@@ -1,7 +1,6 @@
 package com.wepat.schedule.controller;
 
 import com.wepat.notification.NotifiacationType;
-import com.wepat.notification.NotificationDto;
 import com.wepat.notification.service.NotificationService;
 import com.wepat.schedule.ScheduleDto;
 import com.wepat.schedule.service.ScheduleService;
@@ -33,7 +32,7 @@ public class ScheduleController {
     public ResponseEntity<?> addSchedule(@PathVariable("calendarid") String calendarId,
                                          @RequestParam String nowDate,
                                          @RequestBody ScheduleDto scheduleDto,
-                                         HttpServletRequest request) {
+                                         HttpServletRequest request) throws ExecutionException, InterruptedException {
 
         // 알람 db에 추가 및 발생 처리
         String memberId = JwtUtil.getUserIdByHttpRequest(request);
@@ -93,7 +92,7 @@ public class ScheduleController {
     public ResponseEntity<?> completeSchedule(@PathVariable("calendarid") String calendarId,
                                               @PathVariable("scheduleid") String scheduleId,
                                               @RequestParam("nowDate") String nowDate,
-                                              HttpServletRequest request) {
+                                              HttpServletRequest request) throws ExecutionException, InterruptedException {
 
         String memberId = JwtUtil.getUserIdByHttpRequest(request);
         scheduleService.deleteSchedule(calendarId, scheduleId);

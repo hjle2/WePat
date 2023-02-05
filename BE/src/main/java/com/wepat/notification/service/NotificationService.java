@@ -1,8 +1,5 @@
 package com.wepat.notification.service;
 
-import com.wepat.dto.ScheduleDto;
-import com.wepat.notification.NotificationDto;
-
 import java.util.concurrent.ExecutionException;
 
 public interface NotificationService {
@@ -10,7 +7,7 @@ public interface NotificationService {
                          String memberId,
                          String scheduleId,
                          String date,
-                         int type);
+                         int type) throws ExecutionException, InterruptedException;
     void readNotification(String notificationId);
     void deleteNotification(String NotificationId);
     void deleteAll(String memberId);

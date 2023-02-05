@@ -15,17 +15,30 @@ import java.util.concurrent.ExecutionException;
 @RequiredArgsConstructor
 public class NotificationRepositoryImpl implements NotificationRepository {
     private static final String NOTIFICATION_COLLECTION = "notification";
+    private static final String MEMBER_COLLECTION = "member";
     private final SseEmitterRepository sseEmitterRepository;
 
     @Override
-    public String addNotification(NotificationDto notificationDto) {
+    public String addNotification(NotificationDto notificationDto) throws ExecutionException, InterruptedException {
         CollectionReference notificationCollection = FirestoreClient.getFirestore().collection(NOTIFICATION_COLLECTION);
-        DocumentReference notificationDocRef = notificationCollection.document();
-        notificationDto.setNotificationId(notificationDocRef.getId());
-        notificationDocRef.set(notificationDto);
+        CollectionReference memberCollection = FirestoreClient.getFirestore().collection(MEMBER_COLLECTION);
 
+        // calendarId 가 같은 멤버들 구해오기
+        for (QueryDocumentSnapshot document : memberCollection.whereEqualTo("calendarId", notificationDto
+                        .getCalendarId())
+                        .get().get().getDocuments()) {
 
-        sseEmitterRepository.send(notificationDto);
+            // notification의 memberID는 member document의 id
+            notificationDto.setMemberId(document.getId());
+
+            // db에 알람 추가해주기
+            DocumentReference notificationDocRef = notificationCollection.document();
+            notificationDto.setNotificationId(notificationDocRef.getId());
+            notificationDocRef.set(notificationDto);
+
+            // 알람 띄워주기
+            sseEmitterRepository.send(notificationDto);
+        }
         return notificationDto.getNotificationId();
     }
 
