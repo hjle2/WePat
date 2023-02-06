@@ -14,7 +14,7 @@ public class FirebaseConfig  {
     @PostConstruct
     public void init(){
         try{
-            ClassPathResource serviceAccount = new ClassPathResource("firebase_key.json");
+            ClassPathResource serviceAccount = new ClassPathResource("serviceAccountKey.json");
 //            FileInputStream serviceAccount =
 //                    new FileInputStream("src/main/resources/serviceAccountKey.json");
             FirebaseOptions options = new FirebaseOptions.Builder()
