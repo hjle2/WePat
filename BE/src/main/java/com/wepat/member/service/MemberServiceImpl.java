@@ -38,7 +38,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberDto signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
-//        pwd = SecurityUtil.getSHA256(pwd, "salt");
+        pwd = SecurityUtil.getSHA256(pwd, "salt");
         return memberRepository.signIn(memberId, pwd);
     }
 
@@ -57,6 +57,7 @@ public class MemberServiceImpl implements MemberService {
          * 링크 사용시 사용
          */
         String randomPassword = "";
+        String pwd= "";
         String[] word = new String[] {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B",
                 "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
                 "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
@@ -65,8 +66,8 @@ public class MemberServiceImpl implements MemberService {
             idx = (int) (word.length*Math.random());
             randomPassword += word[idx];
         }
-
-        memberRepository.changePwdToRandom(randomPassword, memberId);
+        pwd = SecurityUtil.getSHA256(randomPassword, "salt");//암호화후 저장
+        memberRepository.changePwdToRandom(pwd, memberId);
 
         MimeMessage message = javaMailSender.createMimeMessage();
         message.setFrom("qwas15788@gmail.com");
@@ -83,13 +84,16 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void modifyPwdById(String memberId, String pwd) throws ExecutionException, InterruptedException {
+        pwd = SecurityUtil.getSHA256(pwd, "salt");//암호화후 저장
         memberRepository.modifyPwdById(memberId, pwd);
+
+
     }
 
     @Override
     public MemberDto getMemberById(String memberId) throws ExecutionException, InterruptedException {
         MemberDto memberDto = memberRepository.getMemberById(memberId);
-        memberDto.setPwd(null);
+        memberDto.setPwd(null);//이건 왜 들어간거??
         return memberDto;
     }
 
