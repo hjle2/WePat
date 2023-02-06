@@ -40,7 +40,6 @@ public class MemberRepositoryImpl implements MemberRepository {
         final DocumentReference memDocRef = memCollection.document(member.getMemberId());
         final DocumentReference calDocRef = calCollection.document(member.getCalendarId());
 
-        List<QueryDocumentSnapshot> documents = memCollection.get().get().getDocuments();
         List<MemberEntity> emailList = memCollection.whereEqualTo("email", member.getEmail()).get().get().toObjects(MemberEntity.class);
 
         ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {

@@ -8,8 +8,8 @@ import java.util.concurrent.ExecutionException;
 public interface ScheduleService {
 
     // 현재 선택된 날짜 기준
-    List<ScheduleDto> getScheduleByCalendarId(String calendarId);
-    List<ScheduleDto> getScheduleListByDate(String calendarId, String date) throws ExecutionException, InterruptedException;
+    List<ScheduleDto> getAllScheduleByCalendarId(String calendarId);
+    List<ScheduleDto> getAllScheduleByDate(String calendarId, String date) throws ExecutionException, InterruptedException;
     // 일정 추가
     void addSchedule(String calendarId, String memberId, String nowDate, ScheduleDto scheduleDto) throws ExecutionException, InterruptedException;
     // 일정 변경

@@ -120,7 +120,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
     }
 
     @Override
-    public ScheduleDto getScheduleDetailByDate(String calendarId, String scheduleId) throws ExecutionException, InterruptedException {
+    public ScheduleDto getScheduleByScheduleId(String calendarId, String scheduleId) throws ExecutionException, InterruptedException {
         CollectionReference scheduleCollection = FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
         return scheduleCollection.whereEqualTo("calendarId", calendarId)
                 .whereEqualTo("calendarId", calendarId)

@@ -21,13 +21,13 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final NotificationRepository notificationRepository;
     private static final int CALEDAR_DATE = 1;
     @Override
-    public List<ScheduleDto> getScheduleByCalendarId(String calendarId) {
+    public List<ScheduleDto> getAllScheduleByCalendarId(String calendarId) {
         return scheduleRepository.getScheduleByCalendarId(calendarId);
     }
     @Override
-    public List<ScheduleDto> getScheduleListByDate(String calendarId, String date) throws ExecutionException, InterruptedException {
-        Date startDate = DateUtil.getDate(date);
-        Date endDate = DateUtil.addDays(startDate, CALEDAR_DATE, Calendar.DATE);
+    public List<ScheduleDto> getAllScheduleByDate(String calendarId, String date) throws ExecutionException, InterruptedException {
+        Date startDate = DateUtil.getDate(date); // 날짜의 시작 시간 기준
+        Date endDate = DateUtil.addDays(startDate, CALEDAR_DATE, Calendar.DATE); // 날짜의 끝 시간 기준
 
         startDate = DateUtil.setZeroTime(startDate);
         endDate = DateUtil.setZeroTime(endDate);
@@ -100,6 +100,6 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public ScheduleDto getScheduleDetailByDate(String calendarId, String scheduleId) throws ExecutionException, InterruptedException {
-        return scheduleRepository.getScheduleDetailByDate(calendarId, scheduleId);
+        return scheduleRepository.getScheduleByScheduleId(calendarId, scheduleId);
     }
 }
