@@ -7,7 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class DateUtil {
-    private static final DateFormat dateFormat = new SimpleDateFormat("YYYYMMddHHmmss");
+    private static final DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
     public static String getStringDate(Date date) {
         return dateFormat.format(date);
     }

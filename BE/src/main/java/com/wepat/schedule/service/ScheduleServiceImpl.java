@@ -21,13 +21,13 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final NotificationRepository notificationRepository;
     private static final int CALEDAR_DATE = 1;
     @Override
-    public List<ScheduleDto> getScheduleByCalendarId(String calendarId) {
+    public List<ScheduleDto> getAllScheduleByCalendarId(String calendarId) {
         return scheduleRepository.getScheduleByCalendarId(calendarId);
     }
     @Override
-    public List<ScheduleDto> getScheduleListByDate(String calendarId, String date) throws ExecutionException, InterruptedException {
-        Date startDate = DateUtil.getDate(date);
-        Date endDate = DateUtil.addDays(startDate, CALEDAR_DATE, Calendar.DATE);
+    public List<ScheduleDto> getAllScheduleByDate(String calendarId, String date) throws ExecutionException, InterruptedException {
+        Date startDate = DateUtil.getDate(date); // 날짜의 시작 시간 기준
+        Date endDate = DateUtil.addDays(startDate, CALEDAR_DATE, Calendar.DATE); // 날짜의 끝 시간 기준
 
         startDate = DateUtil.setZeroTime(startDate);
         endDate = DateUtil.setZeroTime(endDate);
@@ -50,11 +50,13 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         scheduleDto.setCalendarId(calendarId);
         scheduleDto.setScheduleId(memberId);
+        scheduleDto.setNowDate(nowDate);
 
         if (scheduleDto.getRepeatUnit() > 0) {
             // startdate < enddate 인 경우
-            while (startDate.compareTo(endDate) <= 0) {
+            for (int i=0; i<scheduleDto.getRepeatAmount(); i++) {
                 scheduleDto.setStartDate(DateUtil.getStringDate(startDate));
+                scheduleDto.setEndDate(DateUtil.getStringDate(endDate));
                 String scheduleId = scheduleRepository.addSchedule(scheduleDto);
 
                 // 알람 추가하기
@@ -63,6 +65,7 @@ public class ScheduleServiceImpl implements ScheduleService {
                 notificationRepository.addNotification(notificationDto);
                 // 반봅 주기만큼 더하기
                 startDate = DateUtil.addDays(startDate, unit, size);
+                endDate = DateUtil.addDays(endDate, unit, size);
             }
         } else {
             String scheduleId = scheduleRepository.addSchedule(scheduleDto);
@@ -76,11 +79,12 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public void modifySchedule(String calendarId, String scheduleId, String memberId, String nowDate, ScheduleDto scheduleDto) throws ExecutionException, InterruptedException {
+        scheduleDto.setNowDate(nowDate);
         scheduleRepository.modifySchedule(calendarId, scheduleId, scheduleDto);
 
         // 알람 추가하기
         NotificationDto notificationDto = new NotificationDto("", scheduleId,
-                calendarId, memberId, nowDate, false, NotifiacationType.ADD.ordinal());
+                calendarId, memberId, nowDate, false, NotifiacationType.MODIFY.ordinal());
         notificationRepository.addNotification(notificationDto);
     }
 
@@ -90,7 +94,12 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
+    public void compleateSchedule(String calendarId, String scheduleId) {
+        scheduleRepository.completeSchedule(calendarId, scheduleId);
+    }
+
+    @Override
     public ScheduleDto getScheduleDetailByDate(String calendarId, String scheduleId) throws ExecutionException, InterruptedException {
-        return scheduleRepository.getScheduleDetailByDate(calendarId, scheduleId);
+        return scheduleRepository.getScheduleByScheduleId(calendarId, scheduleId);
     }
 }

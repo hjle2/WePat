@@ -23,8 +23,8 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void signUp(MemberDto member) throws ExecutionException, InterruptedException {
+        member.setPwd(SecurityUtil.getSHA256(member.getPwd(),"salt"));
         if (member.getCalendarId() == null || member.getCalendarId().isBlank()) {
-            member.setPwd(SecurityUtil.getSHA256(member.getPwd(),"salt"));
             memberRepository.signUp(member);
         } else {
             memberRepository.signUpWithCalendar(member);

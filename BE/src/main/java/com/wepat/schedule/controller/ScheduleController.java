@@ -21,12 +21,14 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
     private final NotificationService notificationService;
 
+    // 캘린더의 메인페이지에서 모든 일정 데이터 얻기
     @GetMapping("/{calendarid}")
     @ApiOperation(value = "캘린더 메인페이지", notes = "캘린더에 해당 달에 대한 모든 스케쥴조회", response = ScheduleDto.class)
-    public ResponseEntity<?> getScheduleByMonth(@PathVariable("calendarid") String calendarId) {
-        return new ResponseEntity<>(scheduleService.getScheduleByCalendarId(calendarId), HttpStatus.OK);
+    public ResponseEntity<?> getAllScheduleByCalendarId(@PathVariable("calendarid") String calendarId) {
+        return new ResponseEntity<>(scheduleService.getAllScheduleByCalendarId(calendarId), HttpStatus.OK);
     }
 
+    // 일정 추가하기
     @PostMapping("/add/{calendarid}")
     @ApiOperation(value = "일정 추가", notes = "일정 추가 버튼 클릭 시, 일정 추가", response = HttpStatus.class)
     public ResponseEntity<?> addSchedule(@PathVariable("calendarid") String calendarId,
@@ -40,17 +42,19 @@ public class ScheduleController {
         return ResponseEntity.ok().build();
     }
 
+    // 해당 날짜의 일정 확인
     @GetMapping("/list/{calendarid}")
     @ApiOperation(value = "일정 확인", response = ScheduleDto.class)
-    public ResponseEntity<?> getScheduleByDate(@PathVariable("calendarid") String calendarId,
-                                               @RequestParam("nowDate") String nowDate) throws ExecutionException, InterruptedException {
-        return new ResponseEntity<>(scheduleService.getScheduleListByDate(calendarId, nowDate), HttpStatus.OK);
+    public ResponseEntity<?> getAllScheduleByDate(@PathVariable("calendarid") String calendarId,
+                                               @RequestParam("date") String date) throws ExecutionException, InterruptedException {
+        return new ResponseEntity<>(scheduleService.getAllScheduleByDate(calendarId, date), HttpStatus.OK);
     }
 
+    // 스케쥴의 세부 정보
     @GetMapping("/detail/{calendarid}/{scheduleid}")
     @ApiOperation(value = "세부 일정 확인", response = ScheduleDto.class)
-    public ResponseEntity<?> getDetailScheduleByDate(@PathVariable("calendarid") String calendarId,
-                                                     @PathVariable("scheduleid") String scheduleId) {
+    public ResponseEntity<?> getScheduleDateByDate(@PathVariable("calendarid") String calendarId,
+                                                   @PathVariable("scheduleid") String scheduleId) {
         try {
             scheduleService.getScheduleDetailByDate(calendarId, scheduleId);
         } catch (ExecutionException e) {
@@ -60,6 +64,7 @@ public class ScheduleController {
         }
         return ResponseEntity.ok().build();
     }
+    // 스케쥴의 정보 변경
     @PostMapping("/modify/{calendarid}/{scheduleid}")
     @ApiOperation(value = "일정 변경", response = HttpStatus.class)
     public ResponseEntity<?> modifySchedule(@PathVariable("calendarid") String calendarId,
@@ -79,6 +84,7 @@ public class ScheduleController {
         }
         return ResponseEntity.ok().build();
     }
+    // 일정 삭제
     @PostMapping("/delete/{calendarid}")
     @ApiOperation(value = "일정 삭제", response = HttpStatus.class)
     public ResponseEntity<?> deleteSchedule(@PathVariable("calendarid") String calendarId,
@@ -86,6 +92,7 @@ public class ScheduleController {
         scheduleService.deleteSchedule(calendarId, scheduleId);
         return ResponseEntity.ok().build();
     }
+    // 일정 완료 처리
     @PostMapping("/complete/{calendarid}/{scheduleid}")
     @ApiOperation(value = "일정 완료", response = HttpStatus.class)
     public ResponseEntity<?> completeSchedule(@PathVariable("calendarid") String calendarId,
