@@ -99,6 +99,11 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public void modifyMemberPhotoById(String memberId, String photoUrl) throws ExecutionException, InterruptedException {
+        memberRepository.modifyMemberPhotoById(memberId, photoUrl);
+    }
+
+    @Override
     public void deleteMember(String memberId) throws ExecutionException, InterruptedException {
         memberRepository.deleteMember(memberId);
     }

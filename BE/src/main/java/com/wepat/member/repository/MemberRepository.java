@@ -3,6 +3,7 @@ package com.wepat.member.repository;
 
 import com.wepat.member.MemberDto;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.ExecutionException;
 
 public interface MemberRepository {
@@ -16,6 +17,7 @@ public interface MemberRepository {
     void modifyPwdById(String memberId, String pwd) throws ExecutionException, InterruptedException ;
     MemberDto getMemberById(String memberId) throws ExecutionException, InterruptedException;
     void modifyMemberById(String memberId, String nickName) throws ExecutionException, InterruptedException;
+    void modifyMemberPhotoById(String memberId, String photoUrl) throws ExecutionException, InterruptedException;
     void deleteMember(String memberId) throws ExecutionException, InterruptedException;
     void modifyCalendarById(String memberId, String calendarId) throws ExecutionException, InterruptedException;
 

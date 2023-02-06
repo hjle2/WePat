@@ -178,6 +178,21 @@ public class MemberController {
             throw new RuntimeException();
         }
     }
+    @PutMapping("/photo")
+    @ApiOperation(value = "회원 프로필 사진 수정")
+    public ResponseEntity<?> modifyMemberPhotoById(HttpServletRequest request, String photoUrl) {
+        String memberId = JwtUtil.getUserIdByHttpRequest(request);
+        try {
+            memberService.modifyMemberPhotoById(memberId, photoUrl);
+            return ResponseEntity.accepted().build();
+        } catch (NotExistMemberException e) {
+            throw new NotExistMemberException();
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
+    }
+
+
     @DeleteMapping("/")
     @ApiOperation(value = "사용자의 정보를 삭제한다.", response = HttpResponse.class)
     public ResponseEntity<?> deleteMember(HttpServletRequest request, String nickName) {

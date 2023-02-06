@@ -346,6 +346,23 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
+    public void modifyMemberPhotoById(String memberId, String photoUrl) throws ExecutionException, InterruptedException {
+        CollectionReference memCollection = FirestoreClient.getFirestore().collection(MEMBER_COLLECTION);
+        final DocumentReference memDocRef = memCollection.document(memberId);
+        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
+            if (transaction.get(memDocRef).get().exists()) {
+                transaction.update(memDocRef, "photoUrl", photoUrl);
+                return ReturnType.SUCCESS;
+            } else {
+                return ReturnType.NotExistMemberException;
+            }
+        });
+        if (future.get() == ReturnType.NotExistMemberException) {
+            throw new NotExistMemberException();
+        }
+    }
+
+    @Override
     public void deleteMember(String memberId) throws ExecutionException, InterruptedException {
         CollectionReference calCollection = FirestoreClient.getFirestore().collection(CALENDAR_COLLECTION);
         CollectionReference memCollection = FirestoreClient.getFirestore().collection(MEMBER_COLLECTION);
