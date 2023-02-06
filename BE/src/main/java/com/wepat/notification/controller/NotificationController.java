@@ -1,5 +1,6 @@
 package com.wepat.notification.controller;
 
+import com.wepat.notification.NotificationDto;
 import com.wepat.notification.service.NotificationService;
 import com.wepat.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.security.InvalidParameterException;
 import java.util.concurrent.ExecutionException;
+import java.util.List;
 
 @RestController("/notification")
 @RequiredArgsConstructor
@@ -33,7 +35,10 @@ public class NotificationController {
     public ResponseEntity<?> getAllByMemberId(HttpServletRequest request) {
         String memberId = JwtUtil.getUserIdByHttpRequest(request);
         try {
-            return new ResponseEntity<>(notificationService.getAllByMemberId(memberId), HttpStatus.OK);
+            List<NotificationDto> notificationDtoList = notificationService.getAllByMemberId(memberId);
+
+            notificationService.readAllByMemberId(memberId);
+            return new ResponseEntity<>(notificationDtoList, HttpStatus.OK);
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {

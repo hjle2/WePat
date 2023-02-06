@@ -12,4 +12,5 @@ public interface NotificationRepository {
     List<NotificationDto> getAllByMemberId(String memberId) throws ExecutionException, InterruptedException;
     NotificationDto getByNotificationId(String notificationId) throws ExecutionException, InterruptedException;
     int getCountByMemberId(String memberId) throws ExecutionException, InterruptedException;
+    void readAllByMemberId(String memberId) throws ExecutionException, InterruptedException;
 }

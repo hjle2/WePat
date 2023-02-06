@@ -53,30 +53,25 @@ public class ScheduleServiceImpl implements ScheduleService {
         scheduleDto.setCalendarId(calendarId);
         scheduleDto.setScheduleId(memberId);
         scheduleDto.setNowDate(nowDate);
+        String scheduleId = null;
 
         if (scheduleDto.getRepeatUnit() > 0) {
             // endDate < repeatEndDate 인 경우
             while (endDate.compareTo(repeatEndDate) < 0) {
                 scheduleDto.setStartDate(DateUtil.getStringDate(startDate));
                 scheduleDto.setEndDate(DateUtil.getStringDate(endDate));
-                String scheduleId = scheduleRepository.addSchedule(scheduleDto);
-
-                // 알람 추가하기
-                NotificationDto notificationDto = new NotificationDto("", scheduleId,
-                        calendarId, memberId, nowDate, false, NotifiacationType.ADD.ordinal());
-                notificationRepository.addNotification(notificationDto);
+                scheduleId = scheduleRepository.addSchedule(scheduleDto);
                 // 반봅 주기만큼 더하기
                 startDate = DateUtil.addDays(startDate, unit, size);
                 endDate = DateUtil.addDays(endDate, unit, size);
             }
         } else {
-            String scheduleId = scheduleRepository.addSchedule(scheduleDto);
-
-            // 알람 추가하기
-            NotificationDto notificationDto = new NotificationDto("", scheduleId,
-                    calendarId, memberId, nowDate, false, NotifiacationType.ADD.ordinal());
-            notificationRepository.addNotification(notificationDto);
+            scheduleId = scheduleRepository.addSchedule(scheduleDto);
         }
+        // 알람 추가하기
+        NotificationDto notificationDto = new NotificationDto("", scheduleId,
+                calendarId, memberId, nowDate, false, NotifiacationType.ADD.ordinal());
+        notificationRepository.addNotification(notificationDto);
     }
 
     @Override
