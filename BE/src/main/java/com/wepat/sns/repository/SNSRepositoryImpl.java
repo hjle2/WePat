@@ -29,8 +29,8 @@ public class SNSRepositoryImpl implements SNSRepository {
         List<PhotoDto> photoDtoList = photoCollection
                 .whereEqualTo("block", false)
                 .whereEqualTo("sns", true)
-                .orderBy("date", Query.Direction.DESCENDING)
-                .whereGreaterThan("date", date).get().get().toObjects(PhotoDto.class);
+                .orderBy("snsDate", Query.Direction.DESCENDING)
+                .whereGreaterThan("snsDate", date).get().get().toObjects(PhotoDto.class);
         // front 에서 LIKE 순서로 SORT 해서 보여주기
         return photoDtoList;
 

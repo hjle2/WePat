@@ -52,4 +52,9 @@ public class NotificationServiceImpl implements NotificationService {
     public int getCountByMemberId(String memberId) throws ExecutionException, InterruptedException {
         return notificationRepository.getCountByMemberId(memberId);
     }
+
+    @Override
+    public void readAllByMemberId(String memberId) throws ExecutionException, InterruptedException {
+        notificationRepository.readAllByMemberId(memberId);
+    }
 }

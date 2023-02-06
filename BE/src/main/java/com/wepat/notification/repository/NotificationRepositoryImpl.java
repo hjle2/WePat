@@ -96,4 +96,12 @@ public class NotificationRepositoryImpl implements NotificationRepository {
 
         return documents.size();
     }
+    @Override
+    public void readAllByMemberId(String memberId) throws ExecutionException, InterruptedException {
+        CollectionReference notificationCollection = FirestoreClient.getFirestore().collection(NOTIFICATION_COLLECTION);
+        List<QueryDocumentSnapshot> documents = notificationCollection.whereEqualTo("memberId", memberId).get().get().getDocuments();
+        for (QueryDocumentSnapshot document : documents) {
+            document.getReference().update("read", true);
+        }
+    }
 }

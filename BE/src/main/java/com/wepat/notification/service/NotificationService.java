@@ -16,5 +16,6 @@ public interface NotificationService {
     List<NotificationDto> getAllByMemberId(String memberId) throws ExecutionException, InterruptedException;
     NotificationDto getByNotificationId(String notificationId) throws ExecutionException, InterruptedException;
 
-    int getCountByMemberId(String notificationId) throws ExecutionException, InterruptedException;
+    int getCountByMemberId(String notificationId) throws ExecutionException, InterruptedException;;
+    void readAllByMemberId(String memberId) throws ExecutionException, InterruptedException;
 }
