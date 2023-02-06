@@ -36,8 +36,7 @@ public class ScheduleController {
 
         // 알람 db에 추가 및 발생 처리
         String memberId = JwtUtil.getUserIdByHttpRequest(request);
-        notificationService.addNotification(calendarId, memberId, scheduleDto.getScheduleId(), nowDate, NotifiacationType.ADD.ordinal());
-        scheduleService.addSchedule(calendarId, scheduleDto);
+        scheduleService.addSchedule(calendarId, memberId, nowDate, scheduleDto);
         return ResponseEntity.ok().build();
     }
 
@@ -71,8 +70,8 @@ public class ScheduleController {
         try {
 
             String memberId = JwtUtil.getUserIdByHttpRequest(request);
-            scheduleService.modifySchedule(calendarId, scheduleId, scheduleDto);
-            notificationService.addNotification(calendarId, memberId, scheduleId, nowDate, NotifiacationType.MODIFY.ordinal());
+            scheduleService.modifySchedule(calendarId, scheduleId, memberId, nowDate, scheduleDto);
+//            notificationService.addNotification(calendarId, memberId, scheduleId, nowDate, NotifiacationType.MODIFY.ordinal());
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {

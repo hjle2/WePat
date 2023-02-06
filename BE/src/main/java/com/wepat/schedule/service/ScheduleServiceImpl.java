@@ -1,5 +1,8 @@
 package com.wepat.schedule.service;
 
+import com.wepat.notification.NotifiacationType;
+import com.wepat.notification.NotificationDto;
+import com.wepat.notification.repository.NotificationRepository;
 import com.wepat.schedule.ScheduleDto;
 import com.wepat.schedule.repository.ScheduleRepository;
 import com.wepat.util.DateUtil;
@@ -15,6 +18,7 @@ import java.util.concurrent.ExecutionException;
 @RequiredArgsConstructor
 public class ScheduleServiceImpl implements ScheduleService {
     private final ScheduleRepository scheduleRepository;
+    private final NotificationRepository notificationRepository;
     private static final int CALEDAR_DATE = 1;
     @Override
     public List<ScheduleDto> getScheduleByCalendarId(String calendarId) {
@@ -31,7 +35,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public void addSchedule(String calendarId, ScheduleDto scheduleDto) {
+    public void addSchedule(String calendarId, String memberId, String nowDate, ScheduleDto scheduleDto) throws ExecutionException, InterruptedException {
 
         Date startDate = null;
         Date endDate = null;
@@ -45,24 +49,39 @@ public class ScheduleServiceImpl implements ScheduleService {
         int size = scheduleDto.getRepeatAmount();
 
         scheduleDto.setCalendarId(calendarId);
+        scheduleDto.setScheduleId(memberId);
 
         if (scheduleDto.getRepeatUnit() > 0) {
             // startdate < enddate 인 경우
             while (startDate.compareTo(endDate) <= 0) {
                 scheduleDto.setStartDate(DateUtil.getStringDate(startDate));
-                scheduleRepository.addSchedule(scheduleDto);
+                String scheduleId = scheduleRepository.addSchedule(scheduleDto);
 
+                // 알람 추가하기
+                NotificationDto notificationDto = new NotificationDto("", scheduleId,
+                        calendarId, memberId, nowDate, false, NotifiacationType.ADD.ordinal());
+                notificationRepository.addNotification(notificationDto);
                 // 반봅 주기만큼 더하기
                 startDate = DateUtil.addDays(startDate, unit, size);
             }
         } else {
-            scheduleRepository.addSchedule(scheduleDto);
+            String scheduleId = scheduleRepository.addSchedule(scheduleDto);
+
+            // 알람 추가하기
+            NotificationDto notificationDto = new NotificationDto("", scheduleId,
+                    calendarId, memberId, nowDate, false, NotifiacationType.ADD.ordinal());
+            notificationRepository.addNotification(notificationDto);
         }
     }
 
     @Override
-    public void modifySchedule(String calendarId, String scheduleId, ScheduleDto scheduleDto) throws ExecutionException, InterruptedException {
+    public void modifySchedule(String calendarId, String scheduleId, String memberId, String nowDate, ScheduleDto scheduleDto) throws ExecutionException, InterruptedException {
         scheduleRepository.modifySchedule(calendarId, scheduleId, scheduleDto);
+
+        // 알람 추가하기
+        NotificationDto notificationDto = new NotificationDto("", scheduleId,
+                calendarId, memberId, nowDate, false, NotifiacationType.ADD.ordinal());
+        notificationRepository.addNotification(notificationDto);
     }
 
     @Override

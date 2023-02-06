@@ -8,6 +8,7 @@ import com.wepat.notification.NotifiacationType;
 import com.wepat.notification.NotificationDto;
 import com.wepat.schedule.ScheduleDto;
 import com.wepat.schedule.ScheduleEntity;
+import org.checkerframework.checker.units.qual.N;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -50,7 +51,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
     }
 
     @Override
-    public void addSchedule(ScheduleDto scheduleDto) {
+    public String addSchedule(ScheduleDto scheduleDto) {
         CollectionReference scheduleCollection = FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
         CollectionReference notificationCollection = FirestoreClient.getFirestore().collection(NOTIFICATION_COLLECTION);
         final DocumentReference scheduleDocRef = scheduleCollection.document();
@@ -63,14 +64,9 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
             transaction.set(scheduleDocRef, scheduleDto);
 
             // add notification
-            NotificationDto notificationDto = NotificationDto
-                    .builder()
-                    .date(scheduleDto.getNowDate())
-                    .notificationId(notificationDocRef.getId())
-                    .notificationType(NotifiacationType.ADD.ordinal()).build();
-
             return null;
         });
+        return scheduleDocRef.getId();
     }
 
     @Override

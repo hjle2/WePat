@@ -48,7 +48,8 @@ public class FinanceRepositoryImpl implements FinanceRepository {
 
         List<FinanceDto> financeList = calCollection.document(calendarId).get().get().toObject(CalendarEntity.class).getFinanceList();
         for (FinanceDto financeDto : financeList) {
-            if (financeDto.getFinanceId().equals(financeId)) {
+            String dtoFinanceId = financeDto.getFinanceId();
+            if (dtoFinanceId != null && dtoFinanceId.equals(financeId)) {
                 return financeDto;
             }
         }
@@ -64,7 +65,8 @@ public class FinanceRepositoryImpl implements FinanceRepository {
             DocumentSnapshot calSnapshot = transaction.get(calDocRef).get();
             List<FinanceDto> financeList = calSnapshot.toObject(CalendarEntity.class).getFinanceList();
             for (FinanceDto finance : financeList) {
-                if (finance.getFinanceId().equals(financeId)) {
+                String dtoFinanceId = financeDto.getFinanceId();
+                if (dtoFinanceId != null && dtoFinanceId.equals(financeId)) {
                     finance.setCategory(financeDto.getCategory());
                     finance.setMemo(financeDto.getMemo());
                     finance.setMoney(financeDto.getMoney());
@@ -89,7 +91,8 @@ public class FinanceRepositoryImpl implements FinanceRepository {
             DocumentSnapshot calSnapshot = transaction.get(calDocRef).get();
             List<FinanceDto> financeList = calSnapshot.toObject(CalendarEntity.class).getFinanceList();
             for (FinanceDto financeDto : financeList) {
-                if (financeDto.getFinanceId().equals(financeId)) {
+                String financeIdCompare = financeDto.getFinanceId();
+                if (financeIdCompare != null && financeIdCompare.equals(financeId)) {
                     financeList.remove(financeDto);
                     transaction.update(calDocRef, "financeList", financeList);
                     return ReturnType.SUCCESS;

@@ -10,7 +10,7 @@ public interface ScheduleRepository {
     List<ScheduleDto> getScheduleByCalendarId(String calendarId);
     List<ScheduleDto> getScheduleListByDate(String calendarId, String startDate, String endDate) throws ExecutionException, InterruptedException;
     // 일정 추가
-    void addSchedule(ScheduleDto scheduleDto);
+    String addSchedule(ScheduleDto scheduleDto);
     // 일정 변경
     void modifySchedule(String calendarId, String scheduleId, ScheduleDto scheduleDto) throws ExecutionException, InterruptedException;
     // 일정 삭제

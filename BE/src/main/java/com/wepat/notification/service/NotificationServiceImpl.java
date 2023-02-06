@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ExecutionException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,20 +21,11 @@ public class NotificationServiceImpl implements NotificationService {
                                 String date,
                                 int type) throws ExecutionException, InterruptedException {
 
-        NotificationDto notificationDto = NotificationDto.builder()
-                .calendarId(calendarId)
-                .scheduleId(scheduleId)
-                .memberId(memberId)
-                .date(date)
-                .notificationType(type).build();
 
+        NotificationDto notificationDto =
+                new NotificationDto("", scheduleId, calendarId, memberId, date, false, type);
         String notificationId = notificationRepository.addNotification(notificationDto); // db에 notification을 저장하고 id값 반환
         notificationDto.setNotificationId(notificationId);
-    }
-
-    @Override
-    public void readNotification(String notificationId) {
-        notificationRepository.readNotification(notificationId);
     }
 
     @Override
@@ -47,12 +39,17 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void readlAll(String memberId) {
-        notificationRepository.readlAll(memberId);
+    public List<NotificationDto> getAllByMemberId(String memberId) throws ExecutionException, InterruptedException {
+        return notificationRepository.getAllByMemberId(memberId);
     }
 
     @Override
-    public String getScheduleIdByNotificationId(String notificationId) throws ExecutionException, InterruptedException {
-        return notificationRepository.getScheduleIdByNotificationId(notificationId);
+    public NotificationDto getByNotificationId(String notificationId) throws ExecutionException, InterruptedException {
+        return notificationRepository.getByNotificationId(notificationId);
+    }
+
+    @Override
+    public int getCountByMemberId(String memberId) throws ExecutionException, InterruptedException {
+        return notificationRepository.getCountByMemberId(memberId);
     }
 }

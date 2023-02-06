@@ -11,9 +11,9 @@ public interface ScheduleService {
     List<ScheduleDto> getScheduleByCalendarId(String calendarId);
     List<ScheduleDto> getScheduleListByDate(String calendarId, String date) throws ExecutionException, InterruptedException;
     // 일정 추가
-    void addSchedule(String calendarId, ScheduleDto scheduleDto);
+    void addSchedule(String calendarId, String memberId, String nowDate, ScheduleDto scheduleDto) throws ExecutionException, InterruptedException;
     // 일정 변경
-    void modifySchedule(String calendarId, String scheduleId, ScheduleDto scheduleDto) throws ExecutionException, InterruptedException;
+    void modifySchedule(String calendarId, String scheduleId, String memberId, String nowDate, ScheduleDto scheduleDto) throws ExecutionException, InterruptedException;
     // 일정 삭제
     void deleteSchedule(String calendarId, String scheduleId);
     // 일정 상세 정보 읽기

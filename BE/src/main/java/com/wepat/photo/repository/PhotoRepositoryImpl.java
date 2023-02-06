@@ -134,7 +134,8 @@ public class PhotoRepositoryImpl implements PhotoRepository {
             if (photoSnapshot.exists()) {
                 List<CommentDto> commentList = photoDocRef.get().get().toObject(PhotoEntity.class).getCommentList();
                 for (CommentDto commentDto : commentList) {
-                    if (commentDto.getCommentId().equals(commentId)) {
+                    String dtoCommentId = commentDto.getCommentId();
+                    if (dtoCommentId.equals(commentId)) {
                         commentList.remove(commentDto);
                         break;
                     }
