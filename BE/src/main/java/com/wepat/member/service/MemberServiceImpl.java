@@ -57,12 +57,12 @@ public class MemberServiceImpl implements MemberService {
          * 링크 사용시 사용
          */
         String randomPassword = "";
-        String pwd= "";
+        String pwd = "";
         String[] word = new String[] {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B",
                 "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
                 "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
         int idx = 0;
-        for(int i=0; i<RANDOM_LENGTH; i++) {
+        for(int i = 0; i<RANDOM_LENGTH; i++) {
             idx = (int) (word.length*Math.random());
             randomPassword += word[idx];
         }
