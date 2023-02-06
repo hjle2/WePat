@@ -114,6 +114,12 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
     }
 
     @Override
+    public void completeSchedule(String calendarId, String scheduleId) {
+        CollectionReference scheduleCollection = FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
+        scheduleCollection.document(scheduleId).update("completed", true);
+    }
+
+    @Override
     public ScheduleDto getScheduleDetailByDate(String calendarId, String scheduleId) throws ExecutionException, InterruptedException {
         CollectionReference scheduleCollection = FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
         return scheduleCollection.whereEqualTo("calendarId", calendarId)

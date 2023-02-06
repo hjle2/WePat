@@ -16,6 +16,7 @@ public interface ScheduleService {
     void modifySchedule(String calendarId, String scheduleId, String memberId, String nowDate, ScheduleDto scheduleDto) throws ExecutionException, InterruptedException;
     // 일정 삭제
     void deleteSchedule(String calendarId, String scheduleId);
+    void compleateSchedule(String calendarId, String scheduleId);
     // 일정 상세 정보 읽기
     ScheduleDto getScheduleDetailByDate(String calendarId, String scheduleId) throws ExecutionException, InterruptedException;
 }
