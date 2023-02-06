@@ -39,9 +39,11 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         Date startDate = null;
         Date endDate = null;
+        Date repeatEndDate = null;
         try {
             startDate = DateUtil.getDate(scheduleDto.getStartDate());
             endDate = DateUtil.getDate(scheduleDto.getEndDate());
+            repeatEndDate = DateUtil.getDate(scheduleDto.getRepeatEndDate());
         } catch (Exception e) {
             throw new TypeNotPresentException("Date", e);
         }
@@ -53,8 +55,8 @@ public class ScheduleServiceImpl implements ScheduleService {
         scheduleDto.setNowDate(nowDate);
 
         if (scheduleDto.getRepeatUnit() > 0) {
-            // startdate < enddate 인 경우
-            for (int i=0; i<scheduleDto.getRepeatAmount(); i++) {
+            // endDate < repeatEndDate 인 경우
+            while (endDate.compareTo(repeatEndDate) < 0) {
                 scheduleDto.setStartDate(DateUtil.getStringDate(startDate));
                 scheduleDto.setEndDate(DateUtil.getStringDate(endDate));
                 String scheduleId = scheduleRepository.addSchedule(scheduleDto);
