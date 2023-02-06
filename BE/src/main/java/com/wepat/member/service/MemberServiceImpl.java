@@ -32,20 +32,19 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void socialSignUp(MemberDto member, int social) throws ExecutionException, InterruptedException {
-
-        memberRepository.socialSignUp(member, social);
+    public void socialSignUp(MemberDto member) throws ExecutionException, InterruptedException {
+        memberRepository.socialSignUp(member);
     }
 
     @Override
     public MemberDto signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
-        pwd = SecurityUtil.getSHA256(pwd, "salt");
+//        pwd = SecurityUtil.getSHA256(pwd, "salt");
         return memberRepository.signIn(memberId, pwd);
     }
 
     @Override
-    public MemberDto socialSignIn(String memberId, String pwd, int social) throws ExecutionException, InterruptedException {
-        return socialSignIn(memberId, pwd, social);
+    public MemberDto socialSignIn(String memberId, int social) throws ExecutionException, InterruptedException {
+        return memberRepository.socialSignIn(memberId, social);
     }
 
     @Override
@@ -97,6 +96,11 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void modifyMemberById(String memberId, String nickName) throws ExecutionException, InterruptedException {
         memberRepository.modifyMemberById(memberId, nickName);
+    }
+
+    @Override
+    public void modifyMemberPhotoById(String memberId, String photoUrl) throws ExecutionException, InterruptedException {
+        memberRepository.modifyMemberPhotoById(memberId, photoUrl);
     }
 
     @Override

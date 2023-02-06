@@ -55,12 +55,12 @@ public class MemberController {
             throw new RuntimeException();
         }
     }
-    @PostMapping("/signin/social")
+    @PostMapping("/socialsignin")
     @ApiOperation(value = "로그인 시도",  notes = "로그인 요청을 한다.",response = MemberDto.class)
-    public ResponseEntity<?> socialSignIn(String memberId, String pwd) {
+    public ResponseEntity<?> socialSignIn(String memberId, int social) {
         try {
             Map<String, String> resultMap = new HashMap<>();
-            MemberDto memberResult = memberService.signIn(memberId, pwd);//유저가 로그인 가능한 유저인지 확인
+            MemberDto memberResult = memberService.socialSignIn(memberId,social);//유저가 로그인 가능한 유저인지 확인
             String accessToken = null;
             String refreshToken = null;//유저가 로그인 되면 토큰을 생성하여 저장할 String
             if(memberResult != null){//로그인에서 객체를 받아왔다.
@@ -102,9 +102,9 @@ public class MemberController {
         }
     }
 
-    @PostMapping("/signup/social")
-    @ApiOperation(value = "회원가입", notes = "정보를 받아 회원가입 시도한다.", response = MemberDto.class)
-    public ResponseEntity<?> socialSignUp(@RequestBody MemberDto member) {
+    @PostMapping("/socialsignup")
+    @ApiOperation(value = "SNS회원가입", notes = "SNS에서 정보를 받아 회원가입 시도한다.", response = MemberDto.class)
+    public ResponseEntity<?> socialSignUp(MemberDto member) {
         try {
             memberService.signUp(member);
             return ResponseEntity.accepted().build();
@@ -112,8 +112,6 @@ public class MemberController {
             throw new ExistEmailException(e.getMessage());
         } catch (ExistIdException e) {
             throw new ExistIdException(e.getMessage());
-        } catch (NotExistCalendarException e) {
-            throw new NotExistCalendarException(e.getMessage());
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -180,6 +178,21 @@ public class MemberController {
             throw new RuntimeException();
         }
     }
+    @PutMapping("/photo")
+    @ApiOperation(value = "회원 프로필 사진 수정")
+    public ResponseEntity<?> modifyMemberPhotoById(HttpServletRequest request, String photoUrl) {
+        String memberId = JwtUtil.getUserIdByHttpRequest(request);
+        try {
+            memberService.modifyMemberPhotoById(memberId, photoUrl);
+            return ResponseEntity.accepted().build();
+        } catch (NotExistMemberException e) {
+            throw new NotExistMemberException();
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
+    }
+
+
     @DeleteMapping("/")
     @ApiOperation(value = "사용자의 정보를 삭제한다.", response = HttpResponse.class)
     public ResponseEntity<?> deleteMember(HttpServletRequest request, String nickName) {

@@ -21,6 +21,8 @@ public class MemberDto {
     private String calendarId;
     @ApiParam(value = "Social SNS")
     private int social = SOCIAL_ACCOUNT.NONE.ordinal();
+    @ApiParam(value = "프로필 사진")
+    private String photoUrl;
 }
 enum SOCIAL_ACCOUNT {
     NONE,

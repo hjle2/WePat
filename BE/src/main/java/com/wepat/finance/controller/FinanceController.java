@@ -54,8 +54,8 @@ public class FinanceController {
     @PutMapping("/modify/{calendarid}/{financeid}")
     @ApiOperation(value = "가계부 세부 내용 변경", notes = "반환 값 : 성공 or 실패")
     public ResponseEntity<?> modifyFinanceById(@PathVariable("calendarid") String calendarId,
-                                               @PathVariable("financeid") String financeId,
-                                               @RequestBody FinanceDto financeDto) {
+                                                 @PathVariable("financeid") String financeId,
+                                                 @RequestBody FinanceDto financeDto) {
         try {
             financeService.modifyFinanceById(calendarId, financeId, financeDto);
             return new ResponseEntity<>("수정 성공", HttpStatus.OK);

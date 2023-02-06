@@ -15,6 +15,8 @@ public class CommentDto {
     private String commentId;
     @ApiParam(value = "멤버ID", required = true)
     private String memberId;
+    @ApiParam(value = "멤버 프로필 사진")
+    private String photoUrl;
     @ApiParam(value = "작성자", required = true)
     private String writter;
     @ApiParam(value = "글 내용", required = true)

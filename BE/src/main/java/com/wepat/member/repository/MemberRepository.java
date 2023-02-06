@@ -3,19 +3,21 @@ package com.wepat.member.repository;
 
 import com.wepat.member.MemberDto;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.ExecutionException;
 
 public interface MemberRepository {
     void signUpWithCalendar(MemberDto member) throws ExecutionException, InterruptedException;
     void signUp(MemberDto member) throws ExecutionException, InterruptedException;
-    void socialSignUp(MemberDto member, int social) throws ExecutionException, InterruptedException;
+    void socialSignUp(MemberDto member)throws ExecutionException, InterruptedException;
     MemberDto signIn(String memberId, String pwd) throws ExecutionException, InterruptedException;
-    MemberDto socialSignIn(String memberId, String pwd, int social) throws ExecutionException, InterruptedException;
+    MemberDto socialSignIn( String memberId, int social)throws ExecutionException, InterruptedException;
     String findId(String email) throws ExecutionException, InterruptedException;
     void changePwdToRandom(String randomPassword, String memberId) throws ExecutionException, InterruptedException;
     void modifyPwdById(String memberId, String pwd) throws ExecutionException, InterruptedException ;
     MemberDto getMemberById(String memberId) throws ExecutionException, InterruptedException;
     void modifyMemberById(String memberId, String nickName) throws ExecutionException, InterruptedException;
+    void modifyMemberPhotoById(String memberId, String photoUrl) throws ExecutionException, InterruptedException;
     void deleteMember(String memberId) throws ExecutionException, InterruptedException;
     void modifyCalendarById(String memberId, String calendarId) throws ExecutionException, InterruptedException;
 

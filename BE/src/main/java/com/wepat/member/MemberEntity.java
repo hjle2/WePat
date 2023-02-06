@@ -18,7 +18,9 @@ public class MemberEntity {
         this.email = member.getEmail();
         this.calendarId = member.getCalendarId();
         this.reportList = new ArrayList<>();
-        this.block = new Boolean(false);
+        this.block = false;
+        this.social = member.getSocial();
+        this.photoUrl = "";
     }
     @ApiParam(value = "사용자 비밀번호", required = true)
     private String pwd;
@@ -34,4 +36,6 @@ public class MemberEntity {
     private boolean block;
     @ApiParam(value = "social", hidden = true)
     private int social;
+    @ApiParam(value = "프로필 사진")
+    private String photoUrl;
 }
