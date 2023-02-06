@@ -10,12 +10,14 @@ import com.wepat.member.MemberEntity;
 import com.wepat.pet.PetEntity;
 import com.wepat.photo.PhotoEntity;
 import com.wepat.exception.member.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.concurrent.ExecutionException;
 import java.util.List;
 
 @Repository
+@Slf4j
 public class MemberRepositoryImpl implements MemberRepository {
 
     public enum ReturnType {
@@ -215,7 +217,8 @@ public class MemberRepositoryImpl implements MemberRepository {
         CollectionReference memCollection = FirestoreClient.getFirestore().collection(MEMBER_COLLECTION);
         List<QueryDocumentSnapshot> memDocs = memCollection.get().get().getDocuments();
         for (QueryDocumentSnapshot docs : memDocs) {
-            if (docs.toObject(MemberEntity.class).getEmail().equals(email)) {
+            String dtoEmail = docs.toObject(MemberEntity.class).getEmail();
+            if (dtoEmail != null && dtoEmail.equals(email)) {
                 return docs.getId();
             }
         }
@@ -341,7 +344,8 @@ public class MemberRepositoryImpl implements MemberRepository {
             // 사진 삭제
             List<QueryDocumentSnapshot> photoDocList = photoCollection.get().get().getDocuments();
             for (QueryDocumentSnapshot photoList : photoDocList) {
-                if (photoList.toObject(PhotoEntity.class).getCalendarId().equals(calendarId)) {
+                String photoDtoCalendarId = photoList.toObject(PhotoEntity.class).getCalendarId();
+                if (photoDtoCalendarId != null && photoDtoCalendarId.equals(calendarId)) {
                     photoCollection.document(photoList.getId()).delete();
                 }
             }
@@ -408,7 +412,9 @@ public class MemberRepositoryImpl implements MemberRepository {
                     // 사진 삭제
                     List<QueryDocumentSnapshot> photoDocList = photoCollection.get().get().getDocuments();
                     for (QueryDocumentSnapshot photoList : photoDocList) {
-                        if (photoList.toObject(PhotoEntity.class).getCalendarId().equals(beforeCalendarId)) {
+                        String calendarIdCompare = photoList.toObject(PhotoEntity.class).getCalendarId();
+
+                        if (calendarIdCompare != null && calendarIdCompare.equals(beforeCalendarId)) {
                             photoCollection.document(photoList.getId()).delete();
                         }
                     }

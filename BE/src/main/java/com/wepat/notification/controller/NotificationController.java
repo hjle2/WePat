@@ -3,6 +3,7 @@ package com.wepat.notification.controller;
 import com.wepat.notification.service.NotificationService;
 import com.wepat.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,12 +15,6 @@ import java.util.concurrent.ExecutionException;
 @RequiredArgsConstructor
 public class NotificationController {
     private final NotificationService notificationService;
-
-    @GetMapping("/read/{notificationid}")
-    public ResponseEntity<?> readNotification(@PathVariable("notificationid") String notificationId) {
-        notificationService.readNotification(notificationId);
-        return ResponseEntity.ok().build();
-    }
 
     @DeleteMapping("/delete/{notificationid}")
     public ResponseEntity<?> deleteNotification(@PathVariable("notificationid") String notificationId) {
@@ -34,35 +29,38 @@ public class NotificationController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/readAll")
-    public ResponseEntity<?> readlAll(HttpServletRequest request) {
+    @GetMapping("/getall")
+    public ResponseEntity<?> getAllByMemberId(HttpServletRequest request) {
         String memberId = JwtUtil.getUserIdByHttpRequest(request);
-        notificationService.readlAll(memberId);
-        return ResponseEntity.ok().build();
+        try {
+            return new ResponseEntity<>(notificationService.getAllByMemberId(memberId), HttpStatus.OK);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @GetMapping("/get/{notificationid}")
     public ResponseEntity<?> getScheduleIdByNotificationId(@PathVariable("notificationid") String notificationId) {
         try {
-            notificationService.getScheduleIdByNotificationId(notificationId);
+            return new ResponseEntity<>(notificationService.getByNotificationId(notificationId), HttpStatus.OK);
         } catch (ExecutionException e) {
-            throw new InvalidParameterException();
+            throw new RuntimeException(e);
         } catch (InterruptedException e) {
-            throw new InvalidParameterException();
+            throw new RuntimeException(e);
         }
-        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/count")
-    public ResponseEntity<?> getScheduleIdByNotificationId(HttpServletRequest request) {
+    public ResponseEntity<?> getCountByMemberId(HttpServletRequest request) {
         try {
             String memberId = JwtUtil.getUserIdByHttpRequest(request);
-            notificationService.getScheduleIdByNotificationId(memberId);
+            return new ResponseEntity<>(notificationService.getCountByMemberId(memberId), HttpStatus.OK);
         } catch (ExecutionException e) {
             throw new InvalidParameterException();
         } catch (InterruptedException e) {
             throw new InvalidParameterException();
         }
-        return ResponseEntity.ok().build();
     }
 }

@@ -118,7 +118,8 @@ public class PetRepositoryImpl implements PetRepository {
             if (petSnapshot.exists()) {
                 List<WeightDto> weightList = petDocRef.get().get().toObject(PetEntity.class).getWeightList();
                 for (WeightDto weight : weightList) {
-                    if (weight.getDate().equals(weightDto.getDate())) {
+                    String weightDate = weight.getDate();
+                    if (weightDate != null && weightDate.equals(weightDto.getDate())) {
                         weight.setWeight(weightDto.getWeight());
                         break;
                     }

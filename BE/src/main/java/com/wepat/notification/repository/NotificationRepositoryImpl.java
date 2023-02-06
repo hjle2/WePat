@@ -6,6 +6,7 @@ import com.google.firebase.cloud.FirestoreClient;
 import com.wepat.notification.NotificationDto;
 import com.wepat.sse.SseEmitterRepository;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -43,20 +44,6 @@ public class NotificationRepositoryImpl implements NotificationRepository {
     }
 
     @Override
-    public void readNotification(String notificationId) {
-        CollectionReference notificationCollection = FirestoreClient.getFirestore().collection(NOTIFICATION_COLLECTION);
-        final DocumentReference notificationDocRef = notificationCollection.document(notificationId);
-
-        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
-            NotificationDto notificationDto = transaction.get(notificationDocRef).get().toObject(NotificationDto.class);
-            if (notificationDto != null) {
-                transaction.update(notificationDocRef, "read", false);
-            }
-           return null;
-        });
-    }
-
-    @Override
     public void deleteNotification(String notificationId) {
         CollectionReference notificationCollection = FirestoreClient.getFirestore().collection(NOTIFICATION_COLLECTION);
         final DocumentReference notificationDocRef = notificationCollection.document(notificationId);
@@ -86,26 +73,27 @@ public class NotificationRepositoryImpl implements NotificationRepository {
     }
 
     @Override
-    public void readlAll(String memberId) {
+    public List<NotificationDto> getAllByMemberId(String memberId) throws ExecutionException, InterruptedException {
         CollectionReference notificationCollection = FirestoreClient.getFirestore().collection(NOTIFICATION_COLLECTION);
 
-        final Query query = notificationCollection.whereEqualTo("memberId", memberId);
-
-        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
-            List<QueryDocumentSnapshot> documentSnapshots = transaction.get(query).get().getDocuments();
-            for (QueryDocumentSnapshot documentSnapshot : documentSnapshots) {
-                transaction.update(documentSnapshot.getReference(), "read", true);
-            }
-            return null;
-        });
+        List<NotificationDto> notificationDtoList = notificationCollection
+                .whereEqualTo("memberId", memberId)
+                .get().get().toObjects(NotificationDto.class);
+        return notificationDtoList;
     }
 
     @Override
-    public String getScheduleIdByNotificationId(String notificationId) throws ExecutionException, InterruptedException {
+    public NotificationDto getByNotificationId(String notificationId) throws ExecutionException, InterruptedException {
         CollectionReference notificationCollection = FirestoreClient.getFirestore().collection(NOTIFICATION_COLLECTION);
-        DocumentReference notificationDocRef = notificationCollection.document(notificationId);
 
-        String scheduleId = notificationDocRef.get().get().toObject(NotificationDto.class).getScheduleId();
-        return scheduleId;
+        return notificationCollection.whereEqualTo("notificationId", notificationId).get().get().toObjects(NotificationDto.class).get(0);
+    }
+
+    @Override
+    public int getCountByMemberId(String memberId) throws ExecutionException, InterruptedException {
+        CollectionReference notificationCollection = FirestoreClient.getFirestore().collection(NOTIFICATION_COLLECTION);
+        List<QueryDocumentSnapshot> documents = notificationCollection.whereEqualTo("memberId", memberId).get().get().getDocuments();
+
+        return documents.size();
     }
 }
