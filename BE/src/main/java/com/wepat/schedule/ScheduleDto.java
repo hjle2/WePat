@@ -26,6 +26,8 @@ public class ScheduleDto {
     private String nowDate;
     @ApiParam(value = "일정 종료일")
     private String endDate;
+    @ApiParam(value = "일정 반복 종료일")
+    private String repeatEndDate;
     @ApiParam(value = "알람 여부")
     private int alarm;
     @ApiParam(value = "일정 예정자")
