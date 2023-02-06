@@ -4,6 +4,8 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import com.wepat.exception.DataNotExitsException;
+import com.wepat.notification.NotifiacationType;
+import com.wepat.notification.NotificationDto;
 import com.wepat.schedule.ScheduleDto;
 import com.wepat.schedule.ScheduleEntity;
 import org.springframework.stereotype.Repository;
@@ -14,6 +16,7 @@ import java.util.concurrent.ExecutionException;
 @Repository
 public class ScheduleRepositoryImpl implements ScheduleRepository {
     private static final String SCHEDULE_COLLECTION = "schedule";
+    private static final String NOTIFICATION_COLLECTION = "notification";
 
 //    private static Firestore firestore1 = FirestoreClient.getFirestore();
 //    private final Firestore firestore2 = FirestoreClient.getFirestore();
@@ -49,13 +52,30 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
     @Override
     public void addSchedule(ScheduleDto scheduleDto) {
         CollectionReference scheduleCollection = FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
-        DocumentReference docRef = scheduleCollection.document();
-        scheduleDto.setScheduleId(docRef.getId());
-        docRef.set(scheduleDto);
+        CollectionReference notificationCollection = FirestoreClient.getFirestore().collection(NOTIFICATION_COLLECTION);
+        final DocumentReference scheduleDocRef = scheduleCollection.document();
+        final DocumentReference notificationDocRef = notificationCollection.document();
+
+        scheduleDto.setScheduleId(scheduleDocRef.getId());
+
+        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction-> {
+            // add schedule
+            transaction.set(scheduleDocRef, scheduleDto);
+
+            // add notification
+            NotificationDto notificationDto = NotificationDto
+                    .builder()
+                    .date(scheduleDto.getNowDate())
+                    .notificationId(notificationDocRef.getId())
+                    .notificationType(NotifiacationType.ADD.ordinal()).build();
+
+            return null;
+        });
     }
 
     @Override
     public void modifySchedule(String calendarId, String scheduleId,  ScheduleDto scheduleDto) throws ExecutionException, InterruptedException {
+
         CollectionReference scheduleCollection = FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
         Query query = scheduleCollection.whereEqualTo("calendarId", calendarId)
                 .whereEqualTo("scheduleId", scheduleDto.getScheduleId());

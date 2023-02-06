@@ -32,8 +32,11 @@ public class MemberController {
             String accessToken = null;
             String refreshToken = null;//유저가 로그인 되면 토큰을 생성하여 저장할 String
             if(memberResult != null){//로그인에서 객체를 받아왔다.
-                accessToken = jwtUtil.createAccessToken("access-token", memberId);
-                refreshToken = jwtUtil.createRefreshToken("refresh-token", memberId);
+                accessToken = jwtUtil.createAccessToken("memberId", memberId);
+                refreshToken = jwtUtil.createRefreshToken("memberId", memberId);
+
+//                System.out.println(accessToken);
+//                System.out.println(refreshToken);
                 memberService.saveRefreshToken(memberId, refreshToken);
 
                 resultMap.put("access-token", accessToken);
@@ -61,8 +64,8 @@ public class MemberController {
             String accessToken = null;
             String refreshToken = null;//유저가 로그인 되면 토큰을 생성하여 저장할 String
             if(memberResult != null){//로그인에서 객체를 받아왔다.
-                accessToken = jwtUtil.createAccessToken("access-token", memberId);
-                refreshToken = jwtUtil.createRefreshToken("create-token", memberId);
+                accessToken = jwtUtil.createAccessToken("memberId", memberId);
+                refreshToken = jwtUtil.createRefreshToken("memberId", memberId);
                 memberService.saveRefreshToken(memberId, refreshToken);
 
                 resultMap.put("access-token", accessToken);
@@ -229,6 +232,7 @@ public class MemberController {
     @PostMapping("/gettoken")
     public ResponseEntity<?> getAccessToken(HttpServletRequest request, String refreshToken) {
         String memberId = JwtUtil.getUserId(request.getHeader("token"));
+
         String accessToken = jwtUtil.createAccessToken("memberId", memberId);
         return new ResponseEntity<>(accessToken, HttpStatus.OK);
     }

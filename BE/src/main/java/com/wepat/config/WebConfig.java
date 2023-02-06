@@ -30,7 +30,6 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/member/findid")
                 .excludePathPatterns("/member/findpwd")
                 .excludePathPatterns("/error/*");
-
     }
 
     @Override

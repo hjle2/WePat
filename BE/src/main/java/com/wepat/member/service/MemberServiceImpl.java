@@ -2,6 +2,7 @@ package com.wepat.member.service;
 
 import com.wepat.member.MemberDto;
 import com.wepat.member.repository.MemberRepository;
+import com.wepat.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,8 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void signUp(MemberDto member) throws ExecutionException, InterruptedException {
-        if (member.getCalendarId() == null) {
+        if (member.getCalendarId() == null || member.getCalendarId().isBlank()) {
+            member.setPwd(SecurityUtil.getSHA256(member.getPwd(),"salt"));
             memberRepository.signUp(member);
         } else {
             memberRepository.signUpWithCalendar(member);
@@ -36,6 +38,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberDto signIn(String memberId, String pwd) throws ExecutionException, InterruptedException {
+//        pwd = SecurityUtil.getSHA256(pwd, "salt");
         return memberRepository.signIn(memberId, pwd);
     }
 
