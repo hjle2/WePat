@@ -88,7 +88,7 @@ public class ScheduleController {
     @DeleteMapping("/delete/{calendarid}")
     @ApiOperation(value = "일정 삭제", response = HttpStatus.class)
     public ResponseEntity<?> deleteSchedule(@PathVariable("calendarid") String calendarId,
-                                            @RequestParam("scheduleid") String scheduleId) {
+                                            @RequestParam String scheduleId) {
         scheduleService.deleteSchedule(calendarId, scheduleId);
         return ResponseEntity.ok().build();
     }
@@ -97,12 +97,17 @@ public class ScheduleController {
     @ApiOperation(value = "일정 완료", response = HttpStatus.class)
     public ResponseEntity<?> completeSchedule(@PathVariable("calendarid") String calendarId,
                                               @PathVariable("scheduleid") String scheduleId,
-                                              @RequestParam("nowDate") String nowDate,
+                                              @RequestParam String nowDate,
+                                              @RequestParam String whoCompleted,
+                                              @RequestParam boolean completed,
                                               HttpServletRequest request) throws ExecutionException, InterruptedException {
 
         String memberId = JwtUtil.getUserIdByHttpRequest(request);
-        scheduleService.deleteSchedule(calendarId, scheduleId);
-        notificationService.addNotification(calendarId, memberId, scheduleId, nowDate, NotifiacationType.COMPLETED.ordinal());
+        scheduleService.completeSchedule(calendarId, scheduleId, whoCompleted, completed);
+        if (completed)
+            notificationService.addNotification(calendarId, memberId, scheduleId, nowDate, NotifiacationType.COMPLETE.ordinal());
+        else
+            notificationService.addNotification(calendarId, memberId, scheduleId, nowDate, NotifiacationType.INCOMPLETE.ordinal());
         return ResponseEntity.ok().build();
     }
 }

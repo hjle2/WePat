@@ -68,4 +68,16 @@ public class NotificationController {
             throw new InvalidParameterException();
         }
     }
+    @PutMapping("/readAll")
+    public ResponseEntity<?> readAllByMemberId(HttpServletRequest request) {
+        try {
+            String memberId = JwtUtil.getUserIdByHttpRequest(request);
+            notificationService.readAllByMemberId(memberId);
+            return ResponseEntity.ok().build();
+        } catch (ExecutionException e) {
+            throw new InvalidParameterException();
+        } catch (InterruptedException e) {
+            throw new InvalidParameterException();
+        }
+    }
 }

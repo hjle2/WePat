@@ -15,7 +15,7 @@ public interface ScheduleRepository {
     void modifySchedule(String calendarId, String scheduleId, ScheduleDto scheduleDto) throws ExecutionException, InterruptedException;
     // 일정 삭제
     void deleteSchedule(String calendarId, String scheduleId);
-    void completeSchedule(String calendarId, String scheduleId);
+    void completeSchedule(String calendarId, String scheduleId, String whoCompleted, boolean completed) throws ExecutionException, InterruptedException;
     // 일정 상세 정보 읽기
     ScheduleDto getScheduleByScheduleId(String calendarId, String scheduleId) throws ExecutionException, InterruptedException;
 }

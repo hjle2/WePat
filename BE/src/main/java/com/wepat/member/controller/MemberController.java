@@ -245,7 +245,7 @@ public class MemberController {
     }
 
     @PostMapping("/gettoken")
-    public ResponseEntity<?> getAccessToken(HttpServletRequest request, String refreshToken) {
+    public ResponseEntity<?> getAccessToken(HttpServletRequest request) {
         String memberId = JwtUtil.getUserId(request.getHeader("token"));
 
         String accessToken = jwtUtil.createAccessToken("memberId", memberId);

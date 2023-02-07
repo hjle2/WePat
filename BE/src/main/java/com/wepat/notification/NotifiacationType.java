@@ -4,5 +4,6 @@ public enum NotifiacationType {
     NONE,
     ADD,
     MODIFY,
-    COMPLETED,
+    COMPLETE,
+    INCOMPLETE,
 }
