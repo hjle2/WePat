@@ -65,7 +65,7 @@ public class ScheduleController {
         return ResponseEntity.ok().build();
     }
     // 스케쥴의 정보 변경
-    @PostMapping("/modify/{calendarid}/{scheduleid}")
+    @PutMapping("/modify/{calendarid}/{scheduleid}")
     @ApiOperation(value = "일정 변경", response = HttpStatus.class)
     public ResponseEntity<?> modifySchedule(@PathVariable("calendarid") String calendarId,
                                             @PathVariable("scheduleid") String scheduleId,
@@ -85,7 +85,7 @@ public class ScheduleController {
         return ResponseEntity.ok().build();
     }
     // 일정 삭제
-    @PostMapping("/delete/{calendarid}")
+    @DeleteMapping("/delete/{calendarid}")
     @ApiOperation(value = "일정 삭제", response = HttpStatus.class)
     public ResponseEntity<?> deleteSchedule(@PathVariable("calendarid") String calendarId,
                                             @RequestParam("scheduleid") String scheduleId) {
@@ -93,7 +93,7 @@ public class ScheduleController {
         return ResponseEntity.ok().build();
     }
     // 일정 완료 처리
-    @PostMapping("/complete/{calendarid}/{scheduleid}")
+    @PutMapping("/complete/{calendarid}/{scheduleid}")
     @ApiOperation(value = "일정 완료", response = HttpStatus.class)
     public ResponseEntity<?> completeSchedule(@PathVariable("calendarid") String calendarId,
                                               @PathVariable("scheduleid") String scheduleId,
