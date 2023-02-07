@@ -14,7 +14,7 @@ public interface MemberService {
     MemberDto socialSignIn(String memberId,int social) throws ExecutionException, InterruptedException;
     String findId(String email) throws ExecutionException, InterruptedException;
     void findPwd(String memberId, String email) throws ExecutionException, InterruptedException, MessagingException;
-    void modifyPwdById(String memberId, String pwd) throws ExecutionException, InterruptedException;
+    void modifyPwdById(String memberId, String originPwd, String newPwd) throws ExecutionException, InterruptedException;
     MemberDto getMemberById(String memberId) throws ExecutionException, InterruptedException;
     void modifyMemberById(String memberId, String nickName) throws ExecutionException, InterruptedException;
     void modifyMemberPhotoById(String memberId, String photoUrl) throws ExecutionException, InterruptedException;
