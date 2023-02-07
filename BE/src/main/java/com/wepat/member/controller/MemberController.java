@@ -142,13 +142,13 @@ public class MemberController {
     }
     @PutMapping("modifypwd")
     @ApiOperation(value = "비밀번호 변경", response = HttpResponse.class)
-    public ResponseEntity<?> modifyPwdById(HttpServletRequest request, String pwd) {
+    public ResponseEntity<?> modifyPwdById(HttpServletRequest request, String originPwd, String newPwd) {
         try {
             String memberId = JwtUtil.getUserIdByHttpRequest(request);
-            memberService.modifyPwdById(memberId, pwd);
+            memberService.modifyPwdById(memberId, originPwd, newPwd);
             return ResponseEntity.accepted().build();
-        } catch (NotExistMemberException e) {
-            throw new NotExistMemberException(e.getMessage());
+        } catch (WrongPwdException e) {
+            throw new WrongPwdException(e.getMessage());
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
