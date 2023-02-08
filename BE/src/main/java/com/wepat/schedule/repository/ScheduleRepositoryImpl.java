@@ -4,12 +4,17 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import com.wepat.exception.DataNotExitsException;
+import com.wepat.exception.schedule.NotExistScheduleException;
+import com.wepat.member.MemberDto;
 import com.wepat.notification.NotifiacationType;
 import com.wepat.notification.NotificationDto;
+import com.wepat.photo.CommentDto;
+import com.wepat.schedule.CalendarEntity;
 import com.wepat.schedule.ScheduleDto;
 import com.wepat.schedule.ScheduleEntity;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -20,6 +25,10 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
     private static final String NOTIFICATION_COLLECTION = "notification";
     private static final String CALENDAR_COLLECTION = "calendar";
     private static final String MEMBER_COLLECTION = "member";
+
+    public enum ReturnType {
+        SUCCESS, NotExistScheduleException
+    }
 
 //    private static Firestore firestore1 = FirestoreClient.getFirestore();
 //    private final Firestore firestore2 = FirestoreClient.getFirestore();
@@ -63,6 +72,8 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 
         ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction-> {
             // add schedule
+            scheduleDto.setPhotoUrl("");
+            scheduleDto.setReviewList(new ArrayList<>());
             transaction.set(scheduleDocRef, scheduleDto);
 
             // add notification
@@ -127,7 +138,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
     public ScheduleDto getScheduleByScheduleId(String calendarId, String scheduleId) throws ExecutionException, InterruptedException {
         CollectionReference scheduleCollection = FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
         return scheduleCollection.whereEqualTo("calendarId", calendarId)
-                .whereEqualTo("calendarId", calendarId)
+                .whereEqualTo("scheduleId", scheduleId)
                 .get().get().toObjects(ScheduleDto.class).get(0);
     }
 
@@ -143,5 +154,100 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
             memberMap.put(memberId, nickName);
         }
         return memberMap;
+    }
+
+    @Override
+    public void addCommentByScheduleId(String calendarId, String scheduleId, CommentDto commentDto) throws ExecutionException, InterruptedException {
+        CollectionReference scheduleCollection = FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
+        DocumentReference scheduleDocRef = scheduleCollection.document(scheduleId);
+        DocumentReference randomDocRef = scheduleCollection.document();
+
+        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
+            DocumentSnapshot scheduleSnapshot = transaction.get(scheduleDocRef).get();
+            if (scheduleSnapshot.exists()) {
+                List<CommentDto> reviewList = scheduleSnapshot.toObject(ScheduleDto.class).getReviewList();
+                commentDto.setCommentId(randomDocRef.getId());
+                reviewList.add(commentDto);
+                transaction.update(scheduleDocRef, "reviewList", reviewList);
+                return ReturnType.SUCCESS;
+            } else {
+                return ReturnType.NotExistScheduleException;
+            }
+        });
+        if (future.get() == ReturnType.NotExistScheduleException) {
+            throw new NotExistScheduleException();
+        }
+    }
+
+    @Override
+    public void modifyCommentByScheduleId(String calendarId, String scheduleId, String commentId, CommentDto commentDto) throws ExecutionException, InterruptedException {
+        CollectionReference scheduleCollection = FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
+        DocumentReference scheduleDocRef = scheduleCollection.document(scheduleId);
+
+        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
+            DocumentSnapshot scheduleSnapshot = transaction.get(scheduleDocRef).get();
+            if (scheduleSnapshot.exists()) {
+                List<CommentDto> reviewList = scheduleSnapshot.toObject(ScheduleDto.class).getReviewList();
+                for (CommentDto review : reviewList) {
+                    if (review.getCommentId().equals(commentId)) {
+                        review.setDate(commentDto.getDate());
+                        review.setContent(commentDto.getContent());
+                        break;
+                    }
+                }
+                transaction.update(scheduleDocRef, "reviewList", reviewList);
+                return ReturnType.SUCCESS;
+            } else {
+                return ReturnType.NotExistScheduleException;
+            }
+        });
+        if (future.get() == ReturnType.NotExistScheduleException) {
+            throw new NotExistScheduleException();
+        }
+    }
+
+    @Override
+    public void deleteCommentByScheduleId(String calendarId, String scheduleId, String commentId) throws ExecutionException, InterruptedException {
+        CollectionReference scheduleCollection = FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
+        DocumentReference scheduleDocRef = scheduleCollection.document(scheduleId);
+
+        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
+            DocumentSnapshot scheduleSnapshot = transaction.get(scheduleDocRef).get();
+            if (scheduleSnapshot.exists()) {
+                List<CommentDto> reviewList = scheduleSnapshot.toObject(ScheduleDto.class).getReviewList();
+                for (CommentDto review : reviewList) {
+                    if (review.getCommentId().equals(commentId)) {
+                        reviewList.remove(review);
+                        break;
+                    }
+                }
+                transaction.update(scheduleDocRef, "reviewList", reviewList);
+                return ReturnType.SUCCESS;
+            } else {
+                return ReturnType.NotExistScheduleException;
+            }
+        });
+        if (future.get() == ReturnType.NotExistScheduleException) {
+            throw new NotExistScheduleException();
+        }
+    }
+
+    @Override
+    public void modifyPhotoUrlByScheduleId(String calendarId, String scheduleId, String photoUrl) throws ExecutionException, InterruptedException {
+        CollectionReference scheduleCollection = FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
+        DocumentReference scheduleDocRef = scheduleCollection.document(scheduleId);
+
+        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
+            DocumentSnapshot scheduleSnapshot = transaction.get(scheduleDocRef).get();
+            if (scheduleSnapshot.exists()) {
+                scheduleSnapshot.toObject(ScheduleDto.class).setPhotoUrl(photoUrl);
+                return ReturnType.SUCCESS;
+            } else {
+                return ReturnType.NotExistScheduleException;
+            }
+        });
+        if (future.get() == ReturnType.NotExistScheduleException) {
+            throw new NotExistScheduleException();
+        }
     }
 }

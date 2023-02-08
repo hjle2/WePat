@@ -1,7 +1,9 @@
 package com.wepat.schedule.controller;
 
+import com.wepat.exception.schedule.NotExistScheduleException;
 import com.wepat.notification.NotifiacationType;
 import com.wepat.notification.service.NotificationService;
+import com.wepat.photo.CommentDto;
 import com.wepat.schedule.ScheduleDto;
 import com.wepat.schedule.service.ScheduleService;
 import com.wepat.util.JwtUtil;
@@ -9,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -68,21 +71,7 @@ public class ScheduleController {
     public ResponseEntity<?> getScheduleDateByDate(@PathVariable("calendarid") String calendarId,
                                                    @PathVariable("scheduleid") String scheduleId) {
         try {
-            scheduleService.getScheduleDetailByDate(calendarId, scheduleId);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        return ResponseEntity.ok().build();
-    }
-
-    // 캘린더 그룹 멤버 정보
-    @GetMapping("/member/{calendarid}")
-    @ApiOperation(value = "캘린더 그룹 멤버 확인")
-    public ResponseEntity<?> getMemberListByCalendarId(@PathVariable("calendarid") String calendarId) {
-        try {
-            return new ResponseEntity<>(scheduleService.getMemberListByCalendarId(calendarId), HttpStatus.OK);
+            return new ResponseEntity<>(scheduleService.getScheduleDetailByDate(calendarId, scheduleId), HttpStatus.OK);
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
@@ -135,4 +124,68 @@ public class ScheduleController {
             notificationService.addNotification(calendarId, memberId, scheduleId, nowDate, NotifiacationType.INCOMPLETE.ordinal());
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/comment/{calendarid}/{scheduleid}")
+    @ApiOperation(value = "일정에 대한 댓글 작성")
+    public ResponseEntity<?> addCommentByScheduleId(@PathVariable("calendarid") String calendarId,
+                                                    @PathVariable("scheduleid") String scheduleId,
+                                                    @RequestBody CommentDto commentDto) {
+
+        try {
+            scheduleService.addCommentByScheduleId(calendarId, scheduleId, commentDto);
+            return new ResponseEntity<>("일정 댓글 작성 성공", HttpStatus.OK);
+        } catch (NotExistScheduleException e) {
+            throw new NotExistScheduleException();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PutMapping("/comment/{calendarid}/{scheduleid}/{commentid}")
+    @ApiOperation(value = "일정에 대한 댓글 수정")
+    public ResponseEntity<?> modifyCommentByScheduleId(@PathVariable("calendarid") String calendarId,
+                                                       @PathVariable("scheduleid") String scheduleId,
+                                                       @PathVariable("commentid") String commentId,
+                                                       @RequestBody CommentDto commentDto) {
+        try {
+            scheduleService.modifyCommentByScheduleId(calendarId, scheduleId, commentId, commentDto);
+            return new ResponseEntity<>("일정 댓글 수정 완료", HttpStatus.ACCEPTED);
+        } catch (NotExistScheduleException e) {
+            throw new NotExistScheduleException();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @DeleteMapping("/comment/{calendarid}/{scheduleid}/{commentid}")
+    @ApiOperation(value = "일정에 대한 댓글 삭제")
+    public ResponseEntity<?> deleteCommentByScheduleId(@PathVariable("calendarid") String calendarId,
+                                                       @PathVariable("scheduleid") String scheduleId,
+                                                       @PathVariable("commentid") String commentId) {
+
+        try {
+            scheduleService.deleteCommentByScheduleId(calendarId, scheduleId, commentId);
+            return new ResponseEntity<>("일정 댓글 삭제 성공", HttpStatus.OK);
+        } catch (NotExistScheduleException e) {
+            throw new NotExistScheduleException();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PutMapping("/photo/{calendarid}/{scheduleid}")
+    @ApiOperation(value = "일정에 대한 사진 추가 및 변경")
+    public ResponseEntity<?> modifyPhotoUrlByScheduleId(@PathVariable("calendarid") String calendarId,
+                                                        @PathVariable("scheduleid") String scheduleId,
+                                                        String photoUrl) {
+        try {
+            scheduleService.modifyPhotoUrlByScheduleId(calendarId, scheduleId, photoUrl);
+            return new ResponseEntity<>("일정 사진 추가 및 변경 성공", HttpStatus.ACCEPTED);
+        } catch (NotExistScheduleException e) {
+            throw new NotExistScheduleException();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.wepat.schedule.repository;
 
+import com.wepat.photo.CommentDto;
 import com.wepat.schedule.ScheduleDto;
 
 import java.util.HashMap;
@@ -21,4 +22,12 @@ public interface ScheduleRepository {
     ScheduleDto getScheduleByScheduleId(String calendarId, String scheduleId) throws ExecutionException, InterruptedException;
     // 캘린더 그룹 멤버 확인
     HashMap<String, String> getMemberListByCalendarId(String calendarId) throws ExecutionException, InterruptedException;
+
+    void addCommentByScheduleId(String calendarId, String scheduleId, CommentDto commentDto) throws ExecutionException, InterruptedException;
+
+    void modifyCommentByScheduleId(String calendarId, String scheduleId, String commentId, CommentDto commentDto) throws ExecutionException, InterruptedException;
+
+    void deleteCommentByScheduleId(String calendarId, String scheduleId, String commentId) throws ExecutionException, InterruptedException;
+
+    void modifyPhotoUrlByScheduleId(String calendarId, String scheduleId, String photoUrl) throws ExecutionException, InterruptedException;
 }

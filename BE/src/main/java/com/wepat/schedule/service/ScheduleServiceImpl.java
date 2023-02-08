@@ -3,6 +3,7 @@ package com.wepat.schedule.service;
 import com.wepat.notification.NotifiacationType;
 import com.wepat.notification.NotificationDto;
 import com.wepat.notification.repository.NotificationRepository;
+import com.wepat.photo.CommentDto;
 import com.wepat.schedule.ScheduleDto;
 import com.wepat.schedule.repository.ScheduleRepository;
 import com.wepat.util.DateUtil;
@@ -105,5 +106,25 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public HashMap<String, String> getMemberListByCalendarId(String calendarId) throws ExecutionException, InterruptedException {
         return scheduleRepository.getMemberListByCalendarId(calendarId);
+    }
+
+    @Override
+    public void addCommentByScheduleId(String calendarId, String scheduleId, CommentDto commentDto) throws ExecutionException, InterruptedException {
+        scheduleRepository.addCommentByScheduleId(calendarId, scheduleId, commentDto);
+    }
+
+    @Override
+    public void modifyCommentByScheduleId(String calendarId, String scheduleId, String commentId, CommentDto commentDto) throws ExecutionException, InterruptedException {
+        scheduleRepository.modifyCommentByScheduleId(calendarId, scheduleId, commentId, commentDto);
+    }
+
+    @Override
+    public void deleteCommentByScheduleId(String calendarId, String scheduleId, String commentId) throws ExecutionException, InterruptedException {
+        scheduleRepository.deleteCommentByScheduleId(calendarId, scheduleId, commentId);
+    }
+
+    @Override
+    public void modifyPhotoUrlByScheduleId(String calendarId, String scheduleId, String photoUrl) throws ExecutionException, InterruptedException {
+        scheduleRepository.modifyPhotoUrlByScheduleId(calendarId, scheduleId, photoUrl);
     }
 }

@@ -12,30 +12,30 @@ import java.util.List;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry) {
-//        // login auth
-//        registry.addInterceptor(new JwtIntercepptor())
-//                .addPathPatterns("/member/**")
-//                .addPathPatterns("/schedule/**")
-//                .addPathPatterns("/calendar/**")
-//                .addPathPatterns("/pet/**")
-//                .addPathPatterns("/sns/**")
-//                .addPathPatterns("/photo/**")
-//                .addPathPatterns("/finance/**")
-//                .addPathPatterns("/alarm/**")
-//                .excludePathPatterns("/member/signin/**")
-//                .excludePathPatterns("/member/signup/**")
-//                .excludePathPatterns("/member/logout")
-//                .excludePathPatterns("/member/findid")
-//                .excludePathPatterns("/member/findpwd")
-//                .excludePathPatterns("/error/*");
-//    }
-//
-//    @Override
-//    public void addCorsMappings(CorsRegistry registry) {
-//        registry.addMapping("/**")
-//                .allowedOrigins("*")
-//                .allowedMethods("*");
-//    }
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        // login auth
+        registry.addInterceptor(new JwtIntercepptor())
+                .addPathPatterns("/member/**")
+                .addPathPatterns("/schedule/**")
+                .addPathPatterns("/calendar/**")
+                .addPathPatterns("/pet/**")
+                .addPathPatterns("/sns/**")
+                .addPathPatterns("/photo/**")
+                .addPathPatterns("/finance/**")
+                .addPathPatterns("/alarm/**")
+                .excludePathPatterns("/member/signin/**")
+                .excludePathPatterns("/member/signup/**")
+                .excludePathPatterns("/member/logout")
+                .excludePathPatterns("/member/findid")
+                .excludePathPatterns("/member/findpwd")
+                .excludePathPatterns("/error/*");
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("*")
+                .allowedMethods("*");
+    }
 }
