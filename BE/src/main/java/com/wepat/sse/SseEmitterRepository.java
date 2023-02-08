@@ -46,14 +46,20 @@ public class SseEmitterRepository {
         return emitter;
     }
     public void send(NotificationDto notificationDto) {
-        emitters.forEach((key, emitter) -> {
-            try {
-                emitter.send(SseEmitter.event()
-                        .name("sse")
-                        .data(notificationDto));
-            } catch (IOException e) {
+        System.out.println(notificationDto.toString());
+        try {
+            SseEmitter emitter =
+                    emitters.get(notificationDto.getMemberId());
+            if (emitter == null) {
+                System.out.println("sseemitter null");
+                return;
+            }
+            emitter
+                    .send(SseEmitter.event()
+                    .name("sse")
+                    .data(notificationDto));
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        });
     }
 }

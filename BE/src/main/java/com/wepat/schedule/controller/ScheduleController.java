@@ -115,7 +115,6 @@ public class ScheduleController {
                                               HttpServletRequest request) throws ExecutionException, InterruptedException {
 
         String memberId = JwtUtil.getUserIdByHttpRequest(request);
-        scheduleService.completeSchedule(calendarId, scheduleId, whoCompleted, completed);
         if (completed)
             notificationService.addNotification(calendarId, memberId, scheduleId, nowDate, NotifiacationType.COMPLETE.ordinal());
         else

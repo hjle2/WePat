@@ -94,6 +94,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public void completeSchedule(String calendarId, String scheduleId, String whoCompleted, boolean completed) throws ExecutionException, InterruptedException {
         scheduleRepository.completeSchedule(calendarId, scheduleId, whoCompleted, completed);
+
     }
 
     @Override
