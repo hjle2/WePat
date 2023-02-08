@@ -22,7 +22,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     public enum ReturnType {
         SUCCESS, ExistEmailException, ExistIdException, NotExistCalendarException, IdWriteException, BlockMemberException,
-        PwdWriteException, AlreadyAloneCalendarException, NotExistMemberException
+        PwdWriteException, AlreadyAloneCalendarException, NotExistMemberException, WrongPwdException
     }
     private static final String CALENDAR_COLLECTION = "calendar";
     private static final String MEMBER_COLLECTION = "member";
@@ -290,7 +290,7 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public void modifyPwdById(String memberId, String pwd) throws ExecutionException, InterruptedException {
+    public void modifyPwdById(String memberId, String originPwd, String newPwd) throws ExecutionException, InterruptedException {
         CollectionReference memCollection = FirestoreClient.getFirestore().collection(MEMBER_COLLECTION);
 
         final DocumentReference memDocRef = memCollection.document(memberId);
@@ -298,17 +298,18 @@ public class MemberRepositoryImpl implements MemberRepository {
         ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
 
             MemberEntity memberEntity = transaction.get(memDocRef).get().toObject(MemberEntity.class);
+            if(memberEntity.getPwd().equals(originPwd)) {//현재 비번이 맞으면
 
-            if (memDocRef.get().get().exists()) {
-                transaction.update(memDocRef, "pwd", pwd);
+                transaction.update(memDocRef, "pwd", newPwd);
                 return ReturnType.SUCCESS;
-            } else {
-                return ReturnType.NotExistMemberException;
+            }
+            else{//현재 비번이 틀리면
+                return ReturnType.WrongPwdException;
             }
         });
         if (future.get() == ReturnType.SUCCESS) {
         } else {
-            throw new NotExistMemberException();
+            throw new WrongPwdException();
         }
     }
 

@@ -83,9 +83,10 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void modifyPwdById(String memberId, String pwd) throws ExecutionException, InterruptedException {
-        pwd = SecurityUtil.getSHA256(pwd, "salt");//암호화후 저장
-        memberRepository.modifyPwdById(memberId, pwd);
+    public void modifyPwdById(String memberId, String originPwd, String newPwd) throws ExecutionException, InterruptedException {
+        originPwd = SecurityUtil.getSHA256(originPwd, "salt");//암호화후 저장
+        newPwd = SecurityUtil.getSHA256(newPwd, "salt");
+        memberRepository.modifyPwdById(memberId, originPwd, newPwd);
 
 
     }

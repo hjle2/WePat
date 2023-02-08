@@ -64,6 +64,12 @@ public class MemberExceptionHandler {
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(WrongPwdException.class)
+    public ResponseEntity<?> WrongPwdException(WrongPwdException e) {
+        ErrorDto errorDto = new ErrorDto("WrongPwdException", "현재 비밀번호가 일치하지 않습니다.");
+        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
+    }
+
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ErrorDto exHandler(Exception e) {
