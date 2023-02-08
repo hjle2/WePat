@@ -97,7 +97,13 @@ public class PetRepositoryImpl implements PetRepository {
             DocumentSnapshot petSnapshot = transaction.get(petDocRef).get();
             if (petSnapshot.exists()) {
                 List<WeightDto> weightList = petDocRef.get().get().toObject(PetEntity.class).getWeightList();
-                weightList.add(weightDto);
+                if (weightList.size() == 0) {
+                    weightList.add(weightDto);
+                } else if (weightList.get(weightList.size()-1).getDate().equals(weightDto.getDate())) {
+                    weightList.get(weightList.size()-1).setWeight(weightDto.getWeight());
+                } else {
+                    weightList.add(weightDto);
+                }
                 transaction.update(petDocRef, "weightList", weightList);
                 return ReturnType.SUCCESS;
             } else {

@@ -28,6 +28,18 @@ public class ScheduleController {
         return new ResponseEntity<>(scheduleService.getAllScheduleByCalendarId(calendarId), HttpStatus.OK);
     }
 
+    // 캘린더 그룹 멤버 정보
+    @GetMapping("/member/{calendarid}")
+    @ApiOperation(value = "캘린더 그룹 멤버 확인")
+    public ResponseEntity<?> getMemberListByCalendarId(@PathVariable("calendarid") String calendarId) {
+        try {
+            return new ResponseEntity<>(scheduleService.getMemberListByCalendarId(calendarId), HttpStatus.OK);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
     // 일정 추가하기
     @PostMapping("/add/{calendarid}")
     @ApiOperation(value = "일정 추가", notes = "일정 추가 버튼 클릭 시, 일정 추가", response = HttpStatus.class)

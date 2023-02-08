@@ -23,10 +23,12 @@ public class JwtIntercepptor implements HandlerInterceptor {
             throw new UnAuthorizedException();
 
         if (jwtUtil.validateToken(token)) {
-            log.info("verified Token : {}", token);
+            log.info("token success");
+//            log.info("verified Token : {}", token);
             return true;
         } else {
-            log.info("not verified token : {}", token);
+            log.info("token fail");
+//            log.info("not verified token : {}", token);
             throw new TokenExpiredException();
         }
     }

@@ -4,13 +4,16 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import com.wepat.exception.DataNotExitsException;
+import com.wepat.member.MemberDto;
 import com.wepat.notification.NotifiacationType;
 import com.wepat.notification.NotificationDto;
+import com.wepat.schedule.CalendarEntity;
 import com.wepat.schedule.ScheduleDto;
 import com.wepat.schedule.ScheduleEntity;
 import org.checkerframework.checker.units.qual.N;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -18,6 +21,8 @@ import java.util.concurrent.ExecutionException;
 public class ScheduleRepositoryImpl implements ScheduleRepository {
     private static final String SCHEDULE_COLLECTION = "schedule";
     private static final String NOTIFICATION_COLLECTION = "notification";
+    private static final String CALENDAR_COLLECTION = "calendar";
+    private static final String MEMBER_COLLECTION = "member";
 
 //    private static Firestore firestore1 = FirestoreClient.getFirestore();
 //    private final Firestore firestore2 = FirestoreClient.getFirestore();
@@ -127,5 +132,19 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
         return scheduleCollection.whereEqualTo("calendarId", calendarId)
                 .whereEqualTo("calendarId", calendarId)
                 .get().get().toObjects(ScheduleDto.class).get(0);
+    }
+
+    @Override
+    public HashMap<String, String> getMemberListByCalendarId(String calendarId) throws ExecutionException, InterruptedException {
+        CollectionReference calendarCollection = FirestoreClient.getFirestore().collection(CALENDAR_COLLECTION);
+        CollectionReference memberCollection = FirestoreClient.getFirestore().collection(MEMBER_COLLECTION);
+
+        HashMap<String, String> memberMap = new HashMap<>();
+        List<String> memberList = calendarCollection.document(calendarId).get().get().toObject(CalendarEntity.class).getMemberId();
+        for (String memberId: memberList) {
+            String nickName = memberCollection.document(memberId).get().get().toObject(MemberDto.class).getNickName();
+            memberMap.put(memberId, nickName);
+        }
+        return memberMap;
     }
 }

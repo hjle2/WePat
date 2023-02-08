@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -98,5 +99,10 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public ScheduleDto getScheduleDetailByDate(String calendarId, String scheduleId) throws ExecutionException, InterruptedException {
         return scheduleRepository.getScheduleByScheduleId(calendarId, scheduleId);
+    }
+
+    @Override
+    public HashMap<String, String> getMemberListByCalendarId(String calendarId) throws ExecutionException, InterruptedException {
+        return scheduleRepository.getMemberListByCalendarId(calendarId);
     }
 }
