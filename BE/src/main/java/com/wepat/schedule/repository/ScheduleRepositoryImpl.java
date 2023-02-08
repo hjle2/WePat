@@ -118,7 +118,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
         CollectionReference scheduleCollection = FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
 
         scheduleCollection.document(scheduleId).update("completed", completed);
-        scheduleCollection.document(scheduleId).update("whoComplete", whoCompleted);
+        scheduleCollection.document(scheduleId).update("whoCompleted", whoCompleted);
     }
 
     @Override
