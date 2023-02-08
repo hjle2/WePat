@@ -64,6 +64,20 @@ public class ScheduleController {
         }
         return ResponseEntity.ok().build();
     }
+
+    // 캘린더 그룹 멤버 정보
+    @GetMapping("/member/{calendarid}")
+    @ApiOperation(value = "캘린더 그룹 멤버 확인")
+    public ResponseEntity<?> getMemberListByCalendarId(@PathVariable("calendarid") String calendarId) {
+        try {
+            return new ResponseEntity<>(scheduleService.getMemberListByCalendarId(calendarId), HttpStatus.OK);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     // 스케쥴의 정보 변경
     @PutMapping("/modify/{calendarid}/{scheduleid}")
     @ApiOperation(value = "일정 변경", response = HttpStatus.class)

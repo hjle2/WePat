@@ -2,6 +2,7 @@ package com.wepat.schedule.service;
 
 import com.wepat.schedule.ScheduleDto;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -19,4 +20,6 @@ public interface ScheduleService {
     void completeSchedule(String calendarId, String scheduleId, String whoCompleted, boolean completed) throws ExecutionException, InterruptedException;
     // 일정 상세 정보 읽기
     ScheduleDto getScheduleDetailByDate(String calendarId, String scheduleId) throws ExecutionException, InterruptedException;
+    // 캘린더 그룹 멤버 확인
+    HashMap<String, String> getMemberListByCalendarId(String calendarId) throws ExecutionException, InterruptedException;
 }
