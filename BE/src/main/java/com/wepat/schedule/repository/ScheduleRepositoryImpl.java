@@ -4,8 +4,8 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import com.wepat.exception.DataNotExitsException;
-import com.wepat.member.MemberDto;
-import com.wepat.schedule.CalendarEntity;
+import com.wepat.notification.NotifiacationType;
+import com.wepat.notification.NotificationDto;
 import com.wepat.schedule.ScheduleDto;
 import com.wepat.schedule.ScheduleEntity;
 import org.springframework.stereotype.Repository;
@@ -120,7 +120,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
         CollectionReference scheduleCollection = FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
 
         scheduleCollection.document(scheduleId).update("completed", completed);
-        scheduleCollection.document(scheduleId).update("whoComplete", whoCompleted);
+        scheduleCollection.document(scheduleId).update("whoCompleted", whoCompleted);
     }
 
     @Override
