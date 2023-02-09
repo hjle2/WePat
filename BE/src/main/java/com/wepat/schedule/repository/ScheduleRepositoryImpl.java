@@ -240,7 +240,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
         ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
             DocumentSnapshot scheduleSnapshot = transaction.get(scheduleDocRef).get();
             if (scheduleSnapshot.exists()) {
-                scheduleSnapshot.toObject(ScheduleDto.class).setPhotoUrl(photoUrl);
+                transaction.update(scheduleDocRef, "photoUrl", photoUrl);
                 return ReturnType.SUCCESS;
             } else {
                 return ReturnType.NotExistScheduleException;
