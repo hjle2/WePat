@@ -4,7 +4,6 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import com.wepat.schedule.CalendarEntity;
-import com.wepat.exception.calendar.AloneScheduleException;
 import com.wepat.member.MemberDto;
 import com.wepat.member.MemberEntity;
 import com.wepat.pet.PetEntity;
@@ -549,7 +548,7 @@ public class MemberRepositoryImpl implements MemberRepository {
             }
         });
         if (future.get() == ReturnType.AlreadyAloneCalendarException) {
-            throw new AloneScheduleException();
+            throw new AlreadyAloneCalendarException();
         }
     }
 }
