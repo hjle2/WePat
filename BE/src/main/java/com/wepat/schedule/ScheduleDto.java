@@ -43,8 +43,8 @@ public class ScheduleDto {
     private int repeatAmount;
     @ApiParam(value = "일정에 관한 메모")
     private String memo;
-    @ApiParam(value = "사진ID 리스트", hidden = true)
-    private List<String> photoList;
+    @ApiParam(value = "사진ID", hidden = true)
+    private String photoUrl;
     @ApiParam(value = "댓글Dto 리스트", hidden = true)
     private List<CommentDto> reviewList;
 }

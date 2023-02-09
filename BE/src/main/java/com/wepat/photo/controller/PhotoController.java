@@ -85,7 +85,6 @@ public class PhotoController {
     @ApiOperation(value = "앨범 댓글 작성")
     public ResponseEntity<?> addCommentByPhotoId(@PathVariable("photoid") String photoId,
                                                  @RequestBody CommentDto commentDto) {
-
         try {
             photoService.addCommentByPhotoId(photoId, commentDto);
             return new ResponseEntity<>("댓글 작성 성공", HttpStatus.OK);

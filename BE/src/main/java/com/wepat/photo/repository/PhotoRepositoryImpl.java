@@ -106,7 +106,6 @@ public class PhotoRepositoryImpl implements PhotoRepository {
         CollectionReference photoCollection = FirestoreClient.getFirestore().collection(PHOTO_COLLECTION);
         DocumentReference photoDocRef = photoCollection.document(photoId);
         DocumentReference randomDocRef = photoCollection.document();
-
         ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
             DocumentSnapshot photoSnapshot = transaction.get(photoDocRef).get();
             if (photoSnapshot.exists()) {
