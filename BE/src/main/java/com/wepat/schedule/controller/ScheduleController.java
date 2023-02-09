@@ -86,7 +86,6 @@ public class ScheduleController {
                                             @RequestBody ScheduleDto scheduleDto,
                                             HttpServletRequest request) {
         try {
-
             String memberId = JwtUtil.getUserIdByHttpRequest(request);
             scheduleService.modifySchedule(calendarId, scheduleId, memberId, nowDate, scheduleDto);
 //            notificationService.addNotification(calendarId, memberId, scheduleId, nowDate, NotifiacationType.MODIFY.ordinal());
@@ -98,10 +97,10 @@ public class ScheduleController {
         return ResponseEntity.ok().build();
     }
     // 일정 삭제
-    @DeleteMapping("/delete/{calendarid}")
+    @DeleteMapping("/delete/{calendarid}/{scheduleid}")
     @ApiOperation(value = "일정 삭제", response = HttpStatus.class)
     public ResponseEntity<?> deleteSchedule(@PathVariable("calendarid") String calendarId,
-                                            @RequestParam String scheduleId) {
+                                            @PathVariable("scheduleid") String scheduleId) {
         scheduleService.deleteSchedule(calendarId, scheduleId);
         return ResponseEntity.ok().build();
     }
