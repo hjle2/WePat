@@ -13,7 +13,8 @@ import java.security.InvalidParameterException;
 import java.util.concurrent.ExecutionException;
 import java.util.List;
 
-@RestController("/api/notification")
+@RestController
+@RequestMapping("/api/notifications")
 @RequiredArgsConstructor
 public class NotificationController {
     private final NotificationService notificationService;
