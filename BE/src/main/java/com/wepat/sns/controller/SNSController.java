@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
-@RequestMapping("/sns")
+@RequestMapping("/api/sns")
 @RequiredArgsConstructor
 public class SNSController {
     private final SNSService snsService;

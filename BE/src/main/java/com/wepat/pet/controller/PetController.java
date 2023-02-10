@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
-@RequestMapping("/pet")
+@RequestMapping("/api/pet")
 @RequiredArgsConstructor
 public class PetController {
     private final PetService petService;

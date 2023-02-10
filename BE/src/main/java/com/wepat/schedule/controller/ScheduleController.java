@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.ExecutionException;
 
 @RestController
-@RequestMapping("/schedule")
+@RequestMapping("/api/schedule")
 @RequiredArgsConstructor
 public class ScheduleController {
     private final ScheduleService scheduleService;

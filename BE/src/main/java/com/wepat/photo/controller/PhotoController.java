@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/photo")
+@RequestMapping("/api/photo")
 @RequiredArgsConstructor
 public class PhotoController {
     private final PhotoService photoService;

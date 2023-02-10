@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutionException;
 
 
 @RestController
-@RequestMapping("/finance")
+@RequestMapping("/api/finance")
 @RequiredArgsConstructor
 public class FinanceController {
     private final FinanceService financeService;
