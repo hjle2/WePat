@@ -339,7 +339,7 @@ public class MemberRepositoryImpl implements MemberRepository {
                 return ReturnType.NotExistMemberException;
             }
         });
-        if (future.get()==ReturnType.SUCCESS) {
+        if (future.get() == ReturnType.SUCCESS) {
         } else {
             throw new NotExistMemberException();
         }
