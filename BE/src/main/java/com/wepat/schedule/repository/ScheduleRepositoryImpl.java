@@ -65,13 +65,11 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
         CollectionReference scheduleCollection = FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
         CollectionReference notificationCollection = FirestoreClient.getFirestore().collection(NOTIFICATION_COLLECTION);
         final DocumentReference scheduleDocRef = scheduleCollection.document();
-        final DocumentReference notificationDocRef = notificationCollection.document();
 
         scheduleDto.setScheduleId(scheduleDocRef.getId());
 
         ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction-> {
             // add schedule
-            scheduleDto.setPhotoUrl("");
             scheduleDto.setReviewList(new ArrayList<>());
             transaction.set(scheduleDocRef, scheduleDto);
 
@@ -85,8 +83,8 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
     public void modifySchedule(String calendarId, String scheduleId,  ScheduleDto scheduleDto) throws ExecutionException, InterruptedException {
 
         CollectionReference scheduleCollection = FirestoreClient.getFirestore().collection(SCHEDULE_COLLECTION);
-        Query query = scheduleCollection.whereEqualTo("calendarId", calendarId)
-                .whereEqualTo("scheduleId", scheduleDto.getScheduleId());
+        Query query = scheduleCollection
+                .whereEqualTo("scheduleId", scheduleId);
 
         ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
             ApiFuture<QuerySnapshot> scheduleEntityList = transaction.get(query);

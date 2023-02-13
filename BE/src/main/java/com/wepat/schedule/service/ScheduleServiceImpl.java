@@ -60,9 +60,33 @@ public class ScheduleServiceImpl implements ScheduleService {
         if (scheduleDto.getRepeatUnit() > 0) {
             // endDate < repeatEndDate 인 경우
             while (endDate.compareTo(repeatEndDate) < 0) {
-                scheduleDto.setStartDate(DateUtil.getStringDate(startDate));
-                scheduleDto.setEndDate(DateUtil.getStringDate(endDate));
-                scheduleId = scheduleRepository.addSchedule(scheduleDto);
+
+                ScheduleDto dto = new ScheduleDto();
+                dto.setCalendarId(calendarId);
+                dto.setTitle(scheduleDto.getTitle());
+                dto.setCategory(scheduleDto.getCategory());
+                dto.setDisplay(scheduleDto.isDisplay());
+                dto.setPetId(scheduleDto.getPetId());
+                dto.setStartDate(scheduleDto.getStartDate());
+                dto.setNowDate(scheduleDto.getNowDate());
+                dto.setEndDate(scheduleDto.getEndDate());
+                dto.setRepeatEndDate(scheduleDto.getRepeatEndDate());
+                dto.setAlarm(scheduleDto.getAlarm());
+                dto.setWhoPlanned(scheduleDto.getWhoPlanned());
+                dto.setWhoCompleted(scheduleDto.getWhoCompleted());
+                dto.setCompleted(scheduleDto.isCompleted());
+                dto.setRepeatUnit(scheduleDto.getRepeatUnit());
+                dto.setRepeatAmount(scheduleDto.getRepeatAmount());
+                dto.setMemo(scheduleDto.getMemo());
+                dto.setPhotoUrl(scheduleDto.getPhotoUrl());
+                dto.setReviewList(scheduleDto.getReviewList());
+
+//                System.out.println(">>>>> " + startDate.toString());
+//                System.out.println(">>>>> " + endDate.toString());
+                dto.setStartDate(DateUtil.getStringDate(startDate));
+                dto.setEndDate(DateUtil.getStringDate(endDate));
+                scheduleId = scheduleRepository.addSchedule(dto);
+
                 // 반봅 주기만큼 더하기
                 startDate = DateUtil.addDays(startDate, unit, size);
                 endDate = DateUtil.addDays(endDate, unit, size);
@@ -79,6 +103,9 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public void modifySchedule(String calendarId, String scheduleId, String memberId, String nowDate, ScheduleDto scheduleDto) throws ExecutionException, InterruptedException {
         scheduleDto.setNowDate(nowDate);
+        scheduleDto.setScheduleId(scheduleId);
+        scheduleDto.setCalendarId(calendarId);
+
         scheduleRepository.modifySchedule(calendarId, scheduleId, scheduleDto);
 
         // 알람 추가하기

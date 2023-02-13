@@ -374,10 +374,9 @@ public class MemberRepositoryImpl implements MemberRepository {
         DocumentReference calendarDocRef = calCollection.document(calendarId);
 
         CalendarEntity calendar = calendarDocRef.get().get().toObject(CalendarEntity.class);
-        calendar.getMemberId().remove(memberId);
 
         // calendar에 member가 없는 경우 데이터 삭제
-        if (calendar.getMemberId().size() == 0) {
+        if (calendar != null && calendar.getMemberId().size() == 0) {
             // 펫, 일정 삭제
             List<String> petIdList = calendar.getPetId();
             for (String petId : petIdList) {
@@ -408,7 +407,8 @@ public class MemberRepositoryImpl implements MemberRepository {
         for (QueryDocumentSnapshot docs : memDocList) {
             if (!(docs.getId()).equals(memberId)) {
                 List<String> reportList = docs.toObject(MemberEntity.class).getReportList();
-                reportList.remove(memberId);
+                if (reportList.contains(memberId));
+                    reportList.remove(memberId);
                 memCollection.document(docs.getId()).update("reportList", reportList);
             }
         }
@@ -511,17 +511,17 @@ public class MemberRepositoryImpl implements MemberRepository {
         CollectionReference memCollection = FirestoreClient.getFirestore().collection(MEMBER_COLLECTION);
         final DocumentReference memDocRef = memCollection.document(memberId);
 
-        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
-            if (transaction.get(memDocRef).get().exists()) {
-                transaction.update(memDocRef, "token", null);
-                return true;
-            }
-            return false;
-        });
+//        ApiFuture<?> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
+//            if (transaction.get(memDocRzef).get().exists()) {
+//                transaction.update(memDocRef, "token", null);
+//                return true;
+//            }
+//            return false;
+//        });
 
-        if (!(boolean) future.get()) {
-            throw new Exception();
-        }
+//        if (!(boolean) future.get()) {
+//            throw new Exception();
+//        }
     }
 
     @Override

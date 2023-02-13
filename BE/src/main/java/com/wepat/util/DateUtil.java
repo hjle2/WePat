@@ -29,7 +29,7 @@ public class DateUtil {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
 
-        calendar.add(CALENDAR_UNIT, unit);
+        calendar.add(unit, CALENDAR_UNIT);
 
         return calendar.getTime();
     }

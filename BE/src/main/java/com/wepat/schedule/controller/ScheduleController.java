@@ -87,6 +87,7 @@ public class ScheduleController {
                                             HttpServletRequest request) {
         try {
             String memberId = JwtUtil.getUserIdByHttpRequest(request);
+
             scheduleService.modifySchedule(calendarId, scheduleId, memberId, nowDate, scheduleDto);
 //            notificationService.addNotification(calendarId, memberId, scheduleId, nowDate, NotifiacationType.MODIFY.ordinal());
         } catch (ExecutionException e) {

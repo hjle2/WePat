@@ -3,6 +3,7 @@ package com.wepat.member.controller;
 import com.wepat.exception.member.*;
 import com.wepat.member.MemberDto;
 import com.wepat.member.service.MemberService;
+import com.wepat.pet.service.PetService;
 import com.wepat.util.JwtUtil;
 import com.wepat.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
@@ -195,7 +196,7 @@ public class MemberController {
 
     @DeleteMapping("/")
     @ApiOperation(value = "사용자의 정보를 삭제한다.", response = HttpResponse.class)
-    public ResponseEntity<?> deleteMember(HttpServletRequest request, String nickName) {
+    public ResponseEntity<?> deleteMember(HttpServletRequest request) {
         try {
             String memberId = JwtUtil.getUserIdByHttpRequest(request);
             memberService.deleteMember(memberId);
