@@ -20,7 +20,7 @@ public class SNSServiceImpl implements SNSService {
     @Override
     public List<PhotoDto> getSNS(int before) throws ExecutionException, InterruptedException {
         Date date = new Date();
-        date = DateUtil.addDays(date, -before, Calendar.DATE);
+        date = DateUtil.addDays(date, Calendar.DATE, -before);
         String strDate  = DateUtil.getStringDate(date);
 
         return snsRepository.getSNS(strDate);

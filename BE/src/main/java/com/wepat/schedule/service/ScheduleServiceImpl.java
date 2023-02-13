@@ -67,9 +67,7 @@ public class ScheduleServiceImpl implements ScheduleService {
                 dto.setCategory(scheduleDto.getCategory());
                 dto.setDisplay(scheduleDto.isDisplay());
                 dto.setPetId(scheduleDto.getPetId());
-                dto.setStartDate(scheduleDto.getStartDate());
                 dto.setNowDate(scheduleDto.getNowDate());
-                dto.setEndDate(scheduleDto.getEndDate());
                 dto.setRepeatEndDate(scheduleDto.getRepeatEndDate());
                 dto.setAlarm(scheduleDto.getAlarm());
                 dto.setWhoPlanned(scheduleDto.getWhoPlanned());
