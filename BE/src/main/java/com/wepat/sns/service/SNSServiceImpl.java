@@ -22,7 +22,9 @@ public class SNSServiceImpl implements SNSService {
         Date date = new Date();
         date = DateUtil.addDays(date, Calendar.DATE, -before);
         String strDate  = DateUtil.getStringDate(date);
-
+        if (before == 0) {
+            strDate = "0";
+        }
         return snsRepository.getSNS(strDate);
     }
 
@@ -32,8 +34,8 @@ public class SNSServiceImpl implements SNSService {
     }
 
     @Override
-    public void updateSNSLikeByPhotoId(String photoId) throws ExecutionException, InterruptedException {
-        snsRepository.updateSNSLikeByPhotoId(photoId);
+    public int updateSNSLikeByPhotoId(String photoId) throws ExecutionException, InterruptedException {
+        return snsRepository.updateSNSLikeByPhotoId(photoId);
     }
 
     @Override

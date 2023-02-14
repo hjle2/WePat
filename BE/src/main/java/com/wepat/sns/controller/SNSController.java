@@ -48,8 +48,8 @@ public class SNSController {
     public ResponseEntity<?> updateSNSLikeByPhotoId(@PathVariable("photoid") String photoId) {
 
         try {
-            snsService.updateSNSLikeByPhotoId(photoId);
-            return new ResponseEntity<>("좋아요 클릭", HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(snsService.updateSNSLikeByPhotoId(photoId), HttpStatus.OK);
+//            return new ResponseEntity<>("좋아요 클릭", HttpStatus.ACCEPTED);
         } catch (NotExistImageException e) {
             throw new NotExistImageException();
         } catch (Exception e) {
