@@ -20,7 +20,7 @@ public class MemberEntity {
         this.reportList = new ArrayList<>();
         this.block = false;
         this.social = member.getSocial();
-        this.photoUrl = "";
+        this.photoUrl = member.getPhotoUrl();
     }
     @ApiParam(value = "사용자 비밀번호", required = true)
     private String pwd;
