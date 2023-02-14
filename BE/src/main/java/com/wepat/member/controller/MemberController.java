@@ -219,7 +219,7 @@ public class MemberController {
 
     @PutMapping("/modify/calendar")
     @ApiOperation(value = "캘린더 변경")
-    public ResponseEntity<?> modifyCalendarById(HttpServletRequest request, String calendarId) {
+    public ResponseEntity<?> modifyCalendarById(HttpServletRequest request, @RequestParam String calendarId) {
         try {
             String memberId = JwtUtil.getUserIdByHttpRequest(request);
             memberService.modifyCalendarById(memberId, calendarId);
