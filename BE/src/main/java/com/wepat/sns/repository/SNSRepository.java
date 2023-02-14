@@ -11,7 +11,7 @@ public interface SNSRepository {
 
     PhotoDto getSNSByPhotoId(String photoId) throws ExecutionException, InterruptedException;
 
-    void updateSNSLikeByPhotoId(String photoId) throws ExecutionException, InterruptedException;
+    int updateSNSLikeByPhotoId(String photoId) throws ExecutionException, InterruptedException;
 
     void reportSNSByPhotoId(String photoId, String memberId) throws ExecutionException, InterruptedException;
 

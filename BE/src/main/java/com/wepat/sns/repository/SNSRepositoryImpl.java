@@ -43,7 +43,7 @@ public class SNSRepositoryImpl implements SNSRepository {
     }
 
     @Override
-    public void updateSNSLikeByPhotoId(String photoId) throws ExecutionException, InterruptedException {
+    public int updateSNSLikeByPhotoId(String photoId) throws ExecutionException, InterruptedException {
         CollectionReference photoCollection = FirestoreClient.getFirestore().collection(PHOTO_COLLECTION);
         DocumentReference photoDocRef = photoCollection.document(photoId);
         ApiFuture<ReturnType> future = FirestoreClient.getFirestore().runTransaction(transaction -> {
@@ -58,6 +58,8 @@ public class SNSRepositoryImpl implements SNSRepository {
         });
         if (future.get() == ReturnType.NotExistImageException) {
             throw new NotExistImageException();
+        } else {
+            return photoDocRef.get().get().toObject(PhotoEntity.class).getLike();
         }
     }
 
