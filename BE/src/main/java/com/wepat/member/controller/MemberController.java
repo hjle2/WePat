@@ -206,7 +206,7 @@ public class MemberController {
         }
     }
     @GetMapping("/logout")
-    @ApiOperation(value = "로그아웃", notes = "현재 로그인되어있는 사용자 로그아웃", response = HttpResponse.class)
+    @ApiOperation(value = "로그아웃", notes = "현재 로그인되어있는 사용자 로그아웃.", response = HttpResponse.class)
     public ResponseEntity<?> logout(HttpServletRequest request) {
         try {
             String memberId = JwtUtil.getUserIdByHttpRequest(request);
