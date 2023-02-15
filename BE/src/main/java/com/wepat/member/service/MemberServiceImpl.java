@@ -73,7 +73,7 @@ public class MemberServiceImpl implements MemberService {
         message.setFrom("qwas15788@gmail.com");
         message.setSubject("WePat 임시비밀번호 안내 이메일입니다.", "UTF-8");
         String htmlStr = "안녕하세요. WePat 임시비밀번호 관련 안내 이메일입니다. <br>회원님의 임시비밀번호는" + randomPassword + "입니다." +
-                "<a href=\"https://www.naver.com\">WePat </a>" +
+                "<a href=\"https://i8a607.p.ssafy.io/\">WePat </a>" +
                 "해당 링크에 접속하여 비밀번호를 변경해주세요. 감사합니다.";
         message.setText(htmlStr, "UTF-8", "html");
         message.addRecipient(Message.RecipientType.TO,
