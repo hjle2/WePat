@@ -1,0 +1,1345 @@
+//색상
+$color-main: #faa960;
+$color-main-75: #faa860c0;
+$color-main-50: #faa86080;
+$color-main-25: #faa86040;
+$color-main-12: #faa86020;
+$color-main-06: #faa86010;
+$color-font: #000000;
+$color-deact: #e7e7e7;
+$color-Nav-deact: #848484;
+
+//글꼴 크기
+$font-size-1: 9vh;
+$font-size-2: 7vh;
+$font-size-3: 4.5vh;
+$font-size-4: 3.5vh;
+$font-size-5: 3vh;
+$font-size-6: 2vh;
+
+//radius
+$radius-size-1: 3vw;
+$radius-size-2: 2.2vw;
+$radius-size-3: 1.5vw;
+$radius-size-3: 0.8vw;
+
+//border
+$border-size-1: 2vw;
+$border-size-2: 1.25vw;
+$border-size-3: 0.75vw;
+$border-size-4: 0.5vw;
+$border-size-5: 0.2vw;
+
+//글꼴
+@font-face {
+  font-family: "Gamja";
+  src: url("@/assets/font/GamjaFlower-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Modu-Bold";
+  src: url("@/assets/font/modu-Bold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Modu-Light";
+  src: url("@/assets/font/modu-Light.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "sae";
+  src: url("@/assets/font/sae.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "uiyeon";
+  src: url("@/assets/font/uiyeon.ttf") format("truetype");
+}
+
+//전체 범위 적용
+* {
+  font-family: "uiyeon";
+}
+
+//글꼴 색
+.ft-green {
+  color: green;
+}
+
+.ft-red {
+  color: red;
+}
+
+.ft-blue {
+  color: blue;
+}
+
+//글씨체
+.font-title {
+  font-size: $font-size-1;
+  font-weight: bolder;
+}
+
+.font-large {
+  font-size: $font-size-2;
+}
+
+.font-medium {
+  font-size: $font-size-3;
+}
+
+.font-small {
+  font-size: $font-size-4;
+}
+
+.font-mini {
+  font-size: $font-size-5;
+}
+
+.font-grey {
+  color: $color-Nav-deact;
+}
+
+.font-money {
+  font-size: 7vh;
+  // padding-top: 3vh !important;
+}
+
+.font-finance {
+  position: fixed;
+  font-size: $font-size-4;
+}
+
+.holder-text-input {
+  margin-left: 15vw;
+}
+.text-input {
+  text-align: left;
+  font-size: $font-size-4;
+  margin-top: 2vh;
+  margin-bottom: 0;
+}
+
+//하이퍼링크 지우기
+.font-vanila {
+  text-decoration: none;
+  color: #000000;
+}
+
+.font-lefts {
+  text-align: left;
+  margin-top: 0.5vh !important;
+}
+
+.font-no-margin {
+  margin: 0 !important;
+}
+
+.no-padding {
+  padding: 0 !important;
+}
+
+//WePat 로고 글씨
+.wepat {
+  width: 100%;
+  font-size: 12vh;
+  font-weight: bolder;
+  display: flex;
+  justify-content: center;
+}
+
+.nametag-huge {
+  width: 29vh;
+  height: 32.5vh;
+  // z-index: 1;
+  position: absolute;
+  top: -8.5vh;
+  left: 0vh;
+}
+.holder-profile {
+  margin-top: 3vh;
+  height: 21vh;
+  display: flex;
+  justify-content: center;
+}
+
+.profile-image-huge {
+  border-radius: 70%;
+  overflow: hidden;
+  width: 21vh;
+  height: 20vh;
+  margin: 4vh;
+  margin-top: 0vh;
+  display: block;
+
+  // border: #000000 solid 0.3vh;
+}
+
+.profile-image-large {
+  border-radius: 70%;
+  overflow: hidden;
+  width: 15vh;
+  height: 15vh;
+  border: #000000 solid 1vh;
+  display: block;
+}
+
+.profile-image-medium {
+  border-radius: 70%;
+  overflow: hidden;
+  width: 10vh;
+  height: 10vh;
+  border: #000000 solid 1vh;
+  display: block;
+}
+
+.profile-image-small {
+  border-radius: 70%;
+  overflow: hidden;
+  width: 7vh;
+  height: 7vh;
+  border: #000000 solid 0.3vh;
+  display: block;
+}
+
+// 투명 배경 버튼
+.btn-invisible {
+  background-color: #ffffff00;
+  border: #ffffff00;
+}
+
+// 흰배경 버튼
+.btn-white {
+  border: solid $color-main-75;
+  background-color: #ffffff;
+}
+// 색배경 버튼
+.btn-colored {
+  color: #ffffff;
+  // font-weight: bold;
+  border: solid #ffffff;
+  background-color: $color-main;
+  filter: drop-shadow(0px 5px 5px rgba(0, 0, 0, 0.5));
+}
+
+// 비활성화 버튼
+.btn-disabled {
+  color: #ffffff;
+  border: solid #ffffff;
+  background-color: $color-Nav-deact;
+  filter: drop-shadow(0px 5px 5px rgba(0, 0, 0, 0.5));
+}
+
+.btn-colored-no-shadow {
+  color: #ffffff;
+  // font-weight: bold;
+  border: solid $color-main;
+  background-color: $color-main;
+  font-size: $font-size-3;
+  // filter: drop-shadow(0px 5px 5px rgba(0, 0, 0, 0.5));
+}
+
+.btn-disabled-no-shadow {
+  font-size: $font-size-3;
+  color: #ffffff;
+  border: solid $color-main;
+  background-color: $color-Nav-deact;
+  // filter: drop-shadow(0px 5px 5px rgba(0, 0, 0, 0.5));
+}
+
+// 버튼 사이즈
+.btn-large {
+  width: 18vw;
+  height: 6vh;
+  border: $border-size-3;
+  border-radius: $radius-size-2;
+  font-size: $font-size-3;
+}
+
+.btn-medium {
+  width: 10vw;
+  height: 6vh;
+  border: $border-size-4;
+  border-radius: $radius-size-3;
+  font-size: $font-size-4;
+}
+
+.btn-small {
+  width: 5vw;
+  height: 6vh;
+  border: $border-size-5;
+  border-radius: $radius-size-3;
+  font-size: $font-size-5;
+}
+
+.btn-Todo {
+  width: 40vw !important;
+  height: 6vh !important;
+  margin-left: 20vw;
+  margin-right: 20vw;
+  // left: 50% !important;
+  // transform: translate(-50%) !important;
+}
+
+//입력 창
+.input {
+  width: 15vw;
+  height: 7vh;
+  border-radius: $radius-size-2;
+  border: 1vh solid $color-main-75;
+  margin: 0;
+  padding-left: 5vw;
+}
+input:focus {
+  outline: solid 0.5rem $color-main-50; /* 아웃라인 */
+  color: $color-main;
+  box-shadow: 8px 8px 8px $color-main-50;
+  transition: outline 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.slash {
+  border: $color-main-75;
+  height: 10%;
+}
+
+//윈도우 위치
+.at-top {
+  top: 10%;
+}
+
+.at-middle {
+  top: 50%;
+}
+
+.at-bottom {
+  // position: relative;
+  bottom: 8vh !important;
+}
+
+//윈도우 형태
+.holder-large {
+  border: $border-size-3 solid $color-main-75;
+  border-top: 2.5vw solid $color-main-75;
+  background: $color-main-12;
+  padding: 7%;
+  width: 90%;
+  height: 125vh;
+  margin: 0 auto;
+  position: relative;
+  left: 0%;
+  box-shadow: 1rem 1rem 1rem $color-main;
+  border-radius: $radius-size-2;
+  overflow: hidden;
+  font-size: $font-size-2;
+}
+
+.holder-medium {
+  border: $border-size-3 solid $color-main-75;
+  border-top: 2.5vw solid $color-main-75;
+  background: $color-main-12;
+  padding: 6%;
+  width: 80%;
+  height: 80vh;
+  margin: 0 auto;
+  position: relative;
+  left: 0%;
+  box-shadow: 1rem 1rem 1rem $color-main;
+  border-radius: $radius-size-2;
+  overflow: hidden;
+  font-size: $font-size-3;
+}
+
+.holder-small {
+  border: $border-size-3 solid $color-main-75;
+  border-top: 2.5vw solid $color-main-75;
+  background: $color-main-12;
+  padding: 10%;
+  width: 70%;
+  height: 50vh;
+  margin: 7% auto;
+  position: relative;
+  left: 0%;
+  box-shadow: 1rem 1rem 1rem $color-main;
+  border-radius: $radius-size-2;
+  overflow: hidden;
+  font-size: $font-size-4;
+}
+
+.holder-petList {
+  border: $border-size-3 solid $color-main-75;
+  // border-top: 2.5vw solid $color-main-75;
+  background: $color-main-06;
+  padding: 1.5vh;
+  width: 90vw;
+  height: 25vh;
+  // margin: 7% auto;
+  position: relative;
+  // left: 0%;
+  // box-shadow: 1rem 1rem 1rem $color-main;
+  border-radius: $radius-size-2;
+  border-top-left-radius: 12.5vh;
+  border-bottom-left-radius: 12.5vh;
+  overflow: hidden;
+  font-size: $font-size-4;
+}
+
+// .petList-left {
+//   position: relative;
+//   left: -28vw;
+// }
+
+.holder-small-op {
+  border: $border-size-3 solid $color-main-75;
+  border-top: 2.5vw solid $color-main-75;
+  background: $color-main-12;
+  padding: 10%;
+  width: 70%;
+  height: 30vh;
+  margin: 0 auto;
+  position: relative;
+  left: 0%;
+  box-shadow: 1rem 1rem 1rem $color-main;
+  border-radius: $radius-size-2;
+  overflow: hidden;
+  font-size: $font-size-4;
+}
+
+.holder-menu-bottom {
+  border: $border-size-3 solid $color-main-75;
+  border-top: 2vw solid $color-main-75;
+  background: $color-main-12;
+  padding: 5%;
+  width: 100%;
+  height: 10%;
+  position: relative;
+  bottom: 0rem;
+  left: 0%;
+  box-shadow: 1rem 1rem 1rem $color-main;
+  border-radius: $radius-size-2;
+  // overflow: hidden;
+  // font-size: $font-size-4;
+}
+
+.holder-medium-full {
+  border: $border-size-3 solid $color-main-75;
+  border-top: 2.5vw solid $color-main-75;
+  background: $color-main-12;
+  padding: 10%;
+  width: 100%;
+  height: 50%;
+  margin-top: 10vw;
+  position: relative;
+  left: 0%;
+  box-shadow: 1rem 1rem 1rem $color-main;
+  border-radius: $radius-size-2;
+  overflow: hidden;
+  font-size: $font-size-4;
+}
+
+.holder-large-full {
+  border: $border-size-3 solid $color-main-75;
+  border-top: 2.5vw solid $color-main-75;
+  background: $color-main-12;
+  padding: 5%;
+  width: 100%;
+  height: 65%;
+  margin-top: 10vw;
+  position: relative;
+  left: 0%;
+  box-shadow: 1rem 1rem 1rem $color-main;
+  border-radius: $radius-size-2;
+  overflow: hidden;
+  font-size: $font-size-4;
+}
+
+.holder-white-mini {
+  border: $border-size-4 solid $color-main-75;
+  border-left: none;
+  border-right: none;
+  background: #ffffff;
+  padding: 1vh;
+  width: 100%;
+  height: 12vh;
+  margin: 0 auto;
+  position: relative;
+  left: 0%;
+  // box-shadow: 1rem 1rem 1rem $color-main;
+  border-radius: none;
+  overflow: hidden;
+  font-size: $font-size-4;
+
+  justify-content: space-between;
+  :focus {
+    outline: solid 0.5rem $color-main-50; /* 아웃라인 */
+    color: $color-main;
+    box-shadow: 8px 8px 8px $color-main-50;
+    transition: outline 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  }
+}
+
+.holder-white-add {
+  // border: $border-size-4 solid $color-main-75;
+  border-left: none;
+  border-right: none;
+  background: $color-main-12;
+  padding: 1vh;
+  width: 100%;
+  // height: 12vh;
+  margin: 0 auto;
+  position: relative;
+  left: 0%;
+  padding: 7%;
+  // padding-top: 6%;
+  // padding-bottom: 6%;
+  // box-shadow: 1rem 1rem 1rem $color-main;
+  border-radius: $radius-size-2;
+  overflow: hidden;
+  font-size: $font-size-4;
+
+  justify-content: space-between;
+}
+
+.holder-finance {
+  // border: $border-size-3 solid $color-main-75;
+  // border-left: none;
+  // border-right: none;
+  background: #fef4eb;
+  padding: 0.5vw;
+  padding-left: 5vw;
+  padding-right: 5vw;
+  width: 100%;
+  height: 41vh;
+  margin: 0vh;
+  position: sticky !important;
+  top: 0;
+  // box-shadow: inset 0.3rem 0.1rem 0.5rem $color-main-50;
+  border-radius: none;
+  overflow: hidden;
+  font-size: $font-size-4;
+  z-index: 1;
+
+  // justify-content: space-between;
+}
+
+.holder-white {
+  border: $border-size-3 solid $color-main-75;
+  border-bottom: none;
+  background: #ffffffc0;
+  padding: 1vh;
+  width: 83vw;
+  height: 10%;
+  margin: 0vh;
+  position: relative;
+  // left: 0%;
+  // box-shadow: inset 0.3rem 0.1rem 0.5rem $color-main-50;
+  border-radius: none;
+  overflow: hidden;
+  font-size: $font-size-4;
+
+  justify-content: space-between;
+}
+
+.holder-white-medium-income {
+  // border: $border-size-4 solid $color-main-75;
+  // border-left: $border-size-1 solid #FFFFFF00;
+  border-left: $border-size-1 solid rgba(0, 128, 0, 0.75);
+  background: #ffffff;
+  padding: 1.2vh;
+  width: 100vw;
+  height: 13.5vh;
+  padding-top: 0vh;
+  padding-bottom: 0vh;
+  margin: 0%;
+  position: relative;
+  left: 0%;
+  // box-shadow: 1rem 2rem 2rem $color-main-75;
+  border-radius: none;
+  overflow: hidden;
+  font-size: $font-size-4;
+}
+
+.holder-white-medium-spend {
+  // border: $border-size-4 solid $color-main-75;
+  // border-left: $border-size-1 solid #FFFFFF00;
+  border-left: $border-size-1 solid rgba(255, 0, 0, 0.75);
+  background: #ffffff;
+  padding: 1.2vh;
+  width: 100vw;
+  height: 13.5vh;
+  padding-top: 0vh;
+  padding-bottom: 0vh;
+  margin: 0%;
+  position: relative;
+  left: 0%;
+  // box-shadow: 1rem 2rem 2rem $color-main-75;
+  border-radius: none;
+  overflow: hidden;
+  font-size: $font-size-4;
+}
+
+.holder-vanilla-medium {
+  border: $border-size-3 solid #ffffff00;
+  border-top: 2.5vw solid #ffffff00;
+  background: #ffffff00;
+  padding: 3%;
+  width: 80%;
+  height: 80vh;
+  margin: 0 auto;
+  position: relative;
+  left: 0%;
+  box-shadow: 1rem 1rem 1rem $color-main;
+  border-radius: $radius-size-2;
+  overflow: hidden;
+  font-size: $font-size-3;
+}
+
+.holder-vanilla-financial {
+  // border: $border-size-3 solid #ffffff00;
+  // border-top: 2.5vw solid #ffffff00;
+  background: #ffffff00;
+  padding-top: 0%;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  // position: relative;
+  // z-index: 1;
+  // left: 0%;
+  // box-shadow: 1rem 1rem 1rem $color-main;
+  // border-radius: $radius-size-2;
+  overflow: hidden;
+  font-size: $font-size-3;
+}
+
+.holder-financial-income {
+  border: $border-size-3 solid #ffffff00;
+  border-left: 2.5vw solid green;
+  background: #ffffff00;
+  padding: 3%;
+  width: 80%;
+  height: 40vh;
+  margin: 0 auto;
+  position: relative;
+  left: 0%;
+  box-shadow: 0px 3px 8px $color-main-50;
+  overflow: hidden;
+  font-size: $font-size-3;
+}
+
+.holder-financial-spend {
+  border: $border-size-3 solid #ffffff00;
+  border-left: 2.5vw solid red;
+  background: #ffffff00;
+  padding: 3%;
+  width: 80%;
+  height: 40vh;
+  margin: 0 auto;
+  position: relative;
+  left: 0%;
+  box-shadow: 0px 3px 8px $color-main-50;
+  overflow: hidden;
+  font-size: $font-size-3;
+}
+//로그인 단락 스타일 입힐 것
+.holder-vanilla-login {
+  // border: $border-size-3 solid #FFFFFF00;
+  // border-top: 2.5vw solid #FFFFFF00;
+  background: $color-main-12;
+  padding: 5%;
+  // padding-top: 40%;
+  width: 100vw;
+  height: 100vh;
+  margin: 0 auto;
+  position: absolute;
+  left: 0%;
+  // box-shadow: 1rem 1rem 1rem $color-main;
+  // border-radius: $radius-size-2;
+  overflow: auto;
+  font-size: $font-size-3;
+}
+
+.holder-vanilla-default {
+  // border: $border-size-3 solid #FFFFFF00;
+  // border-top: 2.5vw solid #FFFFFF00;
+  background: $color-main-12;
+  padding: 5%;
+  // padding-top: 40%;
+  width: 100vw;
+  height: 110vh;
+  margin: 0 auto;
+  position: absolute;
+  left: 0%;
+  // box-shadow: 1rem 1rem 1rem $color-main;
+  // border-radius: $radius-size-2;
+  overflow: auto;
+  font-size: $font-size-3;
+}
+
+.holder-vanilla-op {
+  // border: $border-size-3 solid #FFFFFF00;
+  // border-top: 2.5vw solid #FFFFFF00;
+  background: #ffffff;
+  padding: 5%;
+  // padding-top: 40%;
+  width: 100vw;
+  height: 100vh;
+  margin: 0 auto;
+  position: absolute;
+  left: 0%;
+  // box-shadow: 1rem 1rem 1rem $color-main;
+  // border-radius: $radius-size-2;
+  overflow: auto;
+  font-size: $font-size-3;
+}
+
+.holder-vanilla-todo {
+  // border: $border-size-3 solid #FFFFFF00;
+  // border-top: 2.5vw solid #FFFFFF00;
+  background: #ffffff;
+  padding: 10%;
+  // padding-top: 40%;
+  width: 100%;
+  height: 100vh;
+  margin: 0 !important;
+  position: relative;
+  left: 0%;
+  // box-shadow: 1rem 1rem 1rem $color-main;
+  // border-radius: $radius-size-2;
+  overflow: auto;
+  font-size: $font-size-3;
+  z-index: 1;
+}
+
+.holder-asset {
+  width: 100vw;
+  height: 10vh;
+  border-bottom: 0.2rem solid $color-main-12;
+  font-size: $font-size-4;
+  padding-top: 1.8rem;
+  padding-bottom: 1.8rem;
+  // margin-bottom: 1rem;
+  // color: $color-main;
+  display: flex;
+  justify-content: space-between;
+}
+
+.holder-category {
+  width: 100%;
+  height: 2vh;
+  border-bottom: 0.3rem solid $color-main-25;
+  font-size: $font-size-4;
+  // margin-top : -1vh;
+  margin-bottom: 1.5vw;
+  color: $color-main-50;
+}
+
+.holder-version {
+  width: 27vw;
+  height: 5vh;
+  border-bottom: 0.2rem solid $color-main-12;
+  font-size: $font-size-4;
+  // padding-top: 1.8rem;
+  // padding-bottom: 1.8rem;
+  margin-left: auto;
+  margin-right: auto;
+  // color: $color-main;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.page-wrap {
+  padding: 10vw;
+  // padding-left: 10vw;
+  // padding-right: 10vw;
+  // padding-bottom: 10vw;
+}
+
+// Top navbar
+.top-navbar {
+  list-style: none;
+  display: flex;
+  background: white;
+  justify-content: space-between;
+  align-items: center;
+  max-height: 80px;
+  padding: 5px 15px 0px;
+}
+.wepat-logo {
+  float: left;
+}
+.alarm-logo {
+  float: right;
+  margin: 5px;
+}
+
+//Bottom navbar
+// 로고 모음집
+
+//추가 이미지
+.add-img {
+  width: 45px;
+  position: fixed;
+  bottom: 95px !important;
+  right: 3vw;
+  z-index: 2;
+}
+
+.logo {
+  width: auto !important;
+  height: 3vh !important;
+  // padding-top: 20%;
+  // padding-bottom: 20%;
+  // padding-left: 25%;
+  // padding-right: 25%;
+  z-index: 1;
+}
+
+.logo-wepat {
+  // width: auto !important;
+  // height: 20vh !important;
+  // padding-top: 20%;
+  // padding-bottom: 20%;
+  // padding-left: 25%;
+  // padding-right: 25%;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.logo-login {
+  height: 85px !important;
+  width: 85px !important;
+  margin: 5vw;
+}
+
+.logo-login-div {
+  display: flex;
+  justify-content: center;
+}
+
+.logo-git {
+  height: 3vh;
+  width: 3vh;
+  margin: 1vh !important;
+}
+
+.logo-user {
+  width: auto !important;
+  height: 70px !important;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  // padding-left: 25%;
+  // padding-right: 25%;
+  z-index: 1;
+  position: relative;
+  left: -3.5vw;
+  // right : 5vw;
+}
+
+.logo-album {
+  width: auto !important;
+  height: 70px !important;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  // padding-left: 25%;
+  // padding-right: 25%;
+  z-index: 1;
+  position: relative;
+  left: -3.5vw;
+  // right : 23.5vw;
+}
+
+.logo-main {
+  width: auto !important;
+  height: 70px !important;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  // padding-left: 25%;
+  // padding-right: 25%;
+  z-index: 1;
+  position: relative;
+  left: -3.5vw;
+  // left : 5vw;
+}
+
+.logo-finance {
+  width: auto !important;
+  height: 70px !important;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  // padding-left: 25%;
+  // padding-right: 25%;
+  z-index: 1;
+  position: relative;
+  left: -3.5vw;
+  // left : 23.5vw;
+}
+
+.logo-sns {
+  width: auto !important;
+  height: 70px !important;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  // padding-left: 25%;
+  // padding-right: 25%;
+  z-index: 1;
+  position: relative;
+  left: -3.5vw;
+  // left: 42%;
+}
+
+.logo-financial {
+  width: 4.5rem;
+  height: 4.5rem;
+  top: 3rem;
+  left: 3rem;
+  z-index: 1;
+  // position: fixed;
+}
+
+.logo-back {
+  width: 30px;
+  height: 30px;
+  top: 30px;
+  left: 15px;
+  z-index: 1;
+  position: absolute;
+}
+
+.logo-profile-to {
+  // position: relative;
+  width: 2.5rem;
+  height: 2.2rem;
+  margin-top: 1rem !important;
+}
+
+.logo-profile {
+  // position: relative;
+  width: 2.6vh;
+  height: 2.6vh;
+  margin-top: 1.4vh;
+  margin-right: 5vw;
+}
+
+.logo-profile-pet {
+  // position: relative;
+  width: 2.9vh;
+  height: 2.6vh;
+  margin-top: 1.4vh;
+  margin-right: 4.5vw;
+  margin-left: 0.5vw;
+}
+
+.bordered-logo {
+  background-color: #ffffff;
+  border-bottom: 1vw solid #ffffff;
+  border-left: 1vw solid #ffffff;
+  border-right: 1vw solid #ffffff;
+  border-bottom-left-radius: $radius-size-2;
+  border-bottom-right-radius: $radius-size-2;
+  z-index: 1;
+  padding-left: 2vw;
+  padding-right: 2vw;
+  margin-left: 1vw;
+  margin-right: 1vw;
+}
+.not-bordered-logo {
+  border-bottom: 1vw solid #ffffff00;
+  border-left: 1vw solid #ffffff00;
+  border-right: 1vw solid #ffffff00;
+  padding-left: 2vw;
+  padding-right: 2vw;
+  margin-left: 1vw;
+  margin-right: 1vw;
+}
+
+.bordered-logo-colored {
+  background-color: #fef4eb;
+  border-bottom: 1vw solid #fef4eb;
+  border-left: 1vw solid #fef4eb;
+  border-right: 1vw solid #fef4eb;
+  border-bottom-left-radius: $radius-size-2;
+  border-bottom-right-radius: $radius-size-2;
+  z-index: 1;
+  padding-left: 2vw;
+  padding-right: 2vw;
+}
+
+.bottom-navbar {
+  background-color: #fbf9e3; //color-25 투명도 없는 색상
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-around !important;
+  align-content: space-around;
+  border-top: 1.2vw solid #ffffff;
+  // outline: 1.2vw solid #ffffff !important;
+  // outline-offset: -2.4vw !important;
+  // border-bottom-right-radius: 100%;
+  margin-left: 0px !important;
+  margin-right: 0px !important;
+  // padding-left: 12px !important;
+  // padding-right: 12px !important;
+  z-index: 1;
+
+  width: 100%;
+  height: 80px !important;
+  position: fixed !important;
+  bottom: -1px !important;
+  left: 0px !important;
+}
+.header-navbar {
+  background-color: #fbf9e3; //color-25 투명도 없는 색상
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-around !important;
+  align-content: space-around;
+  border-top: 5px solid #fbf9e3;
+  // outline: 1.2vw solid #ffffff !important;
+  // outline-offset: -2.4vw !important;
+  // border-bottom-right-radius: 100%;
+  margin-left: 0px !important;
+  margin-right: 0px !important;
+  // padding-left: 12px !important;
+  // padding-right: 12px !important;
+  z-index: 1;
+
+  width: 100%;
+  height: 50px !important;
+  position: fixed !important;
+  bottom: 0x !important;
+  left: 0px !important;
+}
+
+.bottom-navbar-colored {
+  background-color: #fbf9e3; //color-25 투명도 없는 색상
+  justify-content: space-between;
+  align-content: space-around;
+  border-top: 1.2vw solid #fef4eb;
+  // outline: 1.2vw solid #ffffff !important;
+  // outline-offset: -2.4vw !important;
+  // border-bottom-right-radius: 100%;
+  margin-left: 0px !important;
+  margin-right: 0px !important;
+  padding-left: 0px;
+  padding-right: 0px;
+  z-index: 1;
+
+  width: 100%;
+  position: fixed !important;
+  bottom: 0% !important;
+}
+
+.modal-wrap {
+  border: $border-size-3 solid $color-main-75;
+  border-top: 2.5vw solid $color-main-75;
+  background: $color-main-12;
+  padding: 10%;
+  width: 60vw !important;
+  height: 40vh !important;
+  //margin-top: 10vw;
+  position: relative;
+  left: 0%;
+  box-shadow: 1rem 1rem 1rem $color-main;
+  border-radius: $radius-size-2;
+  overflow: hidden;
+  font-size: $font-size-4;
+}
+
+//라디오 버튼 효과
+.select {
+  padding: 0;
+}
+.select input[type="radio"] {
+  display: none;
+}
+.select input[type="radio"] + label {
+  // border-radius: $radius-size-2;
+  display: inline-block;
+  cursor: pointer;
+  height: 4.5vh;
+  width: 30vw;
+  border: 0.3rem solid $color-main;
+  line-height: 4vh;
+  text-align: center;
+  // font-weight: bold;
+  font-size: $font-size-4;
+}
+.select input[type="radio"] + label {
+  background-color: #fff;
+  color: $color-main;
+}
+.select input[type="radio"]:checked + label {
+  background-color: $color-main;
+  color: #fff;
+}
+
+// pet 관련
+
+.div-position {
+  position: absolute;
+  left: 60px;
+  bottom: 400px;
+}
+.div-size {
+  position: relative;
+  border-radius: 15px;
+  height: auto;
+  width: 80vw;
+  // justify-content: center;
+  left: 5vw;
+  // bottom: 190px;
+}
+.red {
+  float: left;
+  background-color: #fcb9aa;
+  height: 10vw;
+  width: 10vw;
+}
+.orange {
+  float: left;
+  background-color: #ffdbcc;
+  height: 10vw;
+  width: 10vw;
+}
+.yellow {
+  float: left;
+  background-color: #ffffb5;
+  height: 10vw;
+  width: 10vw;
+}
+.green {
+  float: left;
+  background-color: #b6cfb6;
+  height: 10vw;
+  width: 10vw;
+}
+.blue {
+  float: left;
+  background-color: #a2e1db;
+  height: 10vw;
+  width: 10vw;
+}
+.darkblue {
+  float: left;
+  background-color: #55cbcd;
+  height: 10vw;
+  width: 10vw;
+}
+.purple {
+  float: left;
+  background-color: #cbaacd;
+  height: 10vw;
+  width: 10vw;
+}
+.otherColor {
+  float: left;
+  background-color: #eceae4;
+  height: 10vw;
+  width: 10vw;
+}
+
+.pet-margin {
+  // width: 100vw;
+  top: 0;
+  margin-left: 2vw;
+}
+
+.pet-float-center {
+  // justify-content: center;
+  // align-content: center;
+  // float: center;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  height: 32vh;
+  width: 29vh;
+  margin-bottom: 7vh;
+  // margin: 0, 10px, 120px;
+}
+
+.pet-float-left {
+  float: left;
+  /* position: fixed;
+  margin: 0, 10px, 120px; */
+}
+
+// .pet-div-position {
+  // display: block;
+  // margin-left: auto !important;
+  // margin-right: auto;
+// }
+
+.name-card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transition: 0.4s;
+  transform-style: preserve-3d;
+}
+
+.name-front,
+.name-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden !important;
+}
+
+// 뒷면은 사전에 미리 뒤집기
+.name-back {
+  transform: rotateY(180deg);
+}
+
+// 호버 시 뒤집기
+.flip:hover .name-card {
+  transform: rotateY(180deg);
+}
+
+.name-font {
+  width: 100%;
+  z-index: 1;
+  position: absolute;
+  text-align: center;
+}
+//swal2 효과
+
+#swal2 {
+  background: $color-main-06;
+}
+
+#swal2-title {
+  color: $color-main;
+  font-size: $font-size-3;
+}
+#swal2-text {
+  // color: $color-main;
+  font-size: $font-size-5;
+}
+
+.swal2-popup {
+  display: none;
+  position: relative;
+  box-sizing: border-box;
+  grid-template-columns: minmax(0, 100%);
+  width: 32em;
+  max-width: 100%;
+  padding: 0 0 1.25em;
+  border: none;
+  border-radius: 5px;
+  background: #fff;
+  color: #545454;
+  font-family: inherit;
+  font-size: $font-size-4 !important;
+}
+
+.swal2-styled.swal2-confirm {
+  border: 0;
+  border-radius: 0.25em;
+  background: initial;
+  background-color: $color-main !important;
+  color: #fff;
+  font-size: $font-size-4 !important;
+  // padding-top: 1vh;
+  height: 6vh !important;
+  width: 10vh !important;
+  padding: 0;
+}
+
+.swal2-file {
+  border-radius: $radius-size-2 !important;
+  border: 15px solid $color-main-75 !important;
+}
+
+.swal2-styled.swal2-cancel {
+  border: 0;
+  border-radius: 0.25em;
+  background: initial;
+  // background-color: $color-main !important;
+  color: #fff;
+  font-size: $font-size-4 !important;
+  // padding-top: 1vh;
+  height: 6vh !important;
+  width: 10vh !important;
+  padding: 0;
+}
+
+//앱 전체 효과
+#app {
+  font-family: uiyeon;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  // color: #2c3e50;
+  margin-top: 0px !important;
+
+  // max-height: 80%;
+  // min-width: 500px !important;
+  // max-width: 100vw !important;
+  // padding-bottom: 120px;
+  overflow: hidden !important;
+  // z-index: -1;
+}
+
+#AlbumView {
+  max-height: 80% !important;
+  padding-bottom: 120px !important;
+  width: 100vw !important;
+}
+
+#FinancialView {
+  max-height: 80% !important;
+  padding-bottom: 120px !important;
+}
+
+#MainView {
+  max-height: 80% !important;
+  padding-bottom: 120px !important;
+}
+
+#SnsView {
+  max-height: 80% !important;
+  padding-bottom: 120px !important;
+  width: 100vw !important;
+}
+
+#UserProfileView {
+  max-height: 80% !important;
+  padding-bottom: 120px !important;
+}
+
+#UserDetailView {
+  max-height: 80% !important;
+  padding-bottom: 120px !important;
+}
+/* 전환효과 (Slide) */
+// .next-leave-to { animation: leaveToLeft 500ms both cubic-bezier(0.165, 0.84, 0.44, 1); z-index: 0; }
+// .next-enter-to { animation: enterFromRight 500ms both cubic-bezier(0.165, 0.84, 0.44, 1); z-index: 1; }
+// .prev-leave-to { animation: leaveToRight 500ms both cubic-bezier(0.165, 0.84, 0.44, 1); z-index: 1; }
+// .prev-enter-to { animation: enterFromLeft 500ms both cubic-bezier(0.165, 0.84, 0.44, 1); z-index: 0; }
+// .up-leave-to { animation: leaveToBottom 500ms both cubic-bezier(0.165, 0.84, 0.44, 1); z-index: 0; }
+// .up-enter-to { animation: enterFromTop 500ms both cubic-bezier(0.165, 0.84, 0.44, 1); z-index: 1; }
+
+// @keyframes leaveToLeft { from { transform: translateX(0); } to { transform: translateX(-25%); filter: brightness(0.5); } }
+// @keyframes enterFromLeft { from { transform: translateX(-25%); filter: brightness(0.5); } to { transform: translateX(0); } }
+// @keyframes leaveToRight { from { transform: translateX(0); } to { transform: translateX(100%); } }
+// @keyframes enterFromRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+// @keyframes leaveToBottom { from { transform: translateY(0); } to { transform: translateY(100%); } }
+// @keyframes enterFromTop { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+/* 전환효과 (Fade) */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.8s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.row {
+  width: 100vw !important;
+}
+
+.title-todo {
+  padding-top: 1.5vh;
+}

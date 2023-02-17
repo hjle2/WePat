@@ -1,0 +1,30 @@
+[
+  {
+    "userId": "qwer1234",
+    "scheduleId":"clEDaaBmINNlpfVgrYHb",
+    "alarmRead":false,
+    "alarmType":"add",
+    "alarmTime":"20230206023300"
+  },
+  {
+    "userId": "qwer1234",
+    "scheduleId":"clEDaaBmINNlpfVgrYHb",
+    "alarmRead":false,
+    "alarmType":"update",
+    "alarmTime":"20230206025500"
+  },
+  {
+    "userId": "qqwer1234",
+    "scheduleId":"VcAum1y4gj8k9LAdJIu7",
+    "alarmRead":false,
+    "alarmType":"add",
+    "alarmTime":"20230206025600"
+  },
+  {
+    "userId": "qqwer1234",
+    "scheduleId":"U9i45PAjIoWgF3Kr7sZw",
+    "alarmRead":true,
+    "alarmType":"complete",
+    "alarmTime":"20230206025000"
+  }
+]

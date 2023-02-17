@@ -1,0 +1,20 @@
+[
+  {
+    "id":"Fi1kGb1EUrHWby7Dsrlq",
+    "eventColor": "#ff0000",
+    "textColor": "#ff0000",
+    "show": true
+  },
+  {
+    "id":"JmcUBYsCj4jtIldorCDU" ,
+    "eventColor": "#00008b",
+    "textColor": "#00008b",
+    "show": true
+  },
+  {
+    "id":"bEPTPQch2MLS0i98O1Rh",
+    "eventColor": "#008000",
+    "textColor": "#008000",
+    "show": true
+  }
+]
