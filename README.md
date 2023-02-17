@@ -74,17 +74,155 @@ SNS를 겸한 공유 캘린더로 개발되었습니다.</br>
 ### Back
 ```
 wepet
-  ├── config
-  │   ├── auth
-  │   ├── filter
-  │   ├── interceptor
-  │   └── listener
-  ├── controller
-  ├── service
-  ├── repository
-  ├── dto
-  │   └── simple
-  └── utils
+ └── com
+    └── wepat
+        ├── Application.java
+        ├── aop
+        │   ├── aspect
+        │   │   ├── LogAspect.java
+        │   │   └── LoggerAspect.java
+        │   └── interceptor
+        │       └── JwtIntercepptor.java
+        ├── config
+        │   ├── FirebaseConfig.java
+        │   ├── SecurityConfig.java
+        │   ├── SwaggerConfig.java
+        │   └── WebConfig.java
+        ├── dto
+        │   └── ScheduleDto.java
+        ├── exception
+        │   ├── ApiException.java
+        │   ├── ApiExceptionHandler.java
+        │   ├── BadRequestException.java
+        │   ├── DataNotExitsException.java
+        │   ├── ErrorDto.java
+        │   ├── TokenExpiredException.java
+        │   ├── UnAuthorizedException.java
+        │   ├── calendar
+        │   │   ├── AloneScheduleException.java
+        │   │   ├── CalendarExceptionHandler.java
+        │   │   ├── NotExistCalendarException.java
+        │   │   └── NotExistPet.java
+        │   ├── finance
+        │   │   ├── AlreadyDeleteFinanceException.java
+        │   │   └── FinanceExceptionHandler.java
+        │   ├── member
+        │   │   ├── AlreadyAloneCalendarException.java
+        │   │   ├── BlockMemberException.java
+        │   │   ├── ExistEmailException.java
+        │   │   ├── ExistIdException.java
+        │   │   ├── IdWriteException.java
+        │   │   ├── MemberExceptionHandler.java
+        │   │   ├── NotExistCalendarException.java
+        │   │   ├── NotExistEmailException.java
+        │   │   ├── NotExistMemberException.java
+        │   │   ├── PwdWriteException.java
+        │   │   └── WrongPwdException.java
+        │   ├── pet
+        │   │   ├── AlreadyDeletePetException.java
+        │   │   ├── NotExistCalendarException.java
+        │   │   ├── NotExistPetException.java
+        │   │   └── PetExceptionHandler.java
+        │   ├── photo
+        │   │   ├── AlreadyDeleteImageException.java
+        │   │   ├── NotExistImageException.java
+        │   │   └── PhotoExceptionHandler.java
+        │   ├── schedule
+        │   │   ├── NotExistScheduleException.java
+        │   │   └── ScheduleExceptionHandler.java
+        │   └── sns
+        │       ├── AlreadyReportImageException.java
+        │       ├── NotExistImageException.java
+        │       └── SNSExceptionHandler.java
+        ├── finance
+        │   ├── FinanceDto.java
+        │   ├── controller
+        │   │   └── FinanceController.java
+        │   ├── repository
+        │   │   ├── FinanceRepository.java
+        │   │   └── FinanceRepositoryImpl.java
+        │   └── service
+        │       ├── FinanceService.java
+        │       └── FinanceServiceImpl.java
+        ├── member
+        │   ├── MailDto.java
+        │   ├── MemberDto.java
+        │   ├── MemberEntity.java
+        │   ├── controller
+        │   │   └── MemberController.java
+        │   ├── repository
+        │   │   ├── MemberRepository.java
+        │   │   └── MemberRepositoryImpl.java
+        │   └── service
+        │       ├── MemberService.java
+        │       └── MemberServiceImpl.java
+        ├── notification
+        │   ├── NotifiacationType.java
+        │   ├── NotificationDto.java
+        │   ├── NotificationEntity.java
+        │   ├── controller
+        │   │   └── NotificationController.java
+        │   ├── repository
+        │   │   ├── NotificationRepository.java
+        │   │   └── NotificationRepositoryImpl.java
+        │   └── service
+        │       ├── NotificationService.java
+        │       └── NotificationServiceImpl.java
+        ├── pet
+        │   ├── PetDto.java
+        │   ├── PetEntity.java
+        │   ├── WeightDto.java
+        │   ├── controller
+        │   │   └── PetController.java
+        │   ├── repository
+        │   │   ├── PetRepository.java
+        │   │   └── PetRepositoryImpl.java
+        │   └── service
+        │       ├── PetService.java
+        │       └── PetServiceImpl.java
+        ├── photo
+        │   ├── CommentDto.java
+        │   ├── PhotoDto.java
+        │   ├── PhotoEntity.java
+        │   ├── controller
+        │   │   └── PhotoController.java
+        │   ├── repository
+        │   │   ├── PhotoRepository.java
+        │   │   └── PhotoRepositoryImpl.java
+        │   └── service
+        │       ├── PhotoService.java
+        │       └── PhotoServiceImpl.java
+        ├── schedule
+        │   ├── CalendarDto.java
+        │   ├── CalendarEntity.java
+        │   ├── ScheduleDto.java
+        │   ├── ScheduleEntity.java
+        │   ├── controller
+        │   │   └── ScheduleController.java
+        │   ├── repository
+        │   │   ├── ScheduleRepository.java
+        │   │   └── ScheduleRepositoryImpl.java
+        │   └── service
+        │       ├── ScheduleService.java
+        │       └── ScheduleServiceImpl.java
+        ├── sns
+        │   ├── controller
+        │   │   └── SNSController.java
+        │   ├── repository
+        │   │   ├── SNSRepository.java
+        │   │   └── SNSRepositoryImpl.java
+        │   └── service
+        │       ├── SNSService.java
+        │       └── SNSServiceImpl.java
+        ├── sse
+        │   ├── SseEmitterController.java
+        │   ├── SseEmitterRepository.java
+        │   └── SseEmitterService.java
+        └── util
+            ├── DateUtil.java
+            ├── JwtUtil.java
+            └── SecurityUtil.java
+
 ```
 ### Front
 ```
